@@ -41,11 +41,10 @@
                 </td>
                 <td>
                     @if($user->is_active)
-                        <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('POST')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan pengguna ini?')">Nonaktifkan</button>
-                        </form>
+                        <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST">
+    @csrf
+    <button type="submit" class="btn btn-danger">Nonaktifkan</button>
+</form>
                     @else
                         <span class="text-muted">Nonaktif</span>
                     @endif

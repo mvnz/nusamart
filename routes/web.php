@@ -7,12 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['is_admin'])->group(function () {
+Route::get('/admin/users', [UserManagementController::class, 'index'])
+    ->name('admin.users.index');
 
-    Route::get('/admin/users', [UserManagementController::class, 'index'])
-        ->name('admin.users.index');
-
-    Route::post('/admin/users/{id}/deactivate', [UserManagementController::class, 'deactivate'])
-        ->name('admin.users.deactivate');
-
-});
+Route::post('/admin/users/{id}/deactivate', [UserManagementController::class, 'deactivate'])
+    ->name('admin.users.deactivate');
