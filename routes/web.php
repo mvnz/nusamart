@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+<<<<<<< HEAD
 // Registration routes
 Route::get('/register', [RegistrationController::class, 'showForm'])->name('register');
 Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
@@ -25,3 +26,10 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 
+=======
+Route::get('/admin/users', [UserManagementController::class, 'index'])
+    ->name('admin.users.index');
+
+Route::post('/admin/users/{id}/deactivate', [UserManagementController::class, 'deactivate'])
+    ->name('admin.users.deactivate');
+>>>>>>> feature/admin-user
