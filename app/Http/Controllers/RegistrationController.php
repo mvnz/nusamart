@@ -20,6 +20,9 @@ class RegistrationController extends Controller
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+            'alamat' => ['required', 'string', 'max:500'],
+            'kota' => ['required', 'string', 'max:255'],
+            'propinsi' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:penjual,pembeli'],
         ]);
@@ -29,6 +32,9 @@ class RegistrationController extends Controller
             'email' => $validated['email'],
             'username' => $validated['username'],
             'phone' => $validated['phone'],
+            'alamat' => $validated['alamat'],
+            'kota' => $validated['kota'],
+            'propinsi' => $validated['propinsi'],
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
         ]);

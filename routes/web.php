@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegistrationController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-<<<<<<< HEAD
 // Registration routes
 Route::get('/register', [RegistrationController::class, 'showForm'])->name('register');
 Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
@@ -21,15 +21,14 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Dashboard route (protected)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'dashboard'])->middleware('auth')->name('dashboard');
 
+// Profile routes
+Route::get('/profile', [ProfileController::class, 'show'])->middleware('auth')->name('profile');
+Route::put('/profile', [ProfileController::class, 'update'])->middleware('auth')->name('profile.update');
 
-=======
-Route::get('/admin/users', [UserManagementController::class, 'index'])
-    ->name('admin.users.index');
-
-Route::post('/admin/users/{id}/deactivate', [UserManagementController::class, 'deactivate'])
-    ->name('admin.users.deactivate');
->>>>>>> feature/admin-user
+// Admin routes
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/users', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('admin.users');
+    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('admin.users.destroy');
+});

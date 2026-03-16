@@ -64,6 +64,7 @@
         input[type="text"],
         input[type="email"],
         input[type="password"],
+        input[type="tel"],
         select {
             width: 100%;
             padding: 12px 15px;
@@ -77,6 +78,7 @@
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="password"]:focus,
+        input[type="tel"]:focus,
         select:focus {
             outline: none;
             border-color: #667eea;
@@ -218,7 +220,7 @@
     <div class="container-register">
         <div class="header-register">
             <h1>Daftar Sekarang</h1>
-            <p>Bergabunglah dengan NusaMart sebagai pembeli atau penjual</p>
+            <p>Cari produk sesukamu, di NusaMart</p>
         </div>
 
         @if ($errors->any())
@@ -254,7 +256,7 @@
 
                 <div class="form-group">
                     <label for="phone">Nomor HP/WhatsApp *</label>
-                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="081234567890" required>
+                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="081234567890" pattern="[0-9]*" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                     @error('phone')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -267,6 +269,32 @@
                 @error('email')
                     <span class="error-message">{{ $message }}</span>
                 @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="alamat">Alamat *</label>
+                <input type="text" id="alamat" name="alamat" value="{{ old('alamat') }}" placeholder="Jl. Contoh No. 123" required>
+                @error('alamat')
+                    <span class="error-message">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="kota">Kota *</label>
+                    <input type="text" id="kota" name="kota" value="{{ old('kota') }}" placeholder="Jakarta" required>
+                    @error('kota')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="propinsi">Propinsi *</label>
+                    <input type="text" id="propinsi" name="propinsi" value="{{ old('propinsi') }}" placeholder="DKI Jakarta" required>
+                    @error('propinsi')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
 
             <div class="form-row">
@@ -286,7 +314,7 @@
             </div>
 
             <div class="form-group">
-                <label>Pilih Tipe Akun *</label>
+                <label>Daftar sebagai *</label>
                 <div class="role-selector">
                     <div class="role-option">
                         <input type="radio" id="pembeli" name="role" value="pembeli" {{ old('role') == 'pembeli' ? 'checked' : '' }} required>
