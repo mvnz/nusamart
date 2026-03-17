@@ -41,8 +41,8 @@
                     </div>
                     <h3 class="profile-name">{{ auth()->user()->name }}</h3>
                     <span class="profile-role-badge">
-                        <i class="fa {{ auth()->user()->role === 'penjual' ? 'fa-store' : 'fa-shopping-bag' }}"></i>
-                        {{ auth()->user()->role === 'penjual' ? 'Penjual' : 'Pembeli' }}
+                        <i class="fa {{ auth()->user()->role === 'admin' ? 'fa-shield' : (auth()->user()->role === 'penjual' ? 'fa-store' : 'fa-shopping-bag') }}"></i>
+                        {{ ucfirst(auth()->user()->role) }}
                     </span>
                     <p class="profile-joined"><i class="fa fa-calendar"></i> Bergabung {{ auth()->user()->created_at->translatedFormat('d F Y') }}</p>
                 </div>
@@ -53,7 +53,7 @@
                         <a href="#"><i class="fa fa-shopping-bag"></i> Pesanan Saya</a>
                         <a href="#"><i class="fa fa-heart"></i> Wishlist</a>
                         <a href="#"><i class="fa fa-map-marker"></i> Alamat</a>
-                    @else
+                    @elseif(auth()->user()->role === 'penjual')
                         <a href="#"><i class="fa fa-cube"></i> Pesanan</a>
                         <a href="#"><i class="fa fa-tags"></i> Produk Saya</a>
                         <a href="#"><i class="fa fa-line-chart"></i> Statistik</a>
@@ -114,6 +114,7 @@
                     </form>
                 </div>
 
+                @if(auth()->user()->role !== 'admin')
                 <!-- Account Summary -->
                 <div class="profile-summary-grid">
                     @if(auth()->user()->role === 'pembeli')
@@ -178,6 +179,9 @@
                 </div>
 
                 <!-- Recent Orders -->
+                @endif
+
+                @if(auth()->user()->role !== 'admin')
                 <div class="profile-orders-card">
                     <div class="card-header">
                         <h3><i class="fa fa-shopping-cart"></i> Pesanan Terakhir</h3>
@@ -218,6 +222,7 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
             </div>
         </div>
     </div>
