@@ -181,6 +181,9 @@
 
                 @if(auth()->user()->role !== 'admin')
                 <!-- Recent Orders -->
+                @endif
+
+                @if(auth()->user()->role !== 'admin')
                 <div class="profile-orders-card">
                     <div class="card-header">
                         <h3><i class="fa fa-shopping-cart"></i> Pesanan Terakhir</h3>
