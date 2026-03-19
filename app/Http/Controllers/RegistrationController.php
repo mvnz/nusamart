@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegistrationController extends Controller
@@ -27,7 +29,7 @@ class RegistrationController extends Controller
             'role' => ['required', 'in:penjual,pembeli'],
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['nama_lengkap'],
             'email' => $validated['email'],
             'username' => $validated['username'],
@@ -39,6 +41,10 @@ class RegistrationController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect('/')->with('success', 'Pendaftaran berhasil! Silakan login.');
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect()->route('verification.notice');
     }
 }
