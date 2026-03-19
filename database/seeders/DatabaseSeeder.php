@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             'propinsi' => 'DKI Jakarta',
             'role' => 'admin',
             'password' => bcrypt('password'),
-            'email_verified_at' => now(),
         ]);
     }
 }
