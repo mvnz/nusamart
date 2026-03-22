@@ -646,37 +646,3 @@ ul { list-style: none; }
     .admin-stats-grid { grid-template-columns: 1fr; }
     .admin-topbar { padding: 0 16px; }
 }
-
-/* Toggle User Button */
-.btn-toggle-user {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.btn-deactivate {
-    background: #fff0f0;
-    color: #D10024;
-}
-
-.btn-deactivate:hover {
-    background: #D10024;
-    color: #fff;
-}
-
-.btn-activate {
-    background: #eaffea;
-    color: #27ae60;
-}
-
-.btn-activate:hover {
-    background: #27ae60;
-    color: #fff;
-}
