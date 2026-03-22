@@ -312,7 +312,7 @@
                 <div class="logo-icon">N</div>
                 <div class="logo-text">Nusa<span>Mart</span></div>
             </div>
-            <p>Marketplace produk nusantara terpercaya. Temukan produk lokal terbaik dari seluruh Indonesia.</p>
+            <p>Marketplace produk nusantara terpercaya. Temukan produk lokal terbaik dari UMKM Manut Jaya.</p>
             <ul class="brand-features">
                 <li><i class="fa fa-check-circle"></i> Produk asli nusantara</li>
                 <li><i class="fa fa-check-circle"></i> Pembayaran aman & terpercaya</li>

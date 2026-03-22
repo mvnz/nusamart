@@ -2,8 +2,8 @@
 <div class="top-bar">
     <div class="container">
         <div class="top-bar-left">
-            <span><i class="fa fa-phone"></i> +62 21-9551-84</span>
-            <span><i class="fa fa-envelope-o"></i> info@nusamart.id</span>
+            <span><i class="fa fa-phone"></i> +62 21-1000-000</span>
+            <span><i class="fa fa-envelope-o"></i> cs@tokonusamart.com</span>
         </div>
         <div class="top-bar-right">
             <div class="user-dropdown">
