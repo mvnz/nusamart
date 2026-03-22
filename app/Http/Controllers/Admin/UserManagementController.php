@@ -13,13 +13,15 @@ class UserManagementController extends Controller
         return view('user.index', compact('users'));
     }
 
-    public function destroy(User $user)
+    public function toggleActive(User $user)
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('admin.users')->with('error', 'Tidak bisa menghapus akun sendiri.');
+            return redirect()->route('admin.users')->with('error', 'Tidak bisa menonaktifkan akun sendiri.');
         }
 
-        $user->delete();
-        return redirect()->route('admin.users')->with('success', 'Pengguna berhasil dihapus.');
+        $user->update(['is_active' => !$user->is_active]);
+
+        $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->route('admin.users')->with('success', "Pengguna berhasil {$status}.");
     }
 }

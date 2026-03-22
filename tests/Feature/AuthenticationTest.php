@@ -54,6 +54,22 @@ class AuthenticationTest extends TestCase
         $response->assertSessionHasErrors(['email', 'password']);
     }
 
+    public function test_inactive_user_cannot_login(): void
+    {
+        $user = User::factory()->create([
+            'password' => 'Password1!',
+            'is_active' => false,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'Password1!',
+        ]);
+
+        $this->assertGuest();
+        $response->assertSessionHasErrors('email');
+    }
+
     public function test_unverified_user_redirected_to_verification(): void
     {
         $user = User::factory()->unverified()->create([
