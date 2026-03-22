@@ -2470,6 +2470,12 @@ table tr:hover td { background: #fafafa; }
     .info-page-header { padding: 30px 20px; }
     .info-page-content { padding: 25px 20px; }
     .info-page-header h1 { font-size: 22px; }
+
+    /* Table responsive */
+    .orders-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table th, table td { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
+    .orders-card .card-header h3 { font-size: 14px; }
+    .orders-card .card-header { padding: 12px 16px; }
 }
 
 @media (max-width: 480px) {
