@@ -2,6 +2,10 @@
 
 @section('title', 'Manajemen Pengguna - NusaMart')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/user-management.css') }}?v={{ filemtime(public_path('css/user-management.css')) }}">
+@endpush
+
 @section('content')
 <!-- Stats -->
 <section class="container">
