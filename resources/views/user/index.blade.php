@@ -123,7 +123,7 @@
 </section>
 
 <!-- User Detail Modal -->
-<div class="user-modal-overlay" id="userModal" onclick="if(event.target===this)closeUserModal()">
+<div class="user-modal-overlay" id="userModal" style="display:none" onclick="if(event.target===this)closeUserModal()">
     <div class="user-modal">
         <button class="user-modal-close" onclick="closeUserModal()">&times;</button>
         <div class="user-modal-body">
@@ -206,12 +206,16 @@
         document.getElementById('modalPropinsi').textContent = u.propinsi;
         document.getElementById('modalDate').textContent = u.date;
 
-        document.getElementById('userModal').classList.add('active');
+        var modal = document.getElementById('userModal');
+        modal.style.display = 'flex';
+        modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
     function closeUserModal() {
-        document.getElementById('userModal').classList.remove('active');
+        var modal = document.getElementById('userModal');
+        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
     }
 
