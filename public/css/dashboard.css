@@ -1921,7 +1921,7 @@ table tr:hover td { background: #fafafa; }
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 30px;
     margin-bottom: 20px;
 }
 
