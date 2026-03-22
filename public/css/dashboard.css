@@ -1918,6 +1918,10 @@ table tr:hover td { background: #fafafa; }
     padding: 24px 20px;
 }
 
+.profile-form > .form-group {
+    margin-bottom: 20px;
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
