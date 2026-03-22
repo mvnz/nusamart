@@ -25,8 +25,12 @@ class RegistrationController extends Controller
             'alamat' => ['required', 'string', 'max:500'],
             'kota' => ['required', 'string', 'max:255'],
             'propinsi' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/'],
             'role' => ['required', 'in:penjual,pembeli'],
+        ], [
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan karakter spesial.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([

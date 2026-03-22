@@ -21,8 +21,6 @@
         @yield('content')
     </main>
 
-    @include('partials.newsletter')
-
     @include('partials.footer')
 
     <script src="{{ asset('js/dashboard.js') }}"></script>

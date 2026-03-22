@@ -36,8 +36,28 @@
             <!-- Sidebar -->
             <div class="profile-sidebar">
                 <div class="profile-avatar-card">
-                    <div class="profile-avatar">
-                        <i class="fa fa-user"></i>
+                    <div class="profile-avatar-wrapper">
+                        @if(auth()->user()->photo)
+                            <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
+                        @else
+                            <div class="profile-avatar">
+                                <i class="fa fa-user"></i>
+                            </div>
+                        @endif
+                        <form method="POST" action="{{ route('profile.photo') }}" enctype="multipart/form-data" id="photoForm">
+                            @csrf
+                            <label class="photo-upload-btn" title="Ganti Foto">
+                                <i class="fa fa-camera"></i>
+                                <input type="file" name="photo" accept="image/jpeg,image/png,image/jpg,image/webp" hidden onchange="document.getElementById('photoForm').submit()">
+                            </label>
+                        </form>
+                        @if(auth()->user()->photo)
+                            <form method="POST" action="{{ route('profile.photo.delete') }}" class="photo-delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="photo-delete-btn" title="Hapus Foto"><i class="fa fa-times"></i></button>
+                            </form>
+                        @endif
                     </div>
                     <h3 class="profile-name">{{ auth()->user()->name }}</h3>
                     <span class="profile-role-badge">
@@ -49,16 +69,7 @@
 
                 <nav class="profile-nav">
                     <a href="{{ route('profile') }}" class="active"><i class="fa fa-user"></i> Profil Saya</a>
-                    @if(auth()->user()->role === 'pembeli')
-                        <a href="#"><i class="fa fa-shopping-bag"></i> Pesanan Saya</a>
-                        <a href="#"><i class="fa fa-heart"></i> Wishlist</a>
-                        <a href="#"><i class="fa fa-map-marker"></i> Alamat</a>
-                    @elseif(auth()->user()->role === 'penjual')
-                        <a href="#"><i class="fa fa-cube"></i> Pesanan</a>
-                        <a href="#"><i class="fa fa-tags"></i> Produk Saya</a>
-                        <a href="#"><i class="fa fa-line-chart"></i> Statistik</a>
-                    @endif
-                    <a href="#"><i class="fa fa-lock"></i> Ubah Password</a>
+                    <a href="{{ route('profile.password') }}"><i class="fa fa-lock"></i> Ubah Password</a>
                 </nav>
             </div>
 
@@ -113,116 +124,6 @@
                         </div>
                     </form>
                 </div>
-
-                @if(auth()->user()->role !== 'admin')
-                <!-- Account Summary -->
-                <div class="profile-summary-grid">
-                    @if(auth()->user()->role === 'pembeli')
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-cube"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">3</div>
-                                <div class="summary-label">Pesanan Aktif</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-heart"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">12</div>
-                                <div class="summary-label">Wishlist</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-shopping-cart"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">5</div>
-                                <div class="summary-label">Keranjang</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-star"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">8</div>
-                                <div class="summary-label">Ulasan</div>
-                            </div>
-                        </div>
-                    @else
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-money"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">Rp 12.4jt</div>
-                                <div class="summary-label">Pendapatan</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-cube"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">156</div>
-                                <div class="summary-label">Total Pesanan</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-tags"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">48</div>
-                                <div class="summary-label">Produk Aktif</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fa fa-users"></i></div>
-                            <div class="summary-info">
-                                <div class="summary-value">1.240</div>
-                                <div class="summary-label">Pelanggan</div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Recent Orders -->
-                @endif
-
-                @if(auth()->user()->role !== 'admin')
-                <div class="profile-orders-card">
-                    <div class="card-header">
-                        <h3><i class="fa fa-shopping-cart"></i> Pesanan Terakhir</h3>
-                        <a href="#" class="view-all">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Produk</th>
-                                <th>Total</th>
-                                <th>Tanggal</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="order-id">#NM-1045</span></td>
-                                <td>Batik Solo Premium</td>
-                                <td>Rp 350.000</td>
-                                <td>14 Mar 2026</td>
-                                <td><span class="status-badge status-process">Diproses</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="order-id">#NM-1044</span></td>
-                                <td>Kopi Toraja 250g</td>
-                                <td>Rp 125.000</td>
-                                <td>12 Mar 2026</td>
-                                <td><span class="status-badge status-pending">Menunggu</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="order-id">#NM-1043</span></td>
-                                <td>Tenun Ikat NTT</td>
-                                <td>Rp 780.000</td>
-                                <td>10 Mar 2026</td>
-                                <td><span class="status-badge status-success">Selesai</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                @endif
             </div>
         </div>
     </div>

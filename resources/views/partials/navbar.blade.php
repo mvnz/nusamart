@@ -4,6 +4,7 @@
         <button class="nav-categories-btn"><i class="fa fa-bars"></i> Kategori</button>
         <div class="nav-menu">
             <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
+            @auth
             @if(auth()->user()->role == 'admin')
                 <a href="{{ route('admin.users') }}">Pengguna</a>
                 <!--<a href="#">Produk</a>
@@ -19,7 +20,8 @@
                 <a href="#">Kategori</a>
                 <a href="#">Pesanan Saya</a> -->
             @endif
-            <a href="#">Bantuan</a>
+            @endauth
+            <a href="{{ route('page.bantuan') }}">Bantuan</a>
         </div>
        
     </div>
