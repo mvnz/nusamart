@@ -4,7 +4,9 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegistrationController;
 
 Route::get('/', function () {
@@ -21,6 +23,12 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Logout route
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Forgot & Reset Password routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->middleware('guest')->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->middleware('guest')->name('password.email');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.update');
 
 // Email Verification routes
 Route::get('/email/verify', function () {
@@ -43,9 +51,21 @@ Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::
 // Profile routes
 Route::get('/profile', [ProfileController::class, 'show'])->middleware(['auth', 'verified'])->name('profile');
 Route::put('/profile', [ProfileController::class, 'update'])->middleware(['auth', 'verified'])->name('profile.update');
+Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->middleware(['auth', 'verified'])->name('profile.photo');
+Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->middleware(['auth', 'verified'])->name('profile.photo.delete');
+Route::get('/profile/password', [ProfileController::class, 'showChangePassword'])->middleware(['auth', 'verified'])->name('profile.password');
+Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware(['auth', 'verified'])->name('profile.password.update');
 
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/users', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('admin.users');
     Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('admin.users.destroy');
 });
+
+// Info pages
+Route::get('/tentang', [PageController::class, 'tentang'])->name('page.tentang');
+Route::get('/kontak', [PageController::class, 'kontak'])->name('page.kontak');
+Route::get('/kebijakan-privasi', [PageController::class, 'privasi'])->name('page.privasi');
+Route::get('/syarat-ketentuan', [PageController::class, 'syarat'])->name('page.syarat');
+Route::get('/pengembalian', [PageController::class, 'pengembalian'])->name('page.pengembalian');
+Route::get('/bantuan', [PageController::class, 'bantuan'])->name('page.bantuan');

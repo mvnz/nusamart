@@ -6,6 +6,7 @@
             <span><i class="fa fa-envelope-o"></i> cs@tokonusamart.com</span>
         </div>
         <div class="top-bar-right">
+            @auth
             <div class="user-dropdown">
                 <a href="#" class="user-dropdown-toggle" id="userDropdownToggle"><i class="fa fa-user-o"></i> {{ auth()->user()->username }} <i class="fa fa-caret-down"></i></a>
                 <div class="user-dropdown-menu" id="userDropdownMenu">
@@ -22,6 +23,9 @@
                     </form>
                 </div>
             </div>
+            @else
+            <a href="{{ route('login') }}" style="color: #fff; text-decoration: none;"><i class="fa fa-sign-in"></i> Masuk</a>
+            @endauth
         </div>
     </div>
 </div>
