@@ -20,6 +20,13 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (!Auth::user()->is_active) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             if (!Auth::user()->hasVerifiedEmail()) {

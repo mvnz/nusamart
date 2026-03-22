@@ -65,6 +65,7 @@
                         <th>Email</th>
                         <th>Telepon</th>
                         <th>Role</th>
+                        <th>Status</th>
                         <th>Terdaftar</th>
                         <th>Aksi</th>
                     </tr>
@@ -83,13 +84,28 @@
                                 {{ ucfirst($user->role) }}
                             </span>
                         </td>
+                        <td>
+                            @if($user->is_active)
+                                <span class="status-badge status-success">Aktif</span>
+                            @else
+                                <span class="status-badge status-cancel">Nonaktif</span>
+                            @endif
+                        </td>
                         <td>{{ $user->created_at->format('d M Y') }}</td>
                         <td>
                             @if($user->id !== auth()->id())
-                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Hapus pengguna {{ $user->name }}?')">
+                                <form action="{{ route('admin.users.toggle', $user->id) }}" method="POST" onsubmit="return confirm('{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }} pengguna {{ $user->name }}?')">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="overlay-btn" style="color:#D10024;" title="Hapus"><i class="fa fa-trash"></i></button>
+                                    @method('PATCH')
+                                    @if($user->is_active)
+                                        <button type="submit" class="btn-toggle-user btn-deactivate" title="Nonaktifkan">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                    @else
+                                        <button type="submit" class="btn-toggle-user btn-activate" title="Aktifkan">
+                                            <i class="fa fa-check-circle"></i>
+                                        </button>
+                                    @endif
                                 </form>
                             @else
                                 <span style="color:#ccc;">—</span>

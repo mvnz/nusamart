@@ -73,28 +73,40 @@ class AdminTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_admin_can_delete_other_user(): void
+    public function test_admin_can_deactivate_other_user(): void
     {
         $admin = User::factory()->admin()->create();
         $target = User::factory()->create();
         $this->actingAs($admin);
 
-        $response = $this->delete("/admin/users/{$target->id}");
+        $response = $this->patch("/admin/users/{$target->id}/toggle");
 
         $response->assertRedirect(route('admin.users'));
-        $this->assertDatabaseMissing('users', ['id' => $target->id]);
+        $this->assertDatabaseHas('users', ['id' => $target->id, 'is_active' => false]);
     }
 
-    public function test_admin_cannot_delete_self(): void
+    public function test_admin_can_reactivate_user(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $target = User::factory()->create(['is_active' => false]);
+        $this->actingAs($admin);
+
+        $response = $this->patch("/admin/users/{$target->id}/toggle");
+
+        $response->assertRedirect(route('admin.users'));
+        $this->assertDatabaseHas('users', ['id' => $target->id, 'is_active' => true]);
+    }
+
+    public function test_admin_cannot_deactivate_self(): void
     {
         $admin = User::factory()->admin()->create();
         $this->actingAs($admin);
 
-        $response = $this->delete("/admin/users/{$admin->id}");
+        $response = $this->patch("/admin/users/{$admin->id}/toggle");
 
         $response->assertRedirect(route('admin.users'));
         $response->assertSessionHas('error');
-        $this->assertDatabaseHas('users', ['id' => $admin->id]);
+        $this->assertDatabaseHas('users', ['id' => $admin->id, 'is_active' => true]);
     }
 
     public function test_guest_cannot_access_admin_routes(): void

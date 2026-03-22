@@ -59,7 +59,7 @@ Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->m
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/users', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('admin.users');
-    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('admin.users.destroy');
+    Route::patch('/users/{user}/toggle', [\App\Http\Controllers\Admin\UserManagementController::class, 'toggleActive'])->name('admin.users.toggle');
 });
 
 // Info pages

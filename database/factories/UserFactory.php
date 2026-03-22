@@ -33,6 +33,7 @@ class UserFactory extends Factory
             'propinsi' => fake()->state(),
             'role' => 'pembeli',
             'photo' => null,
+            'is_active' => true,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('Password1!'),
             'remember_token' => Str::random(10),

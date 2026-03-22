@@ -38,16 +38,21 @@ class E2EAdminFlowTest extends TestCase
         // Step 4: Admin visits user management
         $this->get('/admin/users')->assertStatus(200);
 
-        // Step 5: Admin deletes a user
-        $this->delete("/admin/users/{$buyer1->id}")
+        // Step 5: Admin deactivates a user
+        $this->patch("/admin/users/{$buyer1->id}/toggle")
             ->assertRedirect(route('admin.users'));
-        $this->assertDatabaseMissing('users', ['id' => $buyer1->id]);
+        $this->assertDatabaseHas('users', ['id' => $buyer1->id, 'is_active' => false]);
 
-        // Step 6: Admin tries to delete self - should fail
-        $this->delete("/admin/users/{$admin->id}")
+        // Step 6: Admin reactivates the user
+        $this->patch("/admin/users/{$buyer1->id}/toggle")
+            ->assertRedirect(route('admin.users'));
+        $this->assertDatabaseHas('users', ['id' => $buyer1->id, 'is_active' => true]);
+
+        // Step 7: Admin tries to deactivate self - should fail
+        $this->patch("/admin/users/{$admin->id}/toggle")
             ->assertRedirect(route('admin.users'))
             ->assertSessionHas('error');
-        $this->assertDatabaseHas('users', ['id' => $admin->id]);
+        $this->assertDatabaseHas('users', ['id' => $admin->id, 'is_active' => true]);
 
         // Step 7: Admin logs out
         $this->post('/logout');
