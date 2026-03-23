@@ -2,6 +2,14 @@
 
 @section('title', 'Akun Saya - NusaMart')
 
+@push('styles')
+<style>
+.profile-form{padding:24px 20px}
+.profile-form>.form-group{margin-bottom:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:20px}
+</style>
+@endpush
+
 @section('content')
 <!-- Breadcrumb -->
 <div class="breadcrumb-section">
