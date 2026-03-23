@@ -9,6 +9,12 @@
     table th, table td { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
     .orders-card .card-header h3 { font-size: 14px; }
     .orders-card .card-header { padding: 12px 16px; }
+    .two-col-grid { gap: 15px; }
+    .orders-section .container { padding: 0 10px; }
+}
+@media (max-width: 480px) {
+    .orders-section .container { padding: 0 6px; }
+    .two-col-grid { gap: 10px; }
 }
 </style>
 @endpush
