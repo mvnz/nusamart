@@ -61,6 +61,7 @@
                     <h3><i class="fa fa-user-plus"></i> Pengguna Terbaru</h3>
                     <a href="{{ route('admin.users') }}" class="view-all">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
+                <div class="table-responsive" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
                 <table>
                     <thead>
                         <tr>
@@ -84,6 +85,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             </div>
             <div class="activity-card">
                 <div class="card-header">
