@@ -28,6 +28,13 @@
 .user-modal-label{color:#8d8d8d;font-weight:500}
 .user-modal-label i{width:18px;text-align:center;margin-right:6px;color:#D10024}
 .user-modal-value{color:#1e1f29;font-weight:500;text-align:right;max-width:55%;word-break:break-word}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:768px){
+.orders-card{overflow:visible!important}
+table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
+.orders-card .card-header h3{font-size:14px}
+.orders-card .card-header{padding:12px 16px}
+}
 </style>
 <!-- Stats -->
 <section class="container">
@@ -84,6 +91,7 @@
                 </div>
             @endif
 
+            <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
@@ -144,6 +152,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 </section>
