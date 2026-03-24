@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserManagementController extends Controller
 {
@@ -20,7 +21,7 @@ class UserManagementController extends Controller
 
     public function toggleActive(User $user)
     {
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
             return redirect()->route('admin.users')->with('error', 'Tidak bisa menonaktifkan akun sendiri.');
         }
 
