@@ -4,13 +4,35 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->get();
-        return view('user.index', compact('users'));
+        $search = $request->input('search');
+        $role   = $request->input('role');
+
+        $query = User::latest();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
+            });
+        }
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users       = $query->paginate(10)->appends($request->query());
+        $totalUsers   = User::count();
+        $totalBuyers  = User::where('role', 'pembeli')->count();
+        $totalSellers = User::where('role', 'penjual')->count();
+        $totalAdmins  = User::where('role', 'admin')->count();
+
+        return view('user.index', compact('users', 'totalUsers', 'totalBuyers', 'totalSellers', 'totalAdmins'));
     }
 
     public function toggleActive(User $user)

@@ -46,25 +46,25 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
     <div class="seller-stats">
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-users"></i></div>
-            <div class="stat-value">{{ $users->count() }}</div>
+            <div class="stat-value">{{ $totalUsers }}</div>
             <div class="stat-label">Total Pengguna</div>
             <div class="stat-change" style="color:#8d8d8d;">Semua role</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-shopping-bag"></i></div>
-            <div class="stat-value">{{ $users->where('role', 'pembeli')->count() }}</div>
+            <div class="stat-value">{{ $totalBuyers }}</div>
             <div class="stat-label">Pembeli</div>
             <div class="stat-change" style="color:#8d8d8d;">Terdaftar</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-building-o"></i></div>
-            <div class="stat-value">{{ $users->where('role', 'penjual')->count() }}</div>
+            <div class="stat-value">{{ $totalSellers }}</div>
             <div class="stat-label">Penjual</div>
             <div class="stat-change" style="color:#8d8d8d;">Terdaftar</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-shield"></i></div>
-            <div class="stat-value">{{ $users->where('role', 'admin')->count() }}</div>
+            <div class="stat-value">{{ $totalAdmins }}</div>
             <div class="stat-label">Admin</div>
             <div class="stat-change" style="color:#8d8d8d;">Aktif</div>
         </div>
@@ -80,27 +80,32 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 <a href="{{ route('dashboard') }}" class="view-all"><i class="fa fa-arrow-left"></i> Kembali</a>
             </div>
 
+            <form method="GET" action="{{ route('admin.users') }}" id="filterForm">
+            <input type="hidden" name="role" id="roleInput" value="{{ request('role') }}">
             <div style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
                 {{-- Search --}}
                 <div style="position:relative; flex:1; min-width:200px; max-width:320px;">
                     <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#bbb;font-size:13px;pointer-events:none;"></i>
-                    <input type="text" id="userSearch" placeholder="Cari nama atau username..." oninput="applyFilters()" style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e8e8e8'">
+                    <input type="text" name="search" id="userSearch" value="{{ request('search') }}" placeholder="Cari nama atau username..." oninput="debounceSearch()" style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e8e8e8'">
                 </div>
                 {{-- Role filter tabs --}}
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button onclick="setRole('')" id="filterAll" class="role-filter-btn active-filter">Semua</button>
-                    <button onclick="setRole('pembeli')" id="filterPembeli" class="role-filter-btn">
+                    <button type="button" onclick="submitRole('')" id="filterAll" class="role-filter-btn {{ !request('role') ? 'active-filter' : '' }}">Semua</button>
+                    <button type="button" onclick="submitRole('pembeli')" id="filterPembeli" class="role-filter-btn {{ request('role') === 'pembeli' ? 'active-filter' : '' }}">
                         <i class="fa fa-shopping-bag" style="font-size:11px;"></i> Pembeli
                     </button>
-                    <button onclick="setRole('penjual')" id="filterPenjual" class="role-filter-btn">
+                    <button type="button" onclick="submitRole('penjual')" id="filterPenjual" class="role-filter-btn {{ request('role') === 'penjual' ? 'active-filter' : '' }}">
                         <i class="fa fa-building-o" style="font-size:11px;"></i> Penjual
                     </button>
-                    <button onclick="setRole('admin')" id="filterAdmin" class="role-filter-btn">
+                    <button type="button" onclick="submitRole('admin')" id="filterAdmin" class="role-filter-btn {{ request('role') === 'admin' ? 'active-filter' : '' }}">
                         <i class="fa fa-shield" style="font-size:11px;"></i> Admin
                     </button>
                 </div>
-                <span id="userSearchCount" style="font-size:12px;color:#8d8d8d;margin-left:auto;"></span>
+                @if(request('search') || request('role'))
+                <span style="font-size:12px;color:#8d8d8d;margin-left:auto;">{{ $users->total() }} dari {{ $totalUsers }} pengguna</span>
+                @endif
             </div>
+            </form>
             <style>
             .role-filter-btn{border:1.5px solid #e8e8e8;background:#fff;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:#666;display:flex;align-items:center;gap:5px;}
             .role-filter-btn:hover{border-color:#D10024;color:#D10024;}
@@ -191,6 +196,49 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 </tbody>
             </table>
             </div>
+            </div>
+
+            {{-- Pagination --}}
+            @if($users->hasPages())
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:12px;color:#8d8d8d;">
+                    Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} pengguna
+                </span>
+                <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+                    {{-- Prev --}}
+                    @if($users->onFirstPage())
+                        <span style="padding:5px 11px;border-radius:8px;border:1.5px solid #eee;color:#ccc;font-size:13px;">‹</span>
+                    @else
+                        <a href="{{ $users->previousPageUrl() }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">‹</a>
+                    @endif
+                    {{-- Pages --}}
+                    @php
+                        $cur   = $users->currentPage();
+                        $last  = $users->lastPage();
+                        $pages = collect(range(1, $last))->filter(fn($p) =>
+                            $p === 1 || $p === $last || abs($p - $cur) <= 1
+                        )->values();
+                    @endphp
+                    @foreach($pages as $i => $page)
+                        @if($i > 0 && $page - $pages[$i-1] > 1)
+                            <span style="padding:5px 4px;font-size:13px;color:#aaa;">…</span>
+                        @endif
+                        @if($page == $cur)
+                            <span style="padding:5px 11px;border-radius:8px;background:#D10024;color:#fff;font-size:13px;font-weight:600;">{{ $page }}</span>
+                        @else
+                            <a href="{{ $users->url($page) }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">{{ $page }}</a>
+                        @endif
+                    @endforeach
+                    {{-- Next --}}
+                    @if($users->hasMorePages())
+                        <a href="{{ $users->nextPageUrl() }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">›</a>
+                    @else
+                        <span style="padding:5px 11px;border-radius:8px;border:1.5px solid #eee;color:#ccc;font-size:13px;">›</span>
+                    @endif
+                </div>
+            </div>
+            @endif
+
         </div>
     </div>
 </section>
@@ -255,7 +303,7 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
 </div>
 
 @php
-    $usersJson = $users->mapWithKeys(function($u) {
+    $usersJson = $users->getCollection()->mapWithKeys(function($u) {
         return [$u->id => [
             'id' => $u->id,
             'name' => $u->name,
@@ -321,33 +369,18 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         if (e.key === 'Escape') closeUserModal();
     });
 
-    var activeRole = '';
-
-    function setRole(role) {
-        activeRole = role;
-        ['All','Pembeli','Penjual','Admin'].forEach(function(r) {
-            var btn = document.getElementById('filter' + r);
-            if (btn) btn.classList.remove('active-filter');
-        });
-        var map = {'':'All','pembeli':'Pembeli','penjual':'Penjual','admin':'Admin'};
-        document.getElementById('filter' + map[role]).classList.add('active-filter');
-        applyFilters();
+    // Server-side filter helpers
+    function submitRole(role) {
+        document.getElementById('roleInput').value = role;
+        document.getElementById('filterForm').submit();
     }
 
-    function applyFilters() {
-        var q = document.getElementById('userSearch').value.toLowerCase().trim();
-        var rows = document.querySelectorAll('tbody tr[data-search]');
-        var count = 0;
-        rows.forEach(function(row) {
-            var matchSearch = !q || row.dataset.search.includes(q);
-            var matchRole = !activeRole || row.dataset.role === activeRole;
-            var show = matchSearch && matchRole;
-            row.style.display = show ? '' : 'none';
-            if (show) count++;
-        });
-        var total = rows.length;
-        var info = document.getElementById('userSearchCount');
-        info.textContent = (q || activeRole) ? (count + ' dari ' + total + ' pengguna') : '';
+    var searchTimer;
+    function debounceSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            document.getElementById('filterForm').submit();
+        }, 400);
     }
 
     var sortState = { col: null, dir: 'asc' };
@@ -371,7 +404,7 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         }
         // Sort rows (all rows, preserving display state from filters)
         var tbody = document.querySelector('tbody');
-        var rows = Array.from(tbody.querySelectorAll('tr[data-search]'));
+        var rows = Array.from(tbody.querySelectorAll('tr'));
         var key = 'sort' + col.charAt(0).toUpperCase() + col.slice(1);
         rows.sort(function(a, b) {
             var av = (a.dataset[key] || '').toLowerCase();
