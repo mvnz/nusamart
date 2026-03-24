@@ -57,8 +57,17 @@ class ProfileTest extends TestCase
             'email' => $user->email,
             'phone' => '089999999999',
             'alamat' => 'Jl. Baru No. 1',
-            'kota' => 'Bandung',
+            'province_code' => '32',
+            'regency_code' => '3204',
+            'district_code' => '3204010',
+            'village_code' => '3204010001',
             'propinsi' => 'Jawa Barat',
+            'kota' => 'Bandung',
+            'kecamatan' => 'Astanaanyar',
+            'kelurahan' => 'Karasak',
+            'rt' => '001',
+            'rw' => '002',
+            'kodepos' => '40243',
         ]);
 
         $response->assertRedirect(route('profile'));
@@ -74,7 +83,7 @@ class ProfileTest extends TestCase
         $this->authenticatedUser();
 
         $response = $this->put('/profile', []);
-        $response->assertSessionHasErrors(['name', 'username', 'email', 'phone', 'alamat', 'kota', 'propinsi']);
+        $response->assertSessionHasErrors(['name', 'username', 'email', 'phone', 'alamat', 'province_code', 'regency_code', 'district_code', 'village_code', 'rt', 'rw', 'kodepos']);
     }
 
     public function test_profile_update_allows_own_email(): void
@@ -87,8 +96,17 @@ class ProfileTest extends TestCase
             'email' => $user->email,
             'phone' => '081234567890',
             'alamat' => 'Jl. Test No. 1',
-            'kota' => 'Jakarta',
+            'province_code' => '31',
+            'regency_code' => '3171',
+            'district_code' => '3171010',
+            'village_code' => '3171010001',
             'propinsi' => 'DKI Jakarta',
+            'kota' => 'Jakarta Pusat',
+            'kecamatan' => 'Gambir',
+            'kelurahan' => 'Gambir',
+            'rt' => '001',
+            'rw' => '001',
+            'kodepos' => '10110',
         ]);
 
         $response->assertRedirect(route('profile'));

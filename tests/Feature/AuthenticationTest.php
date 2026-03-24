@@ -114,8 +114,17 @@ class AuthenticationTest extends TestCase
             'email' => 'test@example.com',
             'phone' => '081234567890',
             'alamat' => 'Jl. Test No. 1',
-            'kota' => 'Jakarta',
+            'province_code' => '31',
+            'regency_code' => '3171',
+            'district_code' => '3171010',
+            'village_code' => '3171010001',
             'propinsi' => 'DKI Jakarta',
+            'kota' => 'Jakarta Pusat',
+            'kecamatan' => 'Gambir',
+            'kelurahan' => 'Gambir',
+            'rt' => '001',
+            'rw' => '001',
+            'kodepos' => '10110',
             'password' => 'Password1!',
             'password_confirmation' => 'Password1!',
             'role' => 'pembeli',
@@ -135,7 +144,8 @@ class AuthenticationTest extends TestCase
 
         $response->assertSessionHasErrors([
             'nama_lengkap', 'username', 'email', 'phone',
-            'alamat', 'kota', 'propinsi', 'password', 'role',
+            'alamat', 'province_code', 'regency_code', 'district_code', 'village_code',
+            'kecamatan', 'kelurahan', 'rt', 'rw', 'kodepos', 'password', 'role',
         ]);
     }
 

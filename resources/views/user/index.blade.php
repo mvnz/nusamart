@@ -184,12 +184,28 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                     <span class="user-modal-value" id="modalAlamat"></span>
                 </div>
                 <div class="user-modal-row">
-                    <span class="user-modal-label"><i class="fa fa-building"></i> Kota</span>
+                    <span class="user-modal-label"><i class="fa fa-globe"></i> Provinsi</span>
+                    <span class="user-modal-value" id="modalPropinsi"></span>
+                </div>
+                <div class="user-modal-row">
+                    <span class="user-modal-label"><i class="fa fa-building"></i> Kota/Kab</span>
                     <span class="user-modal-value" id="modalKota"></span>
                 </div>
                 <div class="user-modal-row">
-                    <span class="user-modal-label"><i class="fa fa-globe"></i> Propinsi</span>
-                    <span class="user-modal-value" id="modalPropinsi"></span>
+                    <span class="user-modal-label"><i class="fa fa-map-o"></i> Kecamatan</span>
+                    <span class="user-modal-value" id="modalKecamatan"></span>
+                </div>
+                <div class="user-modal-row">
+                    <span class="user-modal-label"><i class="fa fa-home"></i> Kelurahan</span>
+                    <span class="user-modal-value" id="modalKelurahan"></span>
+                </div>
+                <div class="user-modal-row">
+                    <span class="user-modal-label"><i class="fa fa-hashtag"></i> RT / RW</span>
+                    <span class="user-modal-value" id="modalRtRw"></span>
+                </div>
+                <div class="user-modal-row">
+                    <span class="user-modal-label"><i class="fa fa-envelope-o"></i> Kode Pos</span>
+                    <span class="user-modal-value" id="modalKodepos"></span>
                 </div>
                 <div class="user-modal-row">
                     <span class="user-modal-label"><i class="fa fa-calendar"></i> Terdaftar</span>
@@ -213,6 +229,11 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
             'alamat' => $u->alamat ?? '-',
             'kota' => $u->kota ?? '-',
             'propinsi' => $u->propinsi ?? '-',
+            'kecamatan' => $u->kecamatan ?? '-',
+            'kelurahan' => $u->kelurahan ?? '-',
+            'rt' => $u->rt ?? '-',
+            'rw' => $u->rw ?? '-',
+            'kodepos' => $u->kodepos ?? '-',
             'photo' => $u->photo ? asset('storage/' . $u->photo) : null,
             'date' => $u->created_at->format('d M Y'),
         ]];
@@ -239,6 +260,10 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         document.getElementById('modalAlamat').textContent = u.alamat;
         document.getElementById('modalKota').textContent = u.kota;
         document.getElementById('modalPropinsi').textContent = u.propinsi;
+        document.getElementById('modalKecamatan').textContent = u.kecamatan;
+        document.getElementById('modalKelurahan').textContent = u.kelurahan;
+        document.getElementById('modalRtRw').textContent = 'RT ' + u.rt + ' / RW ' + u.rw;
+        document.getElementById('modalKodepos').textContent = u.kodepos;
         document.getElementById('modalDate').textContent = u.date;
 
         var modal = document.getElementById('userModal');
