@@ -75,13 +75,32 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 <a href="{{ route('dashboard') }}" class="view-all"><i class="fa fa-arrow-left"></i> Kembali</a>
             </div>
 
-            <div style="padding: 12px 20px 0;">
-                <div style="position:relative; max-width:320px;">
-                    <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:13px;pointer-events:none;"></i>
-                    <input type="text" id="userSearch" placeholder="Cari nama atau username..." oninput="filterUsers()" style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e0e0e0'">
+            <div style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+                {{-- Search --}}
+                <div style="position:relative; flex:1; min-width:200px; max-width:320px;">
+                    <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#bbb;font-size:13px;pointer-events:none;"></i>
+                    <input type="text" id="userSearch" placeholder="Cari nama atau username..." oninput="applyFilters()" style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e8e8e8'">
                 </div>
-                <p id="userSearchCount" style="font-size:12px;color:#8d8d8d;margin:6px 0 0;display:none;"></p>
+                {{-- Role filter tabs --}}
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button onclick="setRole('')" id="filterAll" class="role-filter-btn active-filter">Semua</button>
+                    <button onclick="setRole('pembeli')" id="filterPembeli" class="role-filter-btn">
+                        <i class="fa fa-shopping-bag" style="font-size:11px;"></i> Pembeli
+                    </button>
+                    <button onclick="setRole('penjual')" id="filterPenjual" class="role-filter-btn">
+                        <i class="fa fa-building-o" style="font-size:11px;"></i> Penjual
+                    </button>
+                    <button onclick="setRole('admin')" id="filterAdmin" class="role-filter-btn">
+                        <i class="fa fa-shield" style="font-size:11px;"></i> Admin
+                    </button>
+                </div>
+                <span id="userSearchCount" style="font-size:12px;color:#8d8d8d;margin-left:auto;"></span>
             </div>
+            <style>
+            .role-filter-btn{border:1.5px solid #e8e8e8;background:#fff;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:#666;display:flex;align-items:center;gap:5px;}
+            .role-filter-btn:hover{border-color:#D10024;color:#D10024;}
+            .active-filter{background:#D10024 !important;border-color:#D10024 !important;color:#fff !important;}
+            </style>
 
             @if(session('success'))
                 <div style="padding: 12px 20px;">
@@ -114,7 +133,7 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                    <tr data-search="{{ strtolower($user->name . ' ' . $user->username) }}">
+                    <tr data-search="{{ strtolower($user->name . ' ' . $user->username) }}" data-role="{{ $user->role }}">
                         <td>
                             <strong>{{ $user->name }}</strong>
                             <div style="font-size:11px; color:#8d8d8d;">{{ '@' . $user->username }}</div>
@@ -291,22 +310,33 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         if (e.key === 'Escape') closeUserModal();
     });
 
-    function filterUsers() {
+    var activeRole = '';
+
+    function setRole(role) {
+        activeRole = role;
+        ['All','Pembeli','Penjual','Admin'].forEach(function(r) {
+            var btn = document.getElementById('filter' + r);
+            if (btn) btn.classList.remove('active-filter');
+        });
+        var map = {'':'All','pembeli':'Pembeli','penjual':'Penjual','admin':'Admin'};
+        document.getElementById('filter' + map[role]).classList.add('active-filter');
+        applyFilters();
+    }
+
+    function applyFilters() {
         var q = document.getElementById('userSearch').value.toLowerCase().trim();
         var rows = document.querySelectorAll('tbody tr[data-search]');
         var count = 0;
         rows.forEach(function(row) {
-            var match = !q || row.dataset.search.includes(q);
-            row.style.display = match ? '' : 'none';
-            if (match) count++;
+            var matchSearch = !q || row.dataset.search.includes(q);
+            var matchRole = !activeRole || row.dataset.role === activeRole;
+            var show = matchSearch && matchRole;
+            row.style.display = show ? '' : 'none';
+            if (show) count++;
         });
+        var total = rows.length;
         var info = document.getElementById('userSearchCount');
-        if (q) {
-            info.style.display = 'block';
-            info.textContent = count + ' pengguna ditemukan';
-        } else {
-            info.style.display = 'none';
-        }
+        info.textContent = (q || activeRole) ? (count + ' dari ' + total + ' pengguna') : '';
     }
 </script>
 @endsection
