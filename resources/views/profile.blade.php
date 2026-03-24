@@ -49,7 +49,7 @@
                 <div class="profile-avatar-card">
                     <div class="profile-avatar-wrapper">
                         @if(auth()->user()->photo)
-                            <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
+                            <img src="{{ asset('uploads/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
                         @else
                             <div class="profile-avatar">
                                 <i class="fa fa-user"></i>

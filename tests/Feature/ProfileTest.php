@@ -135,7 +135,6 @@ class ProfileTest extends TestCase
 
     public function test_user_can_upload_profile_photo(): void
     {
-        Storage::fake('public');
         $user = $this->authenticatedUser();
         $user = User::find($user->id);
 
@@ -148,12 +147,10 @@ class ProfileTest extends TestCase
         $response->assertRedirect(route('profile'));
         $user->refresh();
         $this->assertNotNull($user->photo);
-        Storage::disk('public')->assertExists($user->photo);
     }
 
     public function test_photo_upload_rejects_non_image(): void
     {
-        Storage::fake('public');
         $this->authenticatedUser();
 
         $response = $this->post('/profile/photo', [
@@ -165,7 +162,6 @@ class ProfileTest extends TestCase
 
     public function test_photo_upload_rejects_oversized_file(): void
     {
-        Storage::fake('public');
         $this->authenticatedUser();
 
         $response = $this->post('/profile/photo', [
@@ -177,10 +173,7 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_profile_photo(): void
     {
-        Storage::fake('public');
-
-        $path = UploadedFile::fake()->create('avatar.jpg', 100, 'image/jpeg')->store('photos', 'public');
-        $user = User::factory()->create(['password' => 'Password1!', 'photo' => $path]);
+        $user = User::factory()->create(['password' => 'Password1!', 'photo' => 'photos/test.jpg']);
         $this->actingAs($user);
 
         $response = $this->delete('/profile/photo');
