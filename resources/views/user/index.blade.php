@@ -29,6 +29,11 @@
 .user-modal-label i{width:18px;text-align:center;margin-right:6px;color:#D10024}
 .user-modal-value{color:#1e1f29;font-weight:500;text-align:right;max-width:55%;word-break:break-word}
 .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+th[data-sort-col]{cursor:pointer;user-select:none;white-space:nowrap;}
+th[data-sort-col]:hover{background:rgba(209,0,36,.06);}
+.sort-icon{font-size:10px;color:#ccc;margin-left:4px;display:inline-block;vertical-align:middle;transition:color .15s;}
+th[data-sort-col]:hover .sort-icon{color:#D10024;}
+.sort-icon.asc,.sort-icon.desc{color:#D10024;}
 @media(max-width:768px){
 .orders-card{overflow:visible!important}
 table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
@@ -122,18 +127,24 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
             <table>
                 <thead>
                     <tr>
-                        <th>Pengguna</th>
-                        <th>Email</th>
-                        <th>Telepon</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Terdaftar</th>
+                        <th data-sort-col="name" onclick="sortTable('name')">Pengguna <span class="sort-icon" id="sort-name">&#x21C5;</span></th>
+                        <th data-sort-col="email" onclick="sortTable('email')">Email <span class="sort-icon" id="sort-email">&#x21C5;</span></th>
+                        <th data-sort-col="phone" onclick="sortTable('phone')">Telepon <span class="sort-icon" id="sort-phone">&#x21C5;</span></th>
+                        <th data-sort-col="role" onclick="sortTable('role')">Role <span class="sort-icon" id="sort-role">&#x21C5;</span></th>
+                        <th data-sort-col="status" onclick="sortTable('status')">Status <span class="sort-icon" id="sort-status">&#x21C5;</span></th>
+                        <th data-sort-col="date" onclick="sortTable('date')">Terdaftar <span class="sort-icon" id="sort-date">&#x21C5;</span></th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                    <tr data-search="{{ strtolower($user->name . ' ' . $user->username) }}" data-role="{{ $user->role }}">
+                    <tr data-search="{{ strtolower($user->name . ' ' . $user->username) }}" data-role="{{ $user->role }}"
+                        data-sort-name="{{ strtolower($user->name) }}"
+                        data-sort-email="{{ strtolower($user->email) }}"
+                        data-sort-phone="{{ strtolower($user->phone ?? '') }}"
+                        data-sort-role="{{ $user->role }}"
+                        data-sort-status="{{ $user->is_active ? '1' : '0' }}"
+                        data-sort-date="{{ $user->created_at->format('YmdHis') }}">
                         <td>
                             <strong>{{ $user->name }}</strong>
                             <div style="font-size:11px; color:#8d8d8d;">{{ '@' . $user->username }}</div>
@@ -337,6 +348,39 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         var total = rows.length;
         var info = document.getElementById('userSearchCount');
         info.textContent = (q || activeRole) ? (count + ' dari ' + total + ' pengguna') : '';
+    }
+
+    var sortState = { col: null, dir: 'asc' };
+
+    function sortTable(col) {
+        if (sortState.col === col) {
+            sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortState.col = col;
+            sortState.dir = 'asc';
+        }
+        // Update icons
+        document.querySelectorAll('.sort-icon').forEach(function(el) {
+            el.innerHTML = '&#x21C5;';
+            el.className = 'sort-icon';
+        });
+        var icon = document.getElementById('sort-' + col);
+        if (icon) {
+            icon.innerHTML = sortState.dir === 'asc' ? '&#x2191;' : '&#x2193;';
+            icon.className = 'sort-icon ' + sortState.dir;
+        }
+        // Sort rows (all rows, preserving display state from filters)
+        var tbody = document.querySelector('tbody');
+        var rows = Array.from(tbody.querySelectorAll('tr[data-search]'));
+        var key = 'sort' + col.charAt(0).toUpperCase() + col.slice(1);
+        rows.sort(function(a, b) {
+            var av = (a.dataset[key] || '').toLowerCase();
+            var bv = (b.dataset[key] || '').toLowerCase();
+            if (av < bv) return sortState.dir === 'asc' ? -1 : 1;
+            if (av > bv) return sortState.dir === 'asc' ? 1 : -1;
+            return 0;
+        });
+        rows.forEach(function(row) { tbody.appendChild(row); });
     }
 </script>
 @endsection
