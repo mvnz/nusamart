@@ -173,7 +173,7 @@ class ProfileTest extends TestCase
 
     public function test_user_can_delete_profile_photo(): void
     {
-        $user = User::factory()->create(['password' => 'Password1!', 'photo' => 'photos/test.jpg']);
+        $user = User::factory()->create(['password' => 'Password1!', 'photo' => 'photos/test.jpg', 'email_verified_at' => now()]);
         $this->actingAs($user);
 
         $response = $this->delete('/profile/photo');
