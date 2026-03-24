@@ -16,7 +16,7 @@
             {{-- User dropdown hanya tampil di mobile (top-bar tersembunyi) --}}
             @auth
             <div class="user-dropdown nav-user-dropdown">
-                <a href="#" class="user-dropdown-toggle" id="navUserDropdownToggle"><i class="fa fa-user-o"></i> {{ auth()->user()->username }} <i class="fa fa-caret-down"></i></a>
+                <a href="#" class="user-dropdown-toggle" id="navUserDropdownToggle" onclick="this.parentElement.classList.toggle('open');return false;"><i class="fa fa-user-o"></i> {{ auth()->user()->username }} <i class="fa fa-caret-down"></i></a>
                 <div class="user-dropdown-menu">
                     <a href="{{ route('profile') }}"><i class="fa fa-user"></i> Akun Saya</a>
                     <form method="POST" action="{{ route('logout') }}">
