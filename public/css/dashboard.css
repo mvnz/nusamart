@@ -2461,6 +2461,14 @@ table tr:hover td { background: #fafafa; }
     .top-bar { display: none; }
     .search-bar { display: none; }
     .nav-menu { display: none; }
+    .main-nav.open .nav-menu {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    .main-nav.open .container { flex-wrap: wrap; }
+    .main-nav.open .nav-menu a { padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.07); }
     .hero-grid { grid-template-columns: 1fr; }
     .hero-grid .hero-card:last-child { display: block; }
     .products-grid { grid-template-columns: repeat(2, 1fr); }
