@@ -60,7 +60,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         if ($user->photo) {
-            $oldPath = public_path('storage/photos/' . $user->photo);
+            $oldPath = public_path('uploads/' . $user->photo);
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
@@ -68,8 +68,12 @@ class ProfileController extends Controller
 
         $file = $request->file('photo');
         $filename = 'photos/' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('storage/photos'), basename($filename));
-        $user->update(['storage/photos' => $filename]);
+        $uploadDir = public_path('uploads/photos');
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        $file->move($uploadDir, basename($filename));
+        $user->update(['photo' => $filename]);
 
         return redirect()->route('profile')->with('success', 'Foto profil berhasil diperbarui.');
     }
@@ -79,13 +83,13 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         if ($user->photo) {
-            $oldPath = public_path('storage/photos/' . $user->photo);
+            $oldPath = public_path('uploads/' . $user->photo);
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
         }
 
-        $user->update(['storage/photos' => null]);
+        $user->update(['photo' => null]);
 
         return redirect()->route('profile')->with('success', 'Foto profil berhasil dihapus.');
     }
