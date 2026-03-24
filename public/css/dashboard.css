@@ -554,24 +554,6 @@ ul { list-style: none; }
     position: relative;
 }
 
-.nav-menu a::after {
-    content: '';
-    position: absolute;
-    bottom: 10px;
-    left: 18px;
-    right: 18px;
-    height: 2px;
-    background: #D10024;
-    border-radius: 2px;
-    transform: scaleX(0);
-    transition: transform 0.3s;
-}
-
-.nav-menu a:hover::after,
-.nav-menu a.active::after {
-    transform: scaleX(1);
-}
-
 .nav-menu a:hover,
 .nav-menu a.active {
     color: #D10024;
