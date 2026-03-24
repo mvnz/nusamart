@@ -171,7 +171,7 @@
 
                     <div class="form-group">
                         <label for="kodepos"><i class="fa fa-envelope-o"></i> Kode Pos</label>
-                        <input type="text" id="kodepos" name="kodepos" value="{{ old('kodepos') }}" placeholder="12345" maxlength="10" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                        <input type="text" id="kodepos" name="kodepos" value="{{ old('kodepos') }}" placeholder="12345" maxlength="5" minlength="5" pattern="[0-9]{5}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,5)" required>
                         @error('kodepos')
                             <span class="error-message">{{ $message }}</span>
                         @enderror

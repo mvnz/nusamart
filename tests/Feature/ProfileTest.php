@@ -53,13 +53,12 @@ class ProfileTest extends TestCase
 
         $response = $this->put('/profile', [
             'name' => 'Updated Name',
-            'username' => $user->username,
             'email' => $user->email,
             'phone' => '089999999999',
             'alamat' => 'Jl. Baru No. 1',
             'province_code' => '32',
             'regency_code' => '3204',
-            'district_code' => '3204010',
+            'district_code' => '320401',
             'village_code' => '3204010001',
             'propinsi' => 'Jawa Barat',
             'kota' => 'Bandung',
@@ -83,7 +82,7 @@ class ProfileTest extends TestCase
         $this->authenticatedUser();
 
         $response = $this->put('/profile', []);
-        $response->assertSessionHasErrors(['name', 'username', 'email', 'phone', 'alamat', 'province_code', 'regency_code', 'district_code', 'village_code', 'rt', 'rw', 'kodepos']);
+        $response->assertSessionHasErrors(['name', 'email', 'phone', 'alamat', 'province_code', 'regency_code', 'district_code', 'village_code', 'rt', 'rw', 'kodepos']);
     }
 
     public function test_profile_update_allows_own_email(): void
@@ -92,13 +91,12 @@ class ProfileTest extends TestCase
 
         $response = $this->put('/profile', [
             'name' => $user->name,
-            'username' => $user->username,
             'email' => $user->email,
             'phone' => '081234567890',
             'alamat' => 'Jl. Test No. 1',
             'province_code' => '31',
             'regency_code' => '3171',
-            'district_code' => '3171010',
+            'district_code' => '317101',
             'village_code' => '3171010001',
             'propinsi' => 'DKI Jakarta',
             'kota' => 'Jakarta Pusat',
@@ -120,7 +118,6 @@ class ProfileTest extends TestCase
 
         $response = $this->put('/profile', [
             'name' => 'Test',
-            'username' => 'unique_user',
             'email' => 'other@example.com',
             'phone' => '081234567890',
             'alamat' => 'Jl.',

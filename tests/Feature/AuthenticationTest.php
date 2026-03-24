@@ -116,7 +116,7 @@ class AuthenticationTest extends TestCase
             'alamat' => 'Jl. Test No. 1',
             'province_code' => '31',
             'regency_code' => '3171',
-            'district_code' => '3171010',
+            'district_code' => '317101',
             'village_code' => '3171010001',
             'propinsi' => 'DKI Jakarta',
             'kota' => 'Jakarta Pusat',

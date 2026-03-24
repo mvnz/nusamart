@@ -102,7 +102,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="username"><i class="fa fa-at"></i> Username</label>
-                                    <input type="text" id="username" name="username" value="{{ old('username', auth()->user()->username) }}" required>
+                                    <input type="text" id="username" value="{{ auth()->user()->username }}" readonly style="background:#f0f0f0;cursor:not-allowed;">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="kodepos"><i class="fa fa-envelope-o"></i> Kode Pos</label>
-                                    <input type="text" id="kodepos" name="kodepos" value="{{ old('kodepos', auth()->user()->kodepos) }}" placeholder="12345" maxlength="10" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
+                                    <input type="text" id="kodepos" name="kodepos" value="{{ old('kodepos', auth()->user()->kodepos) }}" placeholder="12345" maxlength="5" minlength="5" pattern="[0-9]{5}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,5)" required>
                                     @error('kodepos')
                                         <span class="error-message">{{ $message }}</span>
                                     @enderror

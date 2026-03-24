@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'alamat' => 'Kantor Pusat NusaMart',
             'province_code' => '31',
             'regency_code' => '3171',
-            'district_code' => '3171010',
+            'district_code' => '317101',
             'village_code' => '3171010001',
             'propinsi' => 'DKI JAKARTA',
             'kota' => 'KOTA JAKARTA PUSAT',

@@ -21,13 +21,12 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'alamat' => ['required', 'string', 'max:500'],
             'province_code' => ['required', 'string', 'size:2'],
             'regency_code' => ['required', 'string', 'size:4'],
-            'district_code' => ['required', 'string', 'size:7'],
+            'district_code' => ['required', 'string', 'size:6'],
             'village_code' => ['required', 'string', 'size:10'],
             'propinsi' => ['required', 'string', 'max:255'],
             'kota' => ['required', 'string', 'max:255'],
@@ -35,7 +34,7 @@ class ProfileController extends Controller
             'kelurahan' => ['required', 'string', 'max:255'],
             'rt' => ['required', 'string', 'max:5'],
             'rw' => ['required', 'string', 'max:5'],
-            'kodepos' => ['required', 'string', 'max:10'],
+            'kodepos' => ['required', 'digits:5'],
         ], [
             'province_code.required' => 'Provinsi wajib dipilih.',
             'regency_code.required' => 'Kota/Kabupaten wajib dipilih.',
@@ -44,6 +43,7 @@ class ProfileController extends Controller
             'rt.required' => 'RT wajib diisi.',
             'rw.required' => 'RW wajib diisi.',
             'kodepos.required' => 'Kode Pos wajib diisi.',
+            'kodepos.digits' => 'Kode Pos harus tepat 5 digit angka.',
         ]);
 
         $user->update($validated);
