@@ -1,5 +1,6 @@
 <!-- Navigation -->
 <style>
+.nav-menu a::after { display: none !important; }
 .nav-user-dropdown { display: none !important; }
 @media (max-width: 768px) {
     .nav-user-dropdown { display: block !important; position: relative; border-top: 1px solid rgba(255,255,255,0.07); }
