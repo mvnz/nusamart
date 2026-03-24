@@ -145,8 +145,9 @@ class AuthenticationTest extends TestCase
         $response->assertSessionHasErrors([
             'nama_lengkap', 'username', 'email', 'phone',
             'alamat', 'province_code', 'regency_code', 'district_code', 'village_code',
-            'kecamatan', 'kelurahan', 'rt', 'rw', 'kodepos', 'password', 'role',
+            'kecamatan', 'kelurahan', 'rt', 'rw', 'kodepos', 'password',
         ]);
+        $response->assertSessionDoesntHaveErrors(['role']);
     }
 
     public function test_registration_rejects_weak_password(): void

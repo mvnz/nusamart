@@ -195,10 +195,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fa fa-user-plus"></i> Daftar sebagai</label>
+                    <label><i class="fa fa-user-plus"></i> Daftar sebagai <span style="font-size:11px;color:#aaa;font-weight:400;">(opsional, default: Pembeli)</span></label>
                     <div class="role-selector">
                         <div class="role-option">
-                            <input type="radio" id="pembeli" name="role" value="pembeli" {{ old('role') == 'pembeli' ? 'checked' : '' }} required>
+                            <input type="radio" id="pembeli" name="role" value="pembeli" {{ old('role') == 'pembeli' ? 'checked' : '' }}>
                             <label for="pembeli" class="role-label"><i class="fa fa-shopping-bag"></i> Pembeli</label>
                         </div>
                         <div class="role-option">
@@ -206,9 +206,6 @@
                             <label for="penjual" class="role-label"><i class="fa fa-building-o"></i> Penjual</label>
                         </div>
                     </div>
-                    @error('role')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
                 </div>
 
                 <button type="submit" class="btn-register"><i class="fa fa-user-plus"></i> Daftar Akun</button>

@@ -35,7 +35,7 @@ class RegistrationController extends Controller
             'rw' => ['required', 'string', 'max:5'],
             'kodepos' => ['required', 'digits:5'],
             'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/'],
-            'role' => ['required', 'in:penjual,pembeli'],
+            'role' => ['nullable', 'in:penjual,pembeli'],
         ], [
             'province_code.required' => 'Provinsi wajib dipilih.',
             'regency_code.required' => 'Kota/Kabupaten wajib dipilih.',
@@ -67,7 +67,7 @@ class RegistrationController extends Controller
             'regency_code' => $validated['regency_code'],
             'district_code' => $validated['district_code'],
             'village_code' => $validated['village_code'],
-            'role' => $validated['role'],
+            'role' => $validated['role'] ?? 'pembeli',
             'password' => Hash::make($validated['password']),
         ]);
 
