@@ -8,6 +8,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\WilayahController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -64,6 +65,14 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
 
 // Info pages
 Route::get('/tentang', [PageController::class, 'tentang'])->name('page.tentang');
+
+// Wilayah API routes (public, for cascading dropdowns)
+Route::prefix('api/wilayah')->name('wilayah.')->group(function () {
+    Route::get('/provinces', [WilayahController::class, 'provinces'])->name('provinces');
+    Route::get('/regencies/{code}', [WilayahController::class, 'regencies'])->name('regencies');
+    Route::get('/districts/{code}', [WilayahController::class, 'districts'])->name('districts');
+    Route::get('/villages/{code}', [WilayahController::class, 'villages'])->name('villages');
+});
 Route::get('/kontak', [PageController::class, 'kontak'])->name('page.kontak');
 Route::get('/kebijakan-privasi', [PageController::class, 'privasi'])->name('page.privasi');
 Route::get('/syarat-ketentuan', [PageController::class, 'syarat'])->name('page.syarat');

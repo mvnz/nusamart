@@ -25,8 +25,25 @@ class ProfileController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'alamat' => ['required', 'string', 'max:500'],
-            'kota' => ['required', 'string', 'max:255'],
+            'province_code' => ['required', 'string', 'size:2'],
+            'regency_code' => ['required', 'string', 'size:4'],
+            'district_code' => ['required', 'string', 'size:7'],
+            'village_code' => ['required', 'string', 'size:10'],
             'propinsi' => ['required', 'string', 'max:255'],
+            'kota' => ['required', 'string', 'max:255'],
+            'kecamatan' => ['required', 'string', 'max:255'],
+            'kelurahan' => ['required', 'string', 'max:255'],
+            'rt' => ['required', 'string', 'max:5'],
+            'rw' => ['required', 'string', 'max:5'],
+            'kodepos' => ['required', 'string', 'max:10'],
+        ], [
+            'province_code.required' => 'Provinsi wajib dipilih.',
+            'regency_code.required' => 'Kota/Kabupaten wajib dipilih.',
+            'district_code.required' => 'Kecamatan wajib dipilih.',
+            'village_code.required' => 'Kelurahan/Desa wajib dipilih.',
+            'rt.required' => 'RT wajib diisi.',
+            'rw.required' => 'RW wajib diisi.',
+            'kodepos.required' => 'Kode Pos wajib diisi.',
         ]);
 
         $user->update($validated);
