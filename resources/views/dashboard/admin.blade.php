@@ -89,42 +89,47 @@
             </div>
             <div class="activity-card">
                 <div class="card-header">
-                    <h3><i class="fa fa-info-circle"></i> Informasi Sistem</h3>
+                    <h3><i class="fa fa-bar-chart"></i> Statistik Pengguna</h3>
                 </div>
                 <ul class="activity-list">
                     <li>
+                        <span class="activity-dot dot-green"></span>
+                        <div class="activity-text" style="flex:1">
+                            <strong>Pengguna Aktif</strong>
+                            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                                <div style="flex:1;height:6px;background:#f0f0f0;border-radius:4px;overflow:hidden;">
+                                    @php $activePercent = $totalUsers > 0 ? round(($totalActive / $totalUsers) * 100) : 0; @endphp
+                                    <div style="width:{{ $activePercent }}%;height:100%;background:#27ae60;border-radius:4px;"></div>
+                                </div>
+                                <span class="time">{{ $totalActive }} ({{ $activePercent }}%)</span>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
                         <span class="activity-dot dot-red"></span>
-                        <div class="activity-text">
-                            <strong>Laravel</strong>
-                            <span class="time">{{ app()->version() }}</span>
+                        <div class="activity-text" style="flex:1">
+                            <strong>Nonaktif</strong>
+                            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                                <div style="flex:1;height:6px;background:#f0f0f0;border-radius:4px;overflow:hidden;">
+                                    @php $inactivePercent = $totalUsers > 0 ? round(($totalInactive / $totalUsers) * 100) : 0; @endphp
+                                    <div style="width:{{ $inactivePercent }}%;height:100%;background:#D10024;border-radius:4px;"></div>
+                                </div>
+                                <span class="time">{{ $totalInactive }} ({{ $inactivePercent }}%)</span>
+                            </div>
                         </div>
                     </li>
                     <li>
                         <span class="activity-dot dot-blue"></span>
                         <div class="activity-text">
-                            <strong>PHP</strong>
-                            <span class="time">{{ phpversion() }}</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="activity-dot dot-green"></span>
-                        <div class="activity-text">
-                            <strong>Database</strong>
-                            <span class="time">MySQL</span>
+                            <strong>Baru Bulan Ini</strong>
+                            <span class="time">{{ $newThisMonth }} pengguna &mdash; {{ now()->translatedFormat('F Y') }}</span>
                         </div>
                     </li>
                     <li>
                         <span class="activity-dot dot-orange"></span>
                         <div class="activity-text">
-                            <strong>Timezone</strong>
-                            <span class="time">{{ config('app.timezone') }}</span>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="activity-dot dot-blue"></span>
-                        <div class="activity-text">
-                            <strong>URL</strong>
-                            <span class="time">{{ config('app.url') }}</span>
+                            <strong>Baru Minggu Ini</strong>
+                            <span class="time">{{ $newThisWeek }} pengguna &mdash; sejak {{ now()->startOfWeek()->format('d M') }}</span>
                         </div>
                     </li>
                 </ul>
