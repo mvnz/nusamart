@@ -7,6 +7,9 @@
 .profile-form{padding:24px 20px}
 .profile-form>.form-group{margin-bottom:20px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:20px}
+.form-group select{width:100%;padding:12px 16px;border:2px solid #e8e8e8;border-radius:10px;font-size:14px;font-family:'Montserrat',sans-serif;color:#333;transition:all 0.3s ease;outline:none;background:#f8f9fa;appearance:auto}
+.form-group select:focus{border-color:#D10024;background:#fff;box-shadow:0 0 0 3px rgba(209,0,36,0.1)}
+.form-group select:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed;opacity:0.7}
 </style>
 @endpush
 
