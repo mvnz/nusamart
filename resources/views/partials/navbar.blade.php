@@ -7,21 +7,25 @@
             @auth
             @if(auth()->user()->role == 'admin')
                 <a href="{{ route('admin.users') }}">Pengguna</a>
-                <!--<a href="#">Produk</a>
-                <a href="#">Kategori</a>
-                <a href="#">Laporan</a> -->
             @elseif(auth()->user()->role == 'penjual')
-                <!--<a href="#">Produk Saya</a>
-                <a href="#">Pesanan</a>
-                <a href="#">Keuangan</a>
-                <a href="#">Statistik</a> -->
             @else
-                <!--<a href="#">Promo</a>
-                <a href="#">Kategori</a>
-                <a href="#">Pesanan Saya</a> -->
             @endif
             @endauth
             <a href="{{ route('page.bantuan') }}">Bantuan</a>
+
+            {{-- User dropdown hanya tampil di mobile (top-bar tersembunyi) --}}
+            @auth
+            <div class="user-dropdown nav-user-dropdown">
+                <a href="#" class="user-dropdown-toggle" id="navUserDropdownToggle"><i class="fa fa-user-o"></i> {{ auth()->user()->username }} <i class="fa fa-caret-down"></i></a>
+                <div class="user-dropdown-menu">
+                    <a href="{{ route('profile') }}"><i class="fa fa-user"></i> Akun Saya</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-logout-btn"><i class="fa fa-sign-out"></i> Logout</button>
+                    </form>
+                </div>
+            </div>
+            @endauth
         </div>
        
     </div>

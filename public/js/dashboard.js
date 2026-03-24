@@ -7,7 +7,7 @@ if (mobileBtn) {
     });
 }
 
-// User dropdown toggle
+// User dropdown toggle (topbar)
 var dropdownToggle = document.getElementById('userDropdownToggle');
 if (dropdownToggle) {
     dropdownToggle.addEventListener('click', function(e) {
@@ -20,6 +20,16 @@ if (dropdownToggle) {
         if (dropdown && !dropdown.contains(e.target)) {
             dropdown.classList.remove('open');
         }
+    });
+}
+
+// Nav user dropdown toggle (mobile navbar)
+var navUserToggle = document.getElementById('navUserDropdownToggle');
+if (navUserToggle) {
+    navUserToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.parentElement.classList.toggle('open');
     });
 }
 

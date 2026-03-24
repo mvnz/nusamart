@@ -577,6 +577,9 @@ ul { list-style: none; }
     color: #D10024;
 }
 
+/* Hide nav user dropdown on desktop — it lives in topbar there */
+.nav-user-dropdown { display: none; }
+
 .nav-right {
     margin-left: auto;
     display: flex;
@@ -2469,6 +2472,12 @@ table tr:hover td { background: #fafafa; }
     }
     .main-nav.open .container { flex-wrap: wrap; }
     .main-nav.open .nav-menu a { padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .nav-user-dropdown { display: block; padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.07); }
+    .nav-user-dropdown .user-dropdown-toggle { color: #fff; padding: 12px 20px; display: flex; }
+    .nav-user-dropdown .user-dropdown-menu { position: static; box-shadow: none; border-radius: 0; border: none; background: rgba(255,255,255,0.06); animation: none; }
+    .nav-user-dropdown.open .user-dropdown-menu { display: block; }
+    .nav-user-dropdown .user-dropdown-menu a { color: #ddd !important; }
+    .nav-user-dropdown .dropdown-logout-btn { color: #ff6b6b; }
     .hero-grid { grid-template-columns: 1fr; }
     .hero-grid .hero-card:last-child { display: block; }
     .products-grid { grid-template-columns: repeat(2, 1fr); }
