@@ -15,14 +15,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(\Laravolt\Indonesia\Seeds\DatabaseSeeder::class);
+
         User::factory()->create([
             'name' => 'Administrator',
             'email' => 'admin@admin.com',
             'username' => 'admin',
             'phone' => '081200000000',
             'alamat' => 'Kantor Pusat NusaMart',
-            'kota' => 'Jakarta',
-            'propinsi' => 'DKI Jakarta',
+            'province_code' => '31',
+            'regency_code' => '3171',
+            'district_code' => '3171010',
+            'village_code' => '3171010001',
+            'propinsi' => 'DKI JAKARTA',
+            'kota' => 'KOTA JAKARTA PUSAT',
+            'kecamatan' => 'GAMBIR',
+            'kelurahan' => 'GAMBIR',
+            'rt' => '001',
+            'rw' => '001',
+            'kodepos' => '10110',
             'role' => 'admin',
             'password' => bcrypt('password'),
         ]);
