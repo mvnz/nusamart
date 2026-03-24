@@ -75,6 +75,14 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 <a href="{{ route('dashboard') }}" class="view-all"><i class="fa fa-arrow-left"></i> Kembali</a>
             </div>
 
+            <div style="padding: 12px 20px 0;">
+                <div style="position:relative; max-width:320px;">
+                    <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:13px;pointer-events:none;"></i>
+                    <input type="text" id="userSearch" placeholder="Cari nama atau username..." oninput="filterUsers()" style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e0e0e0'">
+                </div>
+                <p id="userSearchCount" style="font-size:12px;color:#8d8d8d;margin:6px 0 0;display:none;"></p>
+            </div>
+
             @if(session('success'))
                 <div style="padding: 12px 20px;">
                     <div class="alert alert-success" style="margin-bottom:0;">
@@ -106,7 +114,7 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 </thead>
                 <tbody>
                     @foreach($users as $user)
-                    <tr>
+                    <tr data-search="{{ strtolower($user->name . ' ' . $user->username) }}">
                         <td>
                             <strong>{{ $user->name }}</strong>
                             <div style="font-size:11px; color:#8d8d8d;">{{ '@' . $user->username }}</div>
@@ -282,5 +290,23 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeUserModal();
     });
+
+    function filterUsers() {
+        var q = document.getElementById('userSearch').value.toLowerCase().trim();
+        var rows = document.querySelectorAll('tbody tr[data-search]');
+        var count = 0;
+        rows.forEach(function(row) {
+            var match = !q || row.dataset.search.includes(q);
+            row.style.display = match ? '' : 'none';
+            if (match) count++;
+        });
+        var info = document.getElementById('userSearchCount');
+        if (q) {
+            info.style.display = 'block';
+            info.textContent = count + ' pengguna ditemukan';
+        } else {
+            info.style.display = 'none';
+        }
+    }
 </script>
 @endsection
