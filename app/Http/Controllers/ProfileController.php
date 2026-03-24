@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -17,6 +17,7 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $validated = $request->validate([
@@ -57,6 +58,7 @@ class ProfileController extends Controller
             'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
+        /** @var User $user */
         $user = Auth::user();
 
         $webRoot = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
@@ -82,6 +84,7 @@ class ProfileController extends Controller
 
     public function deletePhoto()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $webRoot = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
@@ -116,6 +119,7 @@ class ProfileController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
+        /** @var User $user */
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
