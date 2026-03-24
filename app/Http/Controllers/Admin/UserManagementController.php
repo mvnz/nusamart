@@ -4,33 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
-        $role   = $request->input('role');
-
-        $query = User::latest();
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%");
-            });
-        }
-
-        if ($role) {
-            $query->where('role', $role);
-        }
-
-        $users       = $query->paginate(10)->appends($request->query());
-        $totalUsers   = User::count();
-        $totalBuyers  = User::where('role', 'pembeli')->count();
-        $totalSellers = User::where('role', 'penjual')->count();
-        $totalAdmins  = User::where('role', 'admin')->count();
+        $users        = User::latest()->get();
+        $totalUsers   = $users->count();
+        $totalBuyers  = $users->where('role', 'pembeli')->count();
+        $totalSellers = $users->where('role', 'penjual')->count();
+        $totalAdmins  = $users->where('role', 'admin')->count();
 
         return view('user.index', compact('users', 'totalUsers', 'totalBuyers', 'totalSellers', 'totalAdmins'));
     }

@@ -80,32 +80,27 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
                 <a href="{{ route('dashboard') }}" class="view-all"><i class="fa fa-arrow-left"></i> Kembali</a>
             </div>
 
-            <form method="GET" action="{{ route('admin.users') }}" id="filterForm">
-            <input type="hidden" name="role" id="roleInput" value="{{ request('role') }}">
             <div style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
                 {{-- Search --}}
                 <div style="position:relative; flex:1; min-width:200px; max-width:320px;">
                     <i class="fa fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#bbb;font-size:13px;pointer-events:none;"></i>
-                    <input type="text" name="search" id="userSearch" value="{{ request('search') }}" placeholder="Cari nama atau username..." oninput="debounceSearch()" style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e8e8e8'">
+                    <input type="text" id="userSearch" placeholder="Cari nama atau username..." oninput="applyFilters()" style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e8e8e8'">
                 </div>
                 {{-- Role filter tabs --}}
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button type="button" onclick="submitRole('')" id="filterAll" class="role-filter-btn {{ !request('role') ? 'active-filter' : '' }}">Semua</button>
-                    <button type="button" onclick="submitRole('pembeli')" id="filterPembeli" class="role-filter-btn {{ request('role') === 'pembeli' ? 'active-filter' : '' }}">
+                    <button type="button" onclick="setRole('')" id="filterAll" class="role-filter-btn active-filter">Semua</button>
+                    <button type="button" onclick="setRole('pembeli')" id="filterPembeli" class="role-filter-btn">
                         <i class="fa fa-shopping-bag" style="font-size:11px;"></i> Pembeli
                     </button>
-                    <button type="button" onclick="submitRole('penjual')" id="filterPenjual" class="role-filter-btn {{ request('role') === 'penjual' ? 'active-filter' : '' }}">
+                    <button type="button" onclick="setRole('penjual')" id="filterPenjual" class="role-filter-btn">
                         <i class="fa fa-building-o" style="font-size:11px;"></i> Penjual
                     </button>
-                    <button type="button" onclick="submitRole('admin')" id="filterAdmin" class="role-filter-btn {{ request('role') === 'admin' ? 'active-filter' : '' }}">
+                    <button type="button" onclick="setRole('admin')" id="filterAdmin" class="role-filter-btn">
                         <i class="fa fa-shield" style="font-size:11px;"></i> Admin
                     </button>
                 </div>
-                @if(request('search') || request('role'))
-                <span style="font-size:12px;color:#8d8d8d;margin-left:auto;">{{ $users->total() }} dari {{ $totalUsers }} pengguna</span>
-                @endif
+                <span id="userSearchCount" style="font-size:12px;color:#8d8d8d;margin-left:auto;"></span>
             </div>
-            </form>
             <style>
             .role-filter-btn{border:1.5px solid #e8e8e8;background:#fff;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:#666;display:flex;align-items:center;gap:5px;}
             .role-filter-btn:hover{border-color:#D10024;color:#D10024;}
@@ -198,46 +193,11 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
             </div>
             </div>
 
-            {{-- Pagination --}}
-            @if($users->hasPages())
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;">
-                <span style="font-size:12px;color:#8d8d8d;">
-                    Menampilkan {{ $users->firstItem() }}–{{ $users->lastItem() }} dari {{ $users->total() }} pengguna
-                </span>
-                <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
-                    {{-- Prev --}}
-                    @if($users->onFirstPage())
-                        <span style="padding:5px 11px;border-radius:8px;border:1.5px solid #eee;color:#ccc;font-size:13px;">‹</span>
-                    @else
-                        <a href="{{ $users->previousPageUrl() }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">‹</a>
-                    @endif
-                    {{-- Pages --}}
-                    @php
-                        $cur   = $users->currentPage();
-                        $last  = $users->lastPage();
-                        $pages = collect(range(1, $last))->filter(fn($p) =>
-                            $p === 1 || $p === $last || abs($p - $cur) <= 1
-                        )->values();
-                    @endphp
-                    @foreach($pages as $i => $page)
-                        @if($i > 0 && $page - $pages[$i-1] > 1)
-                            <span style="padding:5px 4px;font-size:13px;color:#aaa;">…</span>
-                        @endif
-                        @if($page == $cur)
-                            <span style="padding:5px 11px;border-radius:8px;background:#D10024;color:#fff;font-size:13px;font-weight:600;">{{ $page }}</span>
-                        @else
-                            <a href="{{ $users->url($page) }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">{{ $page }}</a>
-                        @endif
-                    @endforeach
-                    {{-- Next --}}
-                    @if($users->hasMorePages())
-                        <a href="{{ $users->nextPageUrl() }}" style="padding:5px 11px;border-radius:8px;border:1.5px solid #e8e8e8;color:#444;font-size:13px;text-decoration:none;">›</a>
-                    @else
-                        <span style="padding:5px 11px;border-radius:8px;border:1.5px solid #eee;color:#ccc;font-size:13px;">›</span>
-                    @endif
-                </div>
+            {{-- JS Pagination bar --}}
+            <div id="paginationBar" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:8px;">
+                <span id="paginationInfo" style="font-size:12px;color:#8d8d8d;"></span>
+                <div id="paginationBtns" style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;"></div>
             </div>
-            @endif
 
         </div>
     </div>
@@ -303,7 +263,7 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
 </div>
 
 @php
-    $usersJson = $users->getCollection()->mapWithKeys(function($u) {
+    $usersJson = $users->mapWithKeys(function($u) {
         return [$u->id => [
             'id' => $u->id,
             'name' => $u->name,
@@ -369,20 +329,93 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
         if (e.key === 'Escape') closeUserModal();
     });
 
-    // Server-side filter helpers
-    function submitRole(role) {
-        document.getElementById('roleInput').value = role;
-        document.getElementById('filterForm').submit();
+    // ── Filter ──────────────────────────────────────────────
+    var activeRole = '';
+    var PAGE_SIZE  = 10;
+    var currentPage = 1;
+
+    function setRole(role) {
+        activeRole = role;
+        ['All','Pembeli','Penjual','Admin'].forEach(function(r) {
+            document.getElementById('filter' + r).classList.remove('active-filter');
+        });
+        var map = {'':'All','pembeli':'Pembeli','penjual':'Penjual','admin':'Admin'};
+        document.getElementById('filter' + map[role]).classList.add('active-filter');
+        currentPage = 1;
+        applyFilters();
     }
 
-    var searchTimer;
-    function debounceSearch() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(function() {
-            document.getElementById('filterForm').submit();
-        }, 400);
+    function applyFilters() {
+        var q = document.getElementById('userSearch').value.toLowerCase().trim();
+        var rows = Array.from(document.querySelectorAll('tbody tr[data-search]'));
+        var matched = rows.filter(function(row) {
+            var matchSearch = !q || row.dataset.search.includes(q);
+            var matchRole   = !activeRole || row.dataset.role === activeRole;
+            return matchSearch && matchRole;
+        });
+
+        // Hide all first
+        rows.forEach(function(r) { r.style.display = 'none'; });
+
+        // Paginate matched
+        var total     = matched.length;
+        var totalAll  = rows.length;
+        var lastPage  = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (currentPage > lastPage) currentPage = lastPage;
+        var start = (currentPage - 1) * PAGE_SIZE;
+        matched.slice(start, start + PAGE_SIZE).forEach(function(r) { r.style.display = ''; });
+
+        // Counter
+        var info = document.getElementById('userSearchCount');
+        info.textContent = (q || activeRole) ? (total + ' dari ' + totalAll + ' pengguna') : '';
+
+        renderPagination(total, lastPage);
     }
 
+    function renderPagination(total, lastPage) {
+        var bar  = document.getElementById('paginationBar');
+        var info = document.getElementById('paginationInfo');
+        var btns = document.getElementById('paginationBtns');
+
+        if (lastPage <= 1 && total <= PAGE_SIZE) {
+            bar.style.display = 'none';
+            return;
+        }
+        bar.style.display = 'flex';
+
+        var start = (currentPage - 1) * PAGE_SIZE + 1;
+        var end   = Math.min(currentPage * PAGE_SIZE, total);
+        info.textContent = 'Menampilkan ' + start + '–' + end + ' dari ' + total + ' pengguna';
+
+        btns.innerHTML = '';
+        function makeBtn(label, page, active, disabled) {
+            var el = document.createElement(disabled ? 'span' : 'button');
+            el.innerHTML = label;
+            el.style.cssText = 'padding:5px 11px;border-radius:8px;font-size:13px;cursor:' + (disabled ? 'default' : 'pointer') + ';border:1.5px solid ' + (disabled ? '#eee' : (active ? '#D10024' : '#e8e8e8')) + ';background:' + (active ? '#D10024' : '#fff') + ';color:' + (disabled ? '#ccc' : (active ? '#fff' : '#444')) + ';font-weight:' + (active ? '600' : '400') + ';';
+            if (!disabled && !active) { el.onclick = function() { currentPage = page; applyFilters(); }; }
+            btns.appendChild(el);
+        }
+        // Prev
+        makeBtn('‹', currentPage - 1, false, currentPage === 1);
+        // Pages with ellipsis
+        for (var p = 1; p <= lastPage; p++) {
+            if (p === 1 || p === lastPage || Math.abs(p - currentPage) <= 1) {
+                makeBtn(p, p, p === currentPage, false);
+            } else if (p === currentPage - 2 || p === currentPage + 2) {
+                var dots = document.createElement('span');
+                dots.textContent = '…';
+                dots.style.cssText = 'padding:5px 4px;font-size:13px;color:#aaa;';
+                btns.appendChild(dots);
+            }
+        }
+        // Next
+        makeBtn('›', currentPage + 1, false, currentPage === lastPage);
+    }
+
+    // Init
+    applyFilters();
+
+    // ── Sort ─────────────────────────────────────────────────
     var sortState = { col: null, dir: 'asc' };
 
     function sortTable(col) {
@@ -414,6 +447,8 @@ table th,table td{padding:10px 12px;font-size:12px;white-space:nowrap}
             return 0;
         });
         rows.forEach(function(row) { tbody.appendChild(row); });
+        currentPage = 1;
+        applyFilters();
     }
 </script>
 @endsection
