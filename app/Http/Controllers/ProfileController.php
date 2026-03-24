@@ -59,8 +59,10 @@ class ProfileController extends Controller
 
         $user = Auth::user();
 
+        $webRoot = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
+
         if ($user->photo) {
-            $oldPath = public_path('uploads/' . $user->photo);
+            $oldPath = $webRoot . '/uploads/' . $user->photo;
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
@@ -68,7 +70,7 @@ class ProfileController extends Controller
 
         $file = $request->file('photo');
         $filename = 'photos/' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $uploadDir = public_path('uploads/photos');
+        $uploadDir = $webRoot . '/uploads/photos';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -82,8 +84,10 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        $webRoot = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
+
         if ($user->photo) {
-            $oldPath = public_path('uploads/' . $user->photo);
+            $oldPath = $webRoot . '/uploads/' . $user->photo;
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
