@@ -15,15 +15,15 @@
     <div class="container">
         <button class="nav-categories-btn"><i class="fa fa-bars"></i> Kategori</button>
         <div class="nav-menu">
-            <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             @auth
             @if(auth()->user()->role == 'admin')
-                <a href="{{ route('admin.users') }}">Pengguna</a>
+                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">Pengguna</a>
             @elseif(auth()->user()->role == 'penjual')
             @else
             @endif
             @endauth
-            <a href="{{ route('page.bantuan') }}">Bantuan</a>
+            <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
 
             {{-- User dropdown hanya tampil di mobile (top-bar tersembunyi) --}}
             @auth
