@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" style="grid-template-columns:1fr 1fr 1fr">
                     <div class="form-group">
                         <label for="rt"><i class="fa fa-hashtag"></i> RT</label>
                         <input type="text" id="rt" name="rt" value="{{ old('rt') }}" placeholder="001" maxlength="5" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" required>
