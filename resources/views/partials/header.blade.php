@@ -21,6 +21,8 @@
             <input type="text" placeholder="Cari produk...">
             <button><i class="fa fa-search"></i> Cari</button>
         </div>
+        @elseif(!auth()->check())
+        {{-- Tampilkan logo lebih besar untuk halaman utama (guest) --}}
         @endif
     </div>
 </header>

@@ -16,8 +16,9 @@
     <div class="container">
         <button class="nav-categories-btn"><i class="fa fa-bars"></i> Kategori</button>
         <div class="nav-menu">
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
             @auth
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             @if(auth()->user()->role == 'admin')
                 <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">Pengguna</a>
             @elseif(auth()->user()->role == 'penjual')
