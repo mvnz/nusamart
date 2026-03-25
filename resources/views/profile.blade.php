@@ -7,9 +7,25 @@
 .profile-form{padding:24px 20px}
 .profile-form>.form-group{margin-bottom:20px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:20px}
-.form-group select{width:100%;padding:12px 16px;border:2px solid #e8e8e8;border-radius:10px;font-size:14px;font-family:'Montserrat',sans-serif;color:#333;transition:all 0.3s ease;outline:none;background:#f8f9fa;appearance:auto}
-.form-group select:focus{border-color:#D10024;background:#fff;box-shadow:0 0 0 3px rgba(209,0,36,0.1)}
-.form-group select:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed;opacity:0.7}
+.ss{position:relative;width:100%}
+.ss-trigger{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;background:#f8f9fa;cursor:pointer;font-size:14px;color:#333;user-select:none;min-height:46px;transition:border-color .2s}
+.ss:not(.ss-disabled) .ss-trigger:hover{border-color:#D10024}
+.ss.ss-open .ss-trigger{border-color:#D10024;background:#fff}
+.ss-trigger-text.ss-empty{color:#b0b0b0}
+.ss-caret{width:0;height:0;border:5px solid transparent;border-top:6px solid #888;margin-top:3px;flex-shrink:0;transition:transform .2s}
+.ss.ss-open .ss-caret{transform:rotate(180deg);margin-top:-3px}
+.ss-panel{display:none;position:fixed;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:9999}
+.ss-panel.ss-panel-open{display:block}
+.ss-search{padding:8px 10px;border-bottom:1px solid #f0f0f0}
+.ss-search input{width:100%;border:1px solid #e0e0e0;border-radius:6px;padding:7px 10px;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;color:#333;background:#fafafa}
+.ss-search input:focus{border-color:#D10024;background:#fff}
+.ss-list{max-height:210px;overflow-y:auto;padding:4px 0}
+.ss-item{padding:9px 14px;cursor:pointer;font-size:13px;color:#444;transition:background .15s}
+.ss-item:hover,.ss-item.ss-focused{background:#fff5f5;color:#D10024}
+.ss-item.ss-selected{background:#fff5f5;color:#D10024;font-weight:600}
+.ss-empty-msg{padding:9px 14px;color:#999;font-size:13px;text-align:center}
+.ss.ss-disabled .ss-trigger{background:#f0f0f0;color:#aaa;cursor:not-allowed;border-color:#e8e8e8;pointer-events:none}
+select.ss-native{display:none!important}
 </style>
 @endpush
 
@@ -204,11 +220,120 @@
 @push('scripts')
 <script>
 (function () {
+    // ── Custom Searchable Select ────────────────────────────────
+    function makeSearchableSelect(selectId, placeholder) {
+        const select = document.getElementById(selectId);
+        if (!select) return null;
+        select.classList.add('ss-native');
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'ss' + (select.disabled ? ' ss-disabled' : '');
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        wrapper.insertAdjacentHTML('beforeend',
+            '<div class="ss-trigger">' +
+                '<span class="ss-trigger-text ss-empty">' + placeholder + '</span>' +
+                '<span class="ss-caret"></span>' +
+            '</div>');
+
+        const panel = document.createElement('div');
+        panel.className = 'ss-panel';
+        panel.innerHTML =
+            '<div class="ss-search"><input type="text" placeholder="Search..."></div>' +
+            '<div class="ss-list"></div>';
+        document.body.appendChild(panel);
+
+        const trigger  = wrapper.querySelector('.ss-trigger');
+        const trigText = wrapper.querySelector('.ss-trigger-text');
+        const searchEl = panel.querySelector('.ss-search input');
+        const listEl   = panel.querySelector('.ss-list');
+        let   items    = [];
+
+        function positionPanel() {
+            const rect = trigger.getBoundingClientRect();
+            panel.style.top   = (rect.bottom + 3) + 'px';
+            panel.style.left  = rect.left + 'px';
+            panel.style.width = rect.width + 'px';
+        }
+
+        function renderList(q) {
+            listEl.innerHTML = '';
+            const filtered = q ? items.filter(i => i.label.toLowerCase().includes(q.toLowerCase())) : items;
+            if (!filtered.length) { listEl.innerHTML = '<div class="ss-empty-msg">Tidak ditemukan</div>'; return; }
+            filtered.forEach(function(item) {
+                const d = document.createElement('div');
+                d.className = 'ss-item' + (select.value === item.value ? ' ss-selected' : '');
+                d.textContent = item.label;
+                d.addEventListener('click', function() {
+                    select.value = item.value;
+                    trigText.textContent = item.label;
+                    trigText.classList.remove('ss-empty');
+                    close();
+                    select.dispatchEvent(new Event('change'));
+                });
+                listEl.appendChild(d);
+            });
+        }
+
+        function open() {
+            if (wrapper.classList.contains('ss-disabled')) return;
+            document.querySelectorAll('.ss.ss-open').forEach(function(el) { if (el !== wrapper) el.classList.remove('ss-open'); });
+            document.querySelectorAll('.ss-panel.ss-panel-open').forEach(function(el) { if (el !== panel) el.classList.remove('ss-panel-open'); });
+            items = Array.from(select.options).filter(o => o.value).map(o => ({ value: o.value, label: o.textContent }));
+            searchEl.value = '';
+            renderList('');
+            positionPanel();
+            wrapper.classList.add('ss-open');
+            panel.classList.add('ss-panel-open');
+            searchEl.focus();
+        }
+
+        function close() {
+            wrapper.classList.remove('ss-open');
+            panel.classList.remove('ss-panel-open');
+        }
+
+        trigger.addEventListener('click', function() { wrapper.classList.contains('ss-open') ? close() : open(); });
+        searchEl.addEventListener('input', function() { renderList(this.value); });
+        document.addEventListener('click', function(e) { if (!wrapper.contains(e.target) && !panel.contains(e.target)) close(); });
+        window.addEventListener('scroll', function() { if (panel.classList.contains('ss-panel-open')) positionPanel(); }, true);
+        window.addEventListener('resize', function() { if (panel.classList.contains('ss-panel-open')) close(); });
+
+        return {
+            populate: function(data, selectedCode) {
+                while (select.options.length > 1) select.remove(1);
+                data.forEach(function(item) {
+                    const opt = document.createElement('option');
+                    opt.value = item.code;
+                    opt.textContent = item.name;
+                    select.appendChild(opt);
+                });
+                select.disabled = false;
+                wrapper.classList.remove('ss-disabled');
+                if (selectedCode) {
+                    const opt = Array.from(select.options).find(o => o.value === selectedCode);
+                    if (opt) { select.value = selectedCode; trigText.textContent = opt.textContent; trigText.classList.remove('ss-empty'); }
+                }
+            },
+            reset: function(ph) {
+                close();
+                while (select.options.length > 1) select.remove(1);
+                select.value = '';
+                select.disabled = true;
+                wrapper.classList.add('ss-disabled');
+                trigText.textContent = ph || placeholder;
+                trigText.classList.add('ss-empty');
+            }
+        };
+    }
+
+    // ── Setup ───────────────────────────────────────────────────
     const urls = {
         provinces: '{{ route('wilayah.provinces') }}',
         regencies: (code) => '{{ url('api/wilayah/regencies') }}/' + code,
         districts: (code) => '{{ url('api/wilayah/districts') }}/' + code,
-        villages: (code) => '{{ url('api/wilayah/villages') }}/' + code,
+        villages:  (code) => '{{ url('api/wilayah/villages') }}/' + code,
     };
 
     const saved = {
@@ -233,61 +358,46 @@
         village_code:  old.village_code  || saved.village_code,
     };
 
-    const selProvince = document.getElementById('province_code');
-    const selRegency  = document.getElementById('regency_code');
-    const selDistrict = document.getElementById('district_code');
-    const selVillage  = document.getElementById('village_code');
-
     const hidPropinsi  = document.getElementById('propinsi');
     const hidKota      = document.getElementById('kota');
     const hidKecamatan = document.getElementById('kecamatan');
     const hidKelurahan = document.getElementById('kelurahan');
 
-    function populateSelect(sel, data, placeholder, selectedCode) {
-        sel.innerHTML = '<option value="">' + placeholder + '</option>';
-        data.forEach(function (item) {
-            const opt = document.createElement('option');
-            opt.value = item.code;
-            opt.textContent = item.name;
-            if (selectedCode && item.code === selectedCode) opt.selected = true;
-            sel.appendChild(opt);
-        });
-        sel.disabled = false;
-        // Sync hidden name field after populating
-        if (sel.value && sel.selectedIndex > 0) {
-            const name = sel.options[sel.selectedIndex].textContent;
-            if (sel === selProvince) hidPropinsi.value = name;
-            if (sel === selRegency)  hidKota.value = name;
-            if (sel === selDistrict) hidKecamatan.value = name;
-            if (sel === selVillage)  hidKelurahan.value = name;
-        }
-    }
+    const ssProvince = makeSearchableSelect('province_code', '-- Pilih Provinsi --');
+    const ssRegency  = makeSearchableSelect('regency_code',  '-- Pilih Kota/Kab --');
+    const ssDistrict = makeSearchableSelect('district_code', '-- Pilih Kecamatan --');
+    const ssVillage  = makeSearchableSelect('village_code',  '-- Pilih Kelurahan/Desa --');
 
-    function resetSelect(sel, placeholder) {
-        sel.innerHTML = '<option value="">' + placeholder + '</option>';
-        sel.disabled = true;
-    }
-
-    // Load provinces on page load, then cascade through saved values
+    // Load provinces on page load, then cascade through saved/old values
     fetch(urls.provinces)
         .then(r => r.json())
-        .then(function (data) {
-            populateSelect(selProvince, data, '-- Pilih Provinsi --', initial.province_code);
+        .then(function(data) {
+            ssProvince.populate(data, initial.province_code);
             if (initial.province_code) {
+                const pOpt = document.querySelector('#province_code option[value="' + initial.province_code + '"]');
+                if (pOpt) hidPropinsi.value = pOpt.textContent;
                 fetch(urls.regencies(initial.province_code))
                     .then(r => r.json())
-                    .then(function (d) {
-                        populateSelect(selRegency, d, '-- Pilih Kota/Kab --', initial.regency_code);
+                    .then(function(d) {
+                        ssRegency.populate(d, initial.regency_code);
                         if (initial.regency_code) {
+                            const rOpt = document.querySelector('#regency_code option[value="' + initial.regency_code + '"]');
+                            if (rOpt) hidKota.value = rOpt.textContent;
                             fetch(urls.districts(initial.regency_code))
                                 .then(r => r.json())
-                                .then(function (d2) {
-                                    populateSelect(selDistrict, d2, '-- Pilih Kecamatan --', initial.district_code);
+                                .then(function(d2) {
+                                    ssDistrict.populate(d2, initial.district_code);
                                     if (initial.district_code) {
+                                        const dOpt = document.querySelector('#district_code option[value="' + initial.district_code + '"]');
+                                        if (dOpt) hidKecamatan.value = dOpt.textContent;
                                         fetch(urls.villages(initial.district_code))
                                             .then(r => r.json())
-                                            .then(function (d3) {
-                                                populateSelect(selVillage, d3, '-- Pilih Kelurahan/Desa --', initial.village_code);
+                                            .then(function(d3) {
+                                                ssVillage.populate(d3, initial.village_code);
+                                                if (initial.village_code) {
+                                                    const vOpt = document.querySelector('#village_code option[value="' + initial.village_code + '"]');
+                                                    if (vOpt) hidKelurahan.value = vOpt.textContent;
+                                                }
                                             });
                                     }
                                 });
@@ -296,44 +406,38 @@
             }
         });
 
-    selProvince.addEventListener('change', function () {
-        hidPropinsi.value = this.options[this.selectedIndex].textContent;
-        resetSelect(selRegency, '-- Pilih Kota/Kab --');
-        resetSelect(selDistrict, '-- Pilih Kecamatan --');
-        resetSelect(selVillage, '-- Pilih Kelurahan/Desa --');
+    document.getElementById('province_code').addEventListener('change', function() {
+        hidPropinsi.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
+        ssRegency.reset('-- Pilih Kota/Kab --');
+        ssDistrict.reset('-- Pilih Kecamatan --');
+        ssVillage.reset('-- Pilih Kelurahan/Desa --');
         hidKota.value = ''; hidKecamatan.value = ''; hidKelurahan.value = '';
         if (this.value) {
-            fetch(urls.regencies(this.value)).then(r => r.json()).then(function (d) {
-                populateSelect(selRegency, d, '-- Pilih Kota/Kab --', null);
-            });
+            fetch(urls.regencies(this.value)).then(r => r.json()).then(function(d) { ssRegency.populate(d, null); });
         }
     });
 
-    selRegency.addEventListener('change', function () {
-        hidKota.value = this.options[this.selectedIndex].textContent;
-        resetSelect(selDistrict, '-- Pilih Kecamatan --');
-        resetSelect(selVillage, '-- Pilih Kelurahan/Desa --');
+    document.getElementById('regency_code').addEventListener('change', function() {
+        hidKota.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
+        ssDistrict.reset('-- Pilih Kecamatan --');
+        ssVillage.reset('-- Pilih Kelurahan/Desa --');
         hidKecamatan.value = ''; hidKelurahan.value = '';
         if (this.value) {
-            fetch(urls.districts(this.value)).then(r => r.json()).then(function (d) {
-                populateSelect(selDistrict, d, '-- Pilih Kecamatan --', null);
-            });
+            fetch(urls.districts(this.value)).then(r => r.json()).then(function(d) { ssDistrict.populate(d, null); });
         }
     });
 
-    selDistrict.addEventListener('change', function () {
-        hidKecamatan.value = this.options[this.selectedIndex].textContent;
-        resetSelect(selVillage, '-- Pilih Kelurahan/Desa --');
+    document.getElementById('district_code').addEventListener('change', function() {
+        hidKecamatan.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
+        ssVillage.reset('-- Pilih Kelurahan/Desa --');
         hidKelurahan.value = '';
         if (this.value) {
-            fetch(urls.villages(this.value)).then(r => r.json()).then(function (d) {
-                populateSelect(selVillage, d, '-- Pilih Kelurahan/Desa --', null);
-            });
+            fetch(urls.villages(this.value)).then(r => r.json()).then(function(d) { ssVillage.populate(d, null); });
         }
     });
 
-    selVillage.addEventListener('change', function () {
-        hidKelurahan.value = this.options[this.selectedIndex].textContent;
+    document.getElementById('village_code').addEventListener('change', function() {
+        hidKelurahan.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
     });
 })();
 </script>
