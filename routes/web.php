@@ -64,6 +64,16 @@ Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->m
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 Route::get('/produk/{product}', [ProductController::class, 'show'])->name('products.show');
 
+// Seller Product Management routes (auth required)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/produk-saya', [ProductController::class, 'myProducts'])->name('products.my-products');
+    Route::post('/produk', [ProductController::class, 'store'])->name('products.store');
+    Route::put('/produk/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::post('/produk/{product}/photo', [ProductController::class, 'uploadPhoto'])->name('products.upload-photo');
+    Route::delete('/produk/{product}/photo', [ProductController::class, 'deletePhoto'])->name('products.delete-photo');
+    Route::delete('/produk/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+});
+
 // Keranjang routes (buyer only, auth required)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');

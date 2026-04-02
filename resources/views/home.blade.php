@@ -276,6 +276,148 @@
 }
 .section-view-all:hover { gap: 10px; color: #a8001d; }
 
+/* ===== BURGER MENU CATEGORY ===== */
+.burger-menu-btn {
+    display: none;
+    background: #D10024;
+    color: #fff;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.burger-menu-btn:hover { background: #a8001d; }
+.burger-menu-btn.active { background: #a8001d; }
+
+.categories-top-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.categories-section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1b28;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+.categories-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 24px;
+    background: #D10024;
+    border-radius: 4px;
+}
+
+.categories-dropdown-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 998;
+}
+.categories-dropdown-overlay.active { display: block; }
+
+.categories-dropdown-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+.categories-dropdown-menu.active { transform: translateX(0); }
+
+.dropdown-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #f9f9f9;
+    position: sticky;
+    top: 0;
+}
+.dropdown-menu-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+.dropdown-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+.dropdown-close-btn:hover { color: #333; }
+
+.dropdown-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 12px 0;
+}
+.dropdown-category-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: #444;
+    border-left: 4px solid transparent;
+}
+.dropdown-category-item:hover {
+    background: #f9f9f9;
+    border-left-color: #D10024;
+}
+.dropdown-category-item.active {
+    background: rgba(209,0,36,0.08);
+    border-left-color: #D10024;
+    color: #D10024;
+    font-weight: 600;
+}
+.dropdown-category-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.dropdown-category-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
 .categories-section { padding: 36px 0 20px; }
 .categories-grid {
     display: grid;
@@ -301,6 +443,11 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.10);
     border-color: #D10024;
 }
+.category-card.active {
+    background: rgba(209,0,36,0.05);
+    border-color: #D10024;
+    box-shadow: 0 4px 16px rgba(209,0,36,0.15);
+}
 .category-icon {
     width: 48px;
     height: 48px;
@@ -321,9 +468,12 @@
 }
 @media (max-width: 768px) {
     .categories-grid { grid-template-columns: repeat(4, 1fr); }
+    .burger-menu-btn { display: flex; }
+    .categories-grid { display: none; }
 }
 @media (max-width: 480px) {
     .categories-grid { grid-template-columns: repeat(3, 1fr); }
+    .categories-dropdown-menu { width: 250px; }
 }
 
 /* ===== PRODUCT SECTION ===== */
@@ -924,13 +1074,16 @@
 
         {{-- ===== KATEGORI ===== --}}
         <section class="categories-section">
-            <div class="section-header">
-                <h2 class="section-title">Kategori Produk</h2>
+            <div class="categories-top-bar">
+                <button class="burger-menu-btn" id="categoryBurgerBtn" title="Buka Menu Kategori">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <h2 class="categories-section-title">Kategori Produk</h2>
                 <a href="#" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
             </div>
             <div class="categories-grid">
                 @foreach($categories as $cat)
-                <a href="#" class="category-card">
+                <a href="#" class="category-card" data-category="{{ $cat['slug'] }}" onclick="filterByCategory(this); return false;">
                     <div class="category-icon" style="background: {{ $cat['color'] }};">
                         <i class="fa {{ $cat['icon'] }}"></i>
                     </div>
@@ -939,6 +1092,33 @@
                 @endforeach
             </div>
         </section>
+
+        {{-- ===== CATEGORIES DROPDOWN MENU ===== --}}
+        <div class="categories-dropdown-overlay" id="categoryDropdownOverlay"></div>
+        <div class="categories-dropdown-menu" id="categoryDropdownMenu">
+            <div class="dropdown-menu-header">
+                <h3 class="dropdown-menu-title">Kategori</h3>
+                <button class="dropdown-close-btn" id="closeDropdownBtn">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="dropdown-category-list">
+                <a href="#" class="dropdown-category-item" data-category="all" onclick="filterByCategory(null, 'all'); return false;">
+                    <div class="dropdown-category-icon" style="background: #666;">
+                        <i class="fa fa-th"></i>
+                    </div>
+                    <span class="dropdown-category-name">Semua Kategori</span>
+                </a>
+                @foreach($categories as $cat)
+                <a href="#" class="dropdown-category-item" data-category="{{ $cat['slug'] }}" onclick="filterByCategory(this); return false;">
+                    <div class="dropdown-category-icon" style="background: {{ $cat['color'] }};">
+                        <i class="fa {{ $cat['icon'] }}"></i>
+                    </div>
+                    <span class="dropdown-category-name">{{ $cat['name'] }}</span>
+                </a>
+                @endforeach
+            </div>
+        </div>
 
         {{-- ===== PROMO BANNER ===== --}}
         <section class="promo-banner-section">
@@ -1026,9 +1206,15 @@
                 <h2 class="section-title">Produk Unggulan UMKM</h2>
                 <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
             </div>
+        {{-- ===== PRODUK UNGGULAN ===== --}}
+        <section class="products-section">
+            <div class="section-header">
+                <h2 class="section-title">Produk Unggulan UMKM</h2>
+                <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
+            </div>
             <div class="products-grid">
                 @foreach($featuredProducts as $product)
-                <div class="product-card">
+                <div class="product-card" data-category="{{ strtolower(str_replace(' ', '-', $product['category'])) }}">
                     <div class="product-img-wrap">
                         <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}">
                         @if($product['badge'])
@@ -1058,6 +1244,7 @@
                 </div>
                 @endforeach
             </div>
+        </section>
         </section>
 
         {{-- ===== PENJUAL UMKM ===== --}}
@@ -1097,7 +1284,7 @@
             </div>
             <div class="products-grid">
                 @foreach($newProducts as $product)
-                <div class="product-card">
+                <div class="product-card" data-category="{{ strtolower(str_replace(' ', '-', $product['category'])) }}">
                     <div class="product-img-wrap">
                         <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}">
                         <span class="product-badge badge-baru">Baru</span>
@@ -1203,6 +1390,120 @@
     }
     updateCountdown();
     setInterval(updateCountdown, 1000);
+})();
+
+// Burger Menu & Category Filter
+(function() {
+    var burgerBtn = document.getElementById('categoryBurgerBtn');
+    var dropdown = document.getElementById('categoryDropdownMenu');
+    var overlay = document.getElementById('categoryDropdownOverlay');
+    var closeBtn = document.getElementById('closeDropdownBtn');
+    var currentFilter = 'all';
+
+    // Toggle burger menu
+    if (burgerBtn) {
+        burgerBtn.addEventListener('click', function() {
+            dropdown.classList.add('active');
+            overlay.classList.add('active');
+            burgerBtn.classList.add('active');
+        });
+    }
+
+    // Close dropdown
+    function closeDropdown() {
+        dropdown.classList.remove('active');
+        overlay.classList.remove('active');
+        if (burgerBtn) {
+            burgerBtn.classList.remove('active');
+        }
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeDropdown);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeDropdown);
+    }
+
+    // Category filter function
+    window.filterByCategory = function(element, category) {
+        // Determine category from element or parameter
+        var selectedCategory = category || (element ? element.getAttribute('data-category') : 'all');
+        currentFilter = selectedCategory;
+
+        // Update active state for dropdown items in sidebar
+        var dropdownItems = document.querySelectorAll('.dropdown-category-item');
+        dropdownItems.forEach(function(item) {
+            if (item.getAttribute('data-category') === selectedCategory) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Update active state for category cards in grid
+        var categoryCards = document.querySelectorAll('.category-card');
+        categoryCards.forEach(function(card) {
+            if (card.getAttribute('data-category') === selectedCategory) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+
+        // Update active state for navbar dropdown items
+        var navDropdownItems = document.querySelectorAll('.nav-dropdown-item');
+        navDropdownItems.forEach(function(item) {
+            if (item.getAttribute('data-category') === selectedCategory) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+
+        // Filter products in all product grids
+        var allProducts = document.querySelectorAll('.product-card');
+        var visibleCount = 0;
+        
+        allProducts.forEach(function(product) {
+            var productCategory = product.getAttribute('data-category');
+            if (selectedCategory === 'all' || productCategory === selectedCategory) {
+                product.style.display = '';
+                setTimeout(function() {
+                    product.style.opacity = '1';
+                }, 10);
+                visibleCount++;
+            } else {
+                product.style.opacity = '0';
+                setTimeout(function() {
+                    product.style.display = 'none';
+                }, 200);
+            }
+        });
+
+        console.log('Filter applied: ' + selectedCategory + ' - ' + visibleCount + ' products shown');
+
+        // Close dropdown after selection
+        if (dropdown && dropdown.classList.contains('active')) {
+            closeDropdown();
+        }
+        
+        // Close navbar dropdown if open
+        var navDropdown = document.getElementById('navCategoryDropdown');
+        if (navDropdown && navDropdown.classList.contains('active')) {
+            navDropdown.classList.remove('active');
+            var navBtn = document.getElementById('navCategoryBtn');
+            if (navBtn) {
+                navBtn.classList.remove('active');
+            }
+        }
+    };
+
+    // Add smooth transition to products
+    var style = document.createElement('style');
+    style.textContent = '.product-card { transition: opacity 0.2s ease; }';
+    document.head.appendChild(style);
 })();
 </script>
 @endpush
