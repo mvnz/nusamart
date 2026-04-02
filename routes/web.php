@@ -10,6 +10,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -55,6 +59,27 @@ Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->middle
 Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->middleware(['auth', 'verified'])->name('profile.photo.delete');
 Route::get('/profile/password', [ProfileController::class, 'showChangePassword'])->middleware(['auth', 'verified'])->name('profile.password');
 Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware(['auth', 'verified'])->name('profile.password.update');
+
+// Produk routes (public browsing)
+Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
+Route::get('/produk/{product}', [ProductController::class, 'show'])->name('products.show');
+
+// Keranjang routes (buyer only, auth required)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/keranjang/{cart}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/keranjang/{cart}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/keranjang', [CartController::class, 'clear'])->name('cart.clear');
+
+    // Checkout routes
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Order routes
+    Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
+});
 
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {

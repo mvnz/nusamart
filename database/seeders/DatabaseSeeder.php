@@ -36,6 +36,9 @@ class DatabaseSeeder extends Seeder
             'kodepos' => '10110',
             'role' => 'admin',
             'password' => bcrypt('password'),
+            'email_verified_at' => now(),
         ]);
+
+        $this->call(ProductSeeder::class);
     }
 }
