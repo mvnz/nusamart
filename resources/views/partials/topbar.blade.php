@@ -7,6 +7,9 @@
         </div>
         <div class="top-bar-right">
             @auth
+            @if(auth()->user()->role == 'penjual')
+            <a href="{{ route('products.my-products') }}" class="topbar-link" style="margin-right: 20px;"><i class="fa fa-cube"></i> Produk Saya</a>
+            @endif
             <div class="user-dropdown">
                 <a href="#" class="user-dropdown-toggle" id="userDropdownToggle"><i class="fa fa-user-o"></i> {{ auth()->user()->username }} <i class="fa fa-caret-down"></i></a>
                 <div class="user-dropdown-menu" id="userDropdownMenu">

@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        $this->call(CreateTestUsersSeeder::class);
         $this->call(ProductSeeder::class);
+        $this->call(InaExportProductSeeder::class);
     }
 }
