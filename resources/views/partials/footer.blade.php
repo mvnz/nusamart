@@ -36,6 +36,9 @@
             <div class="footer-col">
                 <h4>Kategori</h4>
                 <ul>
+                    @foreach(\App\Models\Category::inRandomOrder()->limit(6)->get() as $cat)
+                    <li><a href="{{ route('products.index', ['category_id' => $cat->id]) }}">{{ $cat->name }}</a></li>
+                    @endforeach
                 </ul>
             </div>
             <div class="footer-col">
