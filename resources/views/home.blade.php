@@ -267,11 +267,11 @@
 }
 .home-search-btn:hover { background: #a8001d; }
 @media(max-width:768px){
-    .home-search-inner { flex-wrap: wrap; }
-    .home-cat-wrap { flex: 1; min-width: 100px; }
-    .home-cat-btn { min-width: 0; width: 100%; box-sizing: border-box; }
-    .home-search-inner > input { flex: 2; min-width: 100px; }
-    .home-search-btn { width: 100%; justify-content: center; }
+    .home-search-inner { flex-wrap: wrap; gap: 8px; }
+    .home-cat-wrap { width: 100%; order: 1; }
+    .home-cat-btn { width: 100%; box-sizing: border-box; min-width: 0; justify-content: flex-start; }
+    .home-search-inner > input { flex: 1; order: 2; min-width: 0; }
+    .home-search-btn { order: 3; flex-shrink: 0; padding: 10px 16px; }
 }
 
 /* ===== PROMO STRIP ===== */
