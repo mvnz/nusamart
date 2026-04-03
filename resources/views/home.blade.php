@@ -128,17 +128,39 @@
 }
 .hero-product-card {
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
     overflow: hidden;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
+    text-decoration: none;
+    display: block;
 }
-.hero-product-card:hover { transform: translateY(-4px); }
-.hero-product-card img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
+.hero-product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+.hero-card-icon {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    position: relative;
+    overflow: hidden;
+}
+.hero-card-icon::before {
+    content: '';
+    position: absolute;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    bottom: -28px; right: -18px;
+}
+.hero-card-icon::after {
+    content: '';
+    position: absolute;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    top: -14px; left: -10px;
 }
 .hero-product-info {
     padding: 10px 12px 12px;
@@ -155,6 +177,7 @@
     color: #ff4d6d;
     font-size: 13px;
     font-weight: 700;
+    margin-top: 2px;
 }
 @media (max-width: 992px) {
     .hero-visual { display: none; }
@@ -1150,15 +1173,27 @@
                     </div>
                 </div>
                 <div class="hero-visual">
+                    @php
+                        $hcColors = [
+                            ['#ff8c69','#e8453c'],
+                            ['#a78bfa','#7c3aed'],
+                            ['#34d399','#059669'],
+                            ['#fbbf24','#d97706'],
+                        ];
+                        $hcEmojis = ['🛍️','👗','🍵','🏺'];
+                    @endphp
                     <div class="hero-cards-grid">
                         @foreach(array_slice($featuredProducts, 0, 4) as $p)
-                        <div class="hero-product-card">
-                            <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}">
+                        @php $ci = $loop->index; @endphp
+                        <a href="{{ route('products.show', $p['id']) }}" class="hero-product-card">
+                            <div class="hero-card-icon" style="background: linear-gradient(135deg, {{ $hcColors[$ci][0] }}, {{ $hcColors[$ci][1] }});">
+                                <span style="position:relative;z-index:1;">{{ $hcEmojis[$ci] }}</span>
+                            </div>
                             <div class="hero-product-info">
                                 <div class="name">{{ $p['name'] }}</div>
                                 <div class="price">Rp {{ number_format($p['price'], 0, ',', '.') }}</div>
                             </div>
-                        </div>
+                        </a>
                         @endforeach
                     </div>
                 </div>
