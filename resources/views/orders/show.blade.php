@@ -83,29 +83,7 @@
 .btn-received:hover { background: #059669; }
 .btn-track { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: none; transition: background .15s; }
 .btn-track:hover { background: #0369a1; color: #fff; }
-.btn-track:disabled { opacity: .6; cursor: default; }
 .order-actions-inline { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-
-/* ── Tracking timeline panel ───────────────────────────── */
-.tl-panel { margin-top: 14px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; display: none; background: #fff; }
-.tl-head { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
-.tl-courier { font-size: 13px; font-weight: 700; color: #1e1f29; }
-.tl-awb { font-size: 12px; color: #888; }
-.tl-body { padding: 8px 0 4px; }
-.tl-list { list-style: none; margin: 0; padding: 0 16px; position: relative; }
-.tl-list::before { content:""; position: absolute; left: 28px; top: 8px; bottom: 8px; width: 2px; background: #e5e7eb; }
-.tl-item { display: flex; gap: 12px; padding: 10px 0; position: relative; }
-.tl-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #f0f1f5; border: 2px solid #e5e7eb; color: #aaa; font-size: 12px; z-index: 1; }
-.tl-item.tl-first .tl-icon { background: #d1fae5; border-color: #10b981; color: #10b981; }
-.tl-content { flex: 1; padding-top: 2px; }
-.tl-date { font-size: 11px; color: #888; margin-bottom: 2px; }
-.tl-status { font-size: 13px; font-weight: 700; color: #1e1f29; line-height: 1.4; }
-.tl-item.tl-first .tl-status { color: #059669; }
-.tl-desc { font-size: 12px; color: #555; margin-top: 2px; line-height: 1.5; }
-.tl-more { text-align: center; padding: 8px; border-top: 1px solid #f0f1f5; }
-.tl-more button { background: none; border: none; font-size: 12px; font-weight: 700; color: #0284c7; cursor: pointer; font-family: inherit; }
-.tl-loading { padding: 20px; text-align: center; color: #888; font-size: 13px; }
-.tl-error { padding: 12px 16px; color: #991b1b; font-size: 13px; background: #fee2e2; }
 </style>
 @endpush
 
@@ -190,7 +168,7 @@
                         <label>Nomor Resi Pengiriman</label>
                         @if($order->courier_name)
                         <div style="font-size:11px;color:#6d28d9;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">
-                            <i class="fa fa-motorcycle" style="margin-right:3px"></i>{{ $order->courier_name }}
+                            {{ $order->courier_name }}
                         </div>
                         @endif
                         <span>{{ $order->tracking_number }}</span>
@@ -208,23 +186,26 @@
                         </button>
                     </form>
                     @if($order->tracking_number)
-                    <button type="button" class="btn-track" id="btnLacak" onclick="lacakPaket(this)">
-                        <i class="fa fa-search"></i> Lacak Paket
-                    </button>
+                    @php
+                        $awb = urlencode($order->tracking_number);
+                        $courier = strtolower($order->courier_name ?? '');
+                        $trackUrl = match(true) {
+                            str_contains($courier, 'jne')      => 'https://www.jne.co.id/id/tracking/trace/' . $awb,
+                            str_contains($courier, 'j&t')      => 'https://jet.co.id/track',
+                            str_contains($courier, 'sicepat')  => 'https://www.sicepat.com/checkAwb?awb=' . $awb,
+                            str_contains($courier, 'anteraja') => 'https://anteraja.id/tracking/' . $awb,
+                            str_contains($courier, 'pos')      => 'https://www.posindonesia.co.id/id/tracking?noResi=' . $awb,
+                            str_contains($courier, 'ninja')    => 'https://www.ninjaxpress.co/id-id/tracking?id=' . $awb,
+                            str_contains($courier, 'lion')     => 'https://lionparcel.com/track?awb=' . $awb,
+                            str_contains($courier, 'tiki')     => 'https://tiki.id/id/tracking?airwaybill=' . $awb,
+                            default                            => 'https://cekresi.com/?noresi=' . $awb,
+                        };
+                    @endphp
+                    <a href="{{ $trackUrl }}" target="_blank" rel="noopener noreferrer" class="btn-track">
+                        <i class="fa fa-external-link"></i> Lacak Paket
+                    </a>
                     @endif
                 </div>
-
-                @if($order->tracking_number)
-                <div class="tl-panel" id="tlPanel">
-                    <div class="tl-head">
-                        <span id="tlCourier" class="tl-courier"></span>
-                        <span id="tlAwb" class="tl-awb"></span>
-                    </div>
-                    <div class="tl-body" id="tlBody">
-                        <div class="tl-loading"><i class="fa fa-spinner fa-spin"></i> Memuat data tracking...</div>
-                    </div>
-                </div>
-                @endif
                 @endif
             </div>
 
@@ -460,74 +441,5 @@
     </div>
 </div>
 
-@push('scripts')
-<script>
-var tlLoaded = false;
-var tlExpanded = false;
-var tlAllHistory = [];
 
-function lacakPaket(btn) {
-    var panel = document.getElementById('tlPanel');
-    var visible = panel.style.display === 'block';
-    if (visible) {
-        panel.style.display = 'none';
-        btn.innerHTML = '<i class="fa fa-search"></i> Lacak Paket';
-        return;
-    }
-    panel.style.display = 'block';
-    btn.innerHTML = '<i class="fa fa-times"></i> Tutup Tracking';
-    if (tlLoaded) return;
-    btn.disabled = true;
-    fetch('{{ route("orders.track", $order) }}', { headers: {'X-Requested-With':'XMLHttpRequest'} })
-    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, data:d}; }); })
-    .then(function(r){
-        btn.disabled = false;
-        var body = document.getElementById('tlBody');
-        if (!r.ok) {
-            body.innerHTML = '<div class="tl-error">' + (r.data.error||'Gagal mengambil data.') + '</div>';
-            return;
-        }
-        tlLoaded = true;
-        var d = r.data;
-        var s = d.summary || {};
-        var courierName = (s.courier||'').toUpperCase() + (s.service ? ' ' + s.service : '');
-        document.getElementById('tlCourier').textContent = courierName;
-        document.getElementById('tlAwb').textContent = s.awb || '';
-        tlAllHistory = d.history || [];
-        renderTimeline(false);
-    })
-    .catch(function(){
-        btn.disabled = false;
-        document.getElementById('tlBody').innerHTML = '<div class="tl-error">Koneksi gagal. Coba lagi.</div>';
-    });
-}
-
-function renderTimeline(expanded) {
-    tlExpanded = expanded;
-    var list = tlAllHistory;
-    var preview = expanded ? list : list.slice(0, 5);
-    var html = '<ul class="tl-list">';
-    preview.forEach(function(h, i) {
-        var parts = (h.desc || h.description || '').split('\n');
-        var title = parts[0] || '';
-        var desc = parts.slice(1).join('<br>') || '';
-        var icon = i === 0 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-circle-o" style="font-size:9px"></i>';
-        html += '<li class="tl-item' + (i===0?' tl-first':'') + '">';
-        html += '<div class="tl-icon">' + icon + '</div>';
-        html += '<div class="tl-content">';
-        html += '<div class="tl-date">' + (h.date||'') + (h.time ? ' ' + h.time : '') + '</div>';
-        html += '<div class="tl-status">' + title + '</div>';
-        if (desc) html += '<div class="tl-desc">' + desc + '</div>';
-        html += '</div></li>';
-    });
-    html += '</ul>';
-    if (list.length > 5) {
-        html += '<div class="tl-more"><button onclick="renderTimeline(' + (!expanded) + ')">';
-        html += expanded ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Semua (' + (list.length - 5) + ' lainnya)';
-        html += '</button></div>';
-    }
-    document.getElementById('tlBody').innerHTML = html;
-}
-</script>
-@endpush
 @endsection
