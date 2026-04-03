@@ -14,6 +14,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SellerOrderController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -54,6 +56,13 @@ Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::
 
 // Profile routes
 Route::get('/profile', [ProfileController::class, 'show'])->middleware(['auth', 'verified'])->name('profile');
+Route::get('/profile/biodata', [ProfileController::class, 'showBiodata'])->middleware(['auth', 'verified'])->name('profile.biodata');
+Route::put('/profile/biodata', [ProfileController::class, 'updateBiodata'])->middleware(['auth', 'verified'])->name('profile.biodata.update');
+Route::get('/profile/alamat', [\App\Http\Controllers\AddressController::class, 'index'])->middleware(['auth', 'verified'])->name('profile.alamat');
+Route::post('/profile/alamat', [\App\Http\Controllers\AddressController::class, 'store'])->middleware(['auth', 'verified'])->name('profile.alamat.store');
+Route::put('/profile/alamat/{address}', [\App\Http\Controllers\AddressController::class, 'update'])->middleware(['auth', 'verified'])->name('profile.alamat.update');
+Route::delete('/profile/alamat/{address}', [\App\Http\Controllers\AddressController::class, 'destroy'])->middleware(['auth', 'verified'])->name('profile.alamat.destroy');
+Route::post('/profile/alamat/{address}/primary', [\App\Http\Controllers\AddressController::class, 'setPrimary'])->middleware(['auth', 'verified'])->name('profile.alamat.primary');
 Route::put('/profile', [ProfileController::class, 'update'])->middleware(['auth', 'verified'])->name('profile.update');
 Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->middleware(['auth', 'verified'])->name('profile.photo');
 Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->middleware(['auth', 'verified'])->name('profile.photo.delete');
@@ -62,6 +71,7 @@ Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->m
 
 // Produk routes (public browsing)
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
+Route::get('/kategori', [ProductController::class, 'categories'])->name('categories.index');
 Route::get('/produk/{product}', [ProductController::class, 'show'])->name('products.show');
 
 // Seller Product Management routes (auth required)
@@ -78,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
     Route::post('/keranjang/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/beli-langsung/{product}', [CartController::class, 'buyNow'])->name('cart.buy-now');
     Route::patch('/keranjang/{cart}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/keranjang/{cart}', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/keranjang', [CartController::class, 'clear'])->name('cart.clear');
@@ -89,12 +100,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Order routes
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/pesanan/{order}/terima', [OrderController::class, 'markReceived'])->name('orders.received');
+    Route::get('/pesanan/{order}/lacak', [OrderController::class, 'track'])->name('orders.track');
+
+    // Wishlist routes
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+    // Seller Center routes
+    Route::get('/penjual/pesanan', [SellerOrderController::class, 'index'])->name('seller.orders');
+    Route::get('/penjual/pesanan/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+    Route::patch('/penjual/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('seller.orders.status');
 });
 
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/users', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('admin.users');
     Route::patch('/users/{user}/toggle', [\App\Http\Controllers\Admin\UserManagementController::class, 'toggleActive'])->name('admin.users.toggle');
+
+    // Category management
+    Route::get('/categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories');
+    Route::post('/categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store');
+    Route::put('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
+    Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+    // Courier management
+    Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');
+    Route::post('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'store'])->name('admin.couriers.store');
+    Route::post('/couriers/{courier}', [\App\Http\Controllers\Admin\CourierController::class, 'update'])->name('admin.couriers.update');
+    Route::delete('/couriers/{courier}', [\App\Http\Controllers\Admin\CourierController::class, 'destroy'])->name('admin.couriers.destroy');
+    Route::patch('/couriers/{courier}/toggle', [\App\Http\Controllers\Admin\CourierController::class, 'toggleActive'])->name('admin.couriers.toggle');
+    Route::post('/couriers/{courier}/services', [\App\Http\Controllers\Admin\CourierController::class, 'storeService'])->name('admin.couriers.services.store');
+    Route::delete('/courier-services/{service}', [\App\Http\Controllers\Admin\CourierController::class, 'destroyService'])->name('admin.couriers.services.destroy');
+    Route::patch('/courier-services/{service}/toggle', [\App\Http\Controllers\Admin\CourierController::class, 'toggleService'])->name('admin.couriers.services.toggle');
 });
 
 // Info pages

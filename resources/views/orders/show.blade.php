@@ -16,13 +16,14 @@
 .card-title { font-size: 15px; font-weight: 700; color: #1e1f29; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; }
 .card-title .fa { color: #D10024; }
 
-.order-header-meta { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 6px; }
+.order-header-meta { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 6px; align-items: flex-end; }
+.meta-item { display: flex; flex-direction: column; justify-content: flex-end; }
 .meta-item label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; display: block; margin-bottom: 4px; }
 .meta-item value { font-size: 14px; font-weight: 600; color: #1e1f29; }
 
 .status-badge {
-    display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 13px;
-    font-weight: 700; color: #fff;
+    display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px;
+    font-weight: 700; color: #fff; letter-spacing: .4px;
 }
 
 /* Status Timeline */
@@ -78,6 +79,33 @@
 .btn-back:hover { background: #eee; }
 .btn-shop-again { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: #D10024; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background .15s; }
 .btn-shop-again:hover { background: #a8001e; }
+.btn-received { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background .15s; }
+.btn-received:hover { background: #059669; }
+.btn-track { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: none; transition: background .15s; }
+.btn-track:hover { background: #0369a1; color: #fff; }
+.btn-track:disabled { opacity: .6; cursor: default; }
+.order-actions-inline { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ── Tracking timeline panel ───────────────────────────── */
+.tl-panel { margin-top: 14px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; display: none; background: #fff; }
+.tl-head { padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+.tl-courier { font-size: 13px; font-weight: 700; color: #1e1f29; }
+.tl-awb { font-size: 12px; color: #888; }
+.tl-body { padding: 8px 0 4px; }
+.tl-list { list-style: none; margin: 0; padding: 0 16px; position: relative; }
+.tl-list::before { content:""; position: absolute; left: 28px; top: 8px; bottom: 8px; width: 2px; background: #e5e7eb; }
+.tl-item { display: flex; gap: 12px; padding: 10px 0; position: relative; }
+.tl-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #f0f1f5; border: 2px solid #e5e7eb; color: #aaa; font-size: 12px; z-index: 1; }
+.tl-item.tl-first .tl-icon { background: #d1fae5; border-color: #10b981; color: #10b981; }
+.tl-content { flex: 1; padding-top: 2px; }
+.tl-date { font-size: 11px; color: #888; margin-bottom: 2px; }
+.tl-status { font-size: 13px; font-weight: 700; color: #1e1f29; line-height: 1.4; }
+.tl-item.tl-first .tl-status { color: #059669; }
+.tl-desc { font-size: 12px; color: #555; margin-top: 2px; line-height: 1.5; }
+.tl-more { text-align: center; padding: 8px; border-top: 1px solid #f0f1f5; }
+.tl-more button { background: none; border: none; font-size: 12px; font-weight: 700; color: #0284c7; cursor: pointer; font-family: inherit; }
+.tl-loading { padding: 20px; text-align: center; color: #888; font-size: 13px; }
+.tl-error { padding: 12px 16px; color: #991b1b; font-size: 13px; background: #fee2e2; }
 </style>
 @endpush
 
@@ -111,7 +139,6 @@
                     </div>
                     <div class="meta-item">
                         <label>Status</label>
-                        <br>
                         <span class="status-badge" style="background: {{ $order->status_color }};">
                             {{ $order->status_label }}
                         </span>
@@ -164,6 +191,35 @@
                         <span>{{ $order->tracking_number }}</span>
                     </div>
                 </div>
+                @endif
+
+                {{-- Tombol konfirmasi & lacak (hanya saat status Dikirim) --}}
+                @if($order->status === 'shipped')
+                <div class="order-actions-inline">
+                    <form method="POST" action="{{ route('orders.received', $order) }}" onsubmit="return confirm('Konfirmasi pesanan sudah diterima?')" style="margin:0">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="btn-received">
+                            <i class="fa fa-check-circle"></i> Pesanan Selesai
+                        </button>
+                    </form>
+                    @if($order->tracking_number)
+                    <button type="button" class="btn-track" id="btnLacak" onclick="lacakPaket(this)">
+                        <i class="fa fa-search"></i> Lacak Paket
+                    </button>
+                    @endif
+                </div>
+
+                @if($order->tracking_number)
+                <div class="tl-panel" id="tlPanel">
+                    <div class="tl-head">
+                        <span id="tlCourier" class="tl-courier"></span>
+                        <span id="tlAwb" class="tl-awb"></span>
+                    </div>
+                    <div class="tl-body" id="tlBody">
+                        <div class="tl-loading"><i class="fa fa-spinner fa-spin"></i> Memuat data tracking...</div>
+                    </div>
+                </div>
+                @endif
                 @endif
             </div>
 
@@ -219,7 +275,7 @@
                 </div>
             </div>
 
-            <div style="display:flex;gap:12px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
                 <a href="{{ route('orders.index') }}" class="btn-back">
                     <i class="fa fa-arrow-left"></i> Kembali
                 </a>
@@ -275,7 +331,13 @@
                         <div>
                             <div class="info-label">Metode</div>
                             <div class="info-value">
-                                @if($order->payment_method === 'transfer') Transfer Bank @else {{ ucfirst($order->payment_method) }} @endif
+                                @if($order->payment_method === 'transfer')
+                                    Transfer Bank Manual
+                                @elseif($order->payment_method === 'virtual_account')
+                                    Virtual Account {{ strtoupper($order->va_bank ?? '') }}
+                                @else
+                                    {{ ucfirst($order->payment_method) }}
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -283,13 +345,98 @@
                         <div class="info-icon"><i class="fa fa-money"></i></div>
                         <div>
                             <div class="info-label">Total Tagihan</div>
+                            @if($order->payment_method === 'transfer' && $order->unique_code)
+                            <div class="info-value" style="color:#D10024;font-size:16px;">{{ $order->formatted_transfer_amount }}</div>
+                            @else
                             <div class="info-value" style="color:#D10024;font-size:16px;">{{ $order->formatted_total }}</div>
+                            @endif
                         </div>
                     </div>
                 </div>
 
+                @if($order->payment_method === 'transfer')
+                {{-- Unique code highlight --}}
+                @if($order->unique_code)
+                <div style="margin-top:14px;background:linear-gradient(135deg,#fff7ed,#fff);border:1.5px solid #fed7aa;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
+                    <div style="flex-shrink:0;width:40px;height:40px;background:#f97316;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fa fa-tag" style="color:#fff;font-size:16px;"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="font-size:11px;font-weight:700;color:#c2410c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Nominal Transfer Unik</div>
+                        <div style="font-size:20px;font-weight:800;color:#1e1f29;letter-spacing:1px;">{{ $order->formatted_transfer_amount }}</div>
+                        <div style="font-size:11px;color:#9a3412;margin-top:2px;">
+                            Subtotal <strong>{{ $order->formatted_total }}</strong> + kode unik <strong>{{ $order->unique_code }}</strong>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <div style="margin-top:12px;border:1px solid #e8e8e8;border-radius:8px;overflow:hidden;">
+                    <div style="background:#f9f9f9;padding:8px 14px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #eee;">
+                        <i class="fa fa-info-circle" style="color:#D10024;margin-right:4px;"></i> Rekening Tujuan Transfer
+                    </div>
+                    <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+                            <span style="color:#888;">Bank BCA</span>
+                            <span style="font-weight:700;color:#1e1f29;letter-spacing:.5px;">1234567890</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-top:6px;border-top:1px solid #f5f5f5;">
+                            <span style="color:#888;">Bank Mandiri</span>
+                            <span style="font-weight:700;color:#1e1f29;letter-spacing:.5px;">9876543210</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding-top:6px;border-top:1px solid #f5f5f5;">
+                            <span style="color:#888;">Bank BNI</span>
+                            <span style="font-weight:700;color:#1e1f29;letter-spacing:.5px;">1122334455</span>
+                        </div>
+                        <div style="padding-top:6px;border-top:1px solid #f5f5f5;font-size:12px;color:#888;">
+                            Atas nama: <strong style="color:#1e1f29;">NusaMart</strong>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if($order->payment_method === 'virtual_account' && $order->virtual_account_number)
+                @php
+                    $vaBankName = match($order->va_bank) {
+                        'bca'     => 'BCA',
+                        'mandiri' => 'Mandiri',
+                        'bni'     => 'BNI',
+                        'bri'     => 'BRI',
+                        default   => strtoupper($order->va_bank ?? ''),
+                    };
+                    $vaBankColor = match($order->va_bank) {
+                        'bca'     => '#005baa',
+                        'mandiri' => '#003d91',
+                        'bni'     => '#f15a24',
+                        'bri'     => '#00529b',
+                        default   => '#3b82f6',
+                    };
+                @endphp
+                <div style="margin-top:14px;border:2px solid #dbeafe;border-radius:10px;overflow:hidden;">
+                    <div style="background:#eff6ff;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #dbeafe;">
+                        <div style="background:{{ $vaBankColor }};color:#fff;font-size:10px;font-weight:800;padding:4px 8px;border-radius:4px;letter-spacing:.5px;">
+                            {{ $vaBankName }}
+                        </div>
+                        <span style="font-size:12px;font-weight:700;color:#1e40af;">Virtual Account {{ $vaBankName }}</span>
+                    </div>
+                    <div style="padding:16px 14px;text-align:center;">
+                        <div style="font-size:11px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Nomor Virtual Account</div>
+                        <div style="font-size:22px;font-weight:800;color:#1e1f29;letter-spacing:3px;font-family:monospace;">
+                            {{ chunk_split($order->virtual_account_number, 4, ' ') }}
+                        </div>
+                        <button type="button"
+                            onclick="navigator.clipboard.writeText('{{ $order->virtual_account_number }}');this.innerHTML='<i class=\'fa fa-check\'></i> Disalin!';"
+                            style="margin-top:10px;padding:6px 16px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:6px;color:#1d4ed8;font-size:12px;font-weight:600;cursor:pointer;">
+                            <i class="fa fa-copy"></i> Salin Nomor
+                        </button>
+                        <div style="margin-top:10px;font-size:11px;color:#888;">
+                            Atas nama: <strong style="color:#1e1f29;">NusaMart</strong>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 @if($order->status === 'pending')
-                <div style="margin-top:16px;background:#fef3c7;border-radius:8px;padding:12px;font-size:12px;color:#92400e;">
+                <div style="margin-top:12px;background:#fef3c7;border-radius:8px;padding:12px;font-size:12px;color:#92400e;">
                     <i class="fa fa-exclamation-triangle"></i>
                     <strong>Segera lakukan transfer</strong> sebesar <strong>{{ $order->formatted_total }}</strong>
                     ke rekening NusaMart. Pesanan akan dibatalkan jika tidak ada konfirmasi dalam 24 jam.
@@ -307,4 +454,75 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+var tlLoaded = false;
+var tlExpanded = false;
+var tlAllHistory = [];
+
+function lacakPaket(btn) {
+    var panel = document.getElementById('tlPanel');
+    var visible = panel.style.display === 'block';
+    if (visible) {
+        panel.style.display = 'none';
+        btn.innerHTML = '<i class="fa fa-search"></i> Lacak Paket';
+        return;
+    }
+    panel.style.display = 'block';
+    btn.innerHTML = '<i class="fa fa-times"></i> Tutup Tracking';
+    if (tlLoaded) return;
+    btn.disabled = true;
+    fetch('{{ route("orders.track", $order) }}', { headers: {'X-Requested-With':'XMLHttpRequest'} })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, data:d}; }); })
+    .then(function(r){
+        btn.disabled = false;
+        var body = document.getElementById('tlBody');
+        if (!r.ok) {
+            body.innerHTML = '<div class="tl-error">' + (r.data.error||'Gagal mengambil data.') + '</div>';
+            return;
+        }
+        tlLoaded = true;
+        var d = r.data;
+        var s = d.summary || {};
+        var courierName = (s.courier||'').toUpperCase() + (s.service ? ' ' + s.service : '');
+        document.getElementById('tlCourier').textContent = courierName;
+        document.getElementById('tlAwb').textContent = s.awb || '';
+        tlAllHistory = d.history || [];
+        renderTimeline(false);
+    })
+    .catch(function(){
+        btn.disabled = false;
+        document.getElementById('tlBody').innerHTML = '<div class="tl-error">Koneksi gagal. Coba lagi.</div>';
+    });
+}
+
+function renderTimeline(expanded) {
+    tlExpanded = expanded;
+    var list = tlAllHistory;
+    var preview = expanded ? list : list.slice(0, 5);
+    var html = '<ul class="tl-list">';
+    preview.forEach(function(h, i) {
+        var parts = (h.desc || h.description || '').split('\n');
+        var title = parts[0] || '';
+        var desc = parts.slice(1).join('<br>') || '';
+        var icon = i === 0 ? '<i class="fa fa-check"></i>' : '<i class="fa fa-circle-o" style="font-size:9px"></i>';
+        html += '<li class="tl-item' + (i===0?' tl-first':'') + '">';
+        html += '<div class="tl-icon">' + icon + '</div>';
+        html += '<div class="tl-content">';
+        html += '<div class="tl-date">' + (h.date||'') + (h.time ? ' ' + h.time : '') + '</div>';
+        html += '<div class="tl-status">' + title + '</div>';
+        if (desc) html += '<div class="tl-desc">' + desc + '</div>';
+        html += '</div></li>';
+    });
+    html += '</ul>';
+    if (list.length > 5) {
+        html += '<div class="tl-more"><button onclick="renderTimeline(' + (!expanded) + ')">';
+        html += expanded ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Semua (' + (list.length - 5) + ' lainnya)';
+        html += '</button></div>';
+    }
+    document.getElementById('tlBody').innerHTML = html;
+}
+</script>
+@endpush
 @endsection

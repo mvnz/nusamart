@@ -1,834 +1,187 @@
-@extends('layouts.app')
+﻿@extends('layouts.seller')
 
-@section('title', 'Produk Saya - NusaMart')
+@section('title', 'Produk Saya - Seller Center NusaMart')
+
+@section('breadcrumb', 'Produk / <strong>Daftar Produk</strong>')
 
 @section('content')
 
 @push('styles')
 <style>
-    /* Main Container - Properly integrated with site */
-    main {
-        background: #f8f9fa;
-    }
-
-    .my-products-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px 20px;
-    }
-
-    .my-products-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #eee;
-    }
-
-    .my-products-header h1 {
-        font-size: 28px;
-        font-weight: 700;
-        color: #333;
-        margin: 0;
-    }
-
-    .products-search-filter {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-    }
-
-    .search-input {
-        flex: 1;
-        min-width: 250px;
-        padding: 12px 16px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 14px;
-    }
-
-    .filter-status {
-        padding: 12px 16px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 14px;
-        background: white;
-        cursor: pointer;
-    }
-
-    .products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-
-    .product-card {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: all 0.3s;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .product-card:hover {
-        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        transform: translateY(-2px);
-    }
-
-    .product-image-wrapper {
-        position: relative;
-        width: 100%;
-        height: 280px;
-        background: #f5f5f5;
-        overflow: hidden;
-    }
-
-    .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .product-status-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        color: white;
-        background: #27ae60;
-    }
-
-    .product-status-badge.pending {
-        background: #f39c12;
-    }
-
-    .product-info {
-        padding: 15px;
-    }
-
-    .product-name {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin: 0 0 8px 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .product-category {
-        font-size: 12px;
-        color: #888;
-        margin: 0 0 10px 0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .product-price {
-        font-size: 16px;
-        font-weight: 700;
-        color: #D10024;
-        margin-bottom: 12px;
-    }
-
-    .product-stock {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 12px;
-    }
-
-    .product-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 12px;
-    }
-
-    .action-group {
-        display: flex;
-        gap: 8px;
-    }
-
-    .action-btn {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        text-decoration: none;
-        color: white;
-    }
-
-    .action-btn-primary {
-        background: #007bff;
-        color: white;
-    }
-
-    .action-btn-primary:hover {
-        background: #0056b3;
-    }
-
-    .action-btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-
-    .action-btn-danger:hover {
-        background: #c82333;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-    }
-
-    .empty-state-icon {
-        font-size: 48px;
-        color: #ccc;
-        margin-bottom: 15px;
-    }
-
-    .empty-state-text {
-        color: #999;
-        font-size: 16px;
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 2000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        animation: fadeIn 0.3s;
-    }
-
-    .modal.show,
-    .modal.active {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        padding: 30px;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        animation: slideDown 0.3s;
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-
-    #addProductModal .modal-content {
-        max-width: 650px;
-    }
-
-    @keyframes slideDown {
-        from {
-            transform: translateY(-50px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .modal-header h2 {
-        margin: 0;
-        font-size: 20px;
-        color: #333;
-    }
-
-    .modal-close {
-        background: none;
-        border: none;
-        font-size: 28px;
-        cursor: pointer;
-        color: #999;
-        padding: 0;
-        width: 30px;
-        height: 30px;
-    }
-
-    .modal-close:hover {
-        color: #333;
-    }
-
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 14px;
-        font-family: inherit;
-        box-sizing: border-box;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-    }
-
-    .form-control-checkbox {
-        width: auto;
-        margin-right: 8px;
-    }
-
-    .checkbox-label {
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        color: #333;
-        cursor: pointer;
-    }
-
-    /* Photo Section in Modal */
-    .photo-section {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 16px;
-    }
-
-    .current-photo {
-        width: 100%;
-        height: 150px;
-        background: #e9ecef;
-        border-radius: 6px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 12px;
-    }
-
-    .current-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .photo-actions-group {
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-    }
-
-    .btn-upload {
-        background: #17a2b8;
-        color: white;
-        flex: 1;
-    }
-
-    .btn-upload:hover {
-        background: #138496;
-    }
-
-    .btn-delete-photo {
-        background: #dc3545;
-        color: white;
-        flex: 1;
-    }
-
-    .btn-delete-photo:hover {
-        background: #c82333;
-    }
-
-    .btn-danger {
-        color: white;
-        background: #dc3545;
-        flex: 1;
-    }
-
-    .btn-danger:hover {
-        background: #c82333;
-    }
-
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-        flex: 1;
-    }
-
-    .btn-secondary:hover {
-        background: #545b62;
-    }
-
-    .btn-primary {
-        background: #007bff;
-        color: white;
-        flex: 1;
-    }
-
-    .btn-primary:hover {
-        background: #0056b3;
-    }
-
-    .modal-footer {
-        display: flex;
-        gap: 10px;
-        margin-top: 24px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-
-    /* Notification Toast Styles */
-    #notificationContainer {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        max-width: 400px;
-    }
-
-    .notification {
-        padding: 16px 20px;
-        margin-bottom: 10px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        animation: slideIn 0.3s ease-out;
-        font-size: 14px;
-        line-height: 1.4;
-        color: #333;
-    }
-
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slideOut {
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-
-    .notification.success {
-        background: #d4edda;
-        color: #155724;
-        border-left: 4px solid #28a745;
-    }
-
-    .notification.error {
-        background: #f8d7da;
-        color: #721c24;
-        border-left: 4px solid #dc3545;
-    }
-
-    .notification.warning {
-        background: #fff3cd;
-        color: #856404;
-        border-left: 4px solid #ffc107;
-    }
-
-    .notification.info {
-        background: #d1ecf1;
-        color: #0c5460;
-        border-left: 4px solid #17a2b8;
-    }
-
-    .notification.remove {
-        animation: slideOut 0.3s ease-out forwards;
-    }
-
-    .notification-icon {
-        flex-shrink: 0;
-        font-size: 18px;
-    }
-
-    .notification-content {
-        flex: 1;
-    }
-
-    .notification-close {
-        flex-shrink: 0;
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        padding: 0;
-        color: inherit;
-        opacity: 0.6;
-        transition: opacity 0.2s;
-    }
-
-    .notification-close:hover {
-        opacity: 1;
-    }
-
-    @media (max-width: 600px) {
-        #notificationContainer {
-            left: 10px;
-            right: 10px;
-            top: 10px;
-        }
-
-        .notification {
-            font-size: 13px;
-        }
-    }
-
-    /* Confirmation Modal Styles */
-    .confirmation-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9998;
-        animation: fadeIn 0.3s ease-out;
-    }
-
-    .confirmation-modal {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        animation: slideDown 0.3s ease-out;
-    }
-
-    .confirmation-modal h3 {
-        margin: 0 0 12px 0;
-        font-size: 18px;
-        color: #333;
-    }
-
-    .confirmation-modal p {
-        margin: 0 0 24px 0;
-        font-size: 14px;
-        color: #666;
-        line-height: 1.5;
-    }
-
-    .confirmation-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-    }
-
-    .confirmation-btn {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .confirmation-btn-cancel {
-        background: #6c757d;
-        color: white;
-    }
-
-    .confirmation-btn-cancel:hover {
-        background: #545b62;
-    }
-
-    .confirmation-btn-confirm {
-        background: #dc3545;
-        color: white;
-    }
-
-    .confirmation-btn-confirm:hover {
-        background: #c82333;
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 40px;
-        flex-wrap: wrap;
-    }
-
-    .pagination a, .pagination span {
-        font-size: 12px !important;
-        padding: 6px 10px !important;
-    }
-
-    /* View Toggle */
-    .view-toggle {
-        display: flex;
-        gap: 8px;
-    }
-
-    .view-btn {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        background: white;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        color: #666;
-        transition: all 0.2s;
-    }
-
-    .view-btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .products-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .product-card.list-view {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .product-card.list-view .product-image-wrapper {
-        width: 100px;
-        height: 100px;
-        min-width: 100px;
-        border-radius: 6px;
-    }
-
-    .product-card.list-view .product-info {
-        flex: 1;
-        padding: 10px 0;
-    }
-
-    /* Wizard Stepper */
-    .wizard-stepper {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 30px;
-        position: relative;
-    }
-
-    .wizard-stepper::before {
-        content: '';
-        position: absolute;
-        top: 20px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: #e0e0e0;
-        z-index: 1;
-    }
-
-    .wizard-step {
-        flex: 1;
-        text-align: center;
-        position: relative;
-        z-index: 2;
-    }
-
-    .wizard-step-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #e0e0e0;
-        color: #999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 10px;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-
-    .wizard-step.active .wizard-step-circle {
-        background: #007bff;
-        color: white;
-    }
-
-    .wizard-step.completed .wizard-step-circle {
-        background: #28a745;
-        color: white;
-    }
-
-    .wizard-step-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: #666;
-    }
-
-    .wizard-step.active .wizard-step-label {
-        color: #007bff;
-    }
-
-    .wizard-step.completed .wizard-step-label {
-        color: #28a745;
-    }
-
-    .wizard-content {
-        display: none;
-    }
-
-    .wizard-content.active {
-        display: block;
-    }
-
-    .wizard-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-    }
-
-    /* Add Product Button */
-    .add-product-btn {
-        padding: 12px 24px;
-        background: linear-gradient(135deg, #D10024, #ff4757);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .add-product-btn:hover {
-        box-shadow: 0 4px 12px rgba(209, 0, 36, 0.3);
-        transform: translateY(-1px);
-    }
-
-    .file-input-hidden {
-        display: none;
-    }
-
-    @media (max-width: 768px) {
-        .my-products-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .products-search-filter {
-            flex-direction: column;
-        }
-
-        .products-grid {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .modal-content {
-            width: 95%;
-        }
-    }
+/* â”€â”€â”€ Container â”€â”€â”€ */
+.my-products-container { max-width:100%; }
+
+/* â”€â”€â”€ Header â”€â”€â”€ */
+.my-products-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+
+/* â”€â”€â”€ Filter bar card â”€â”€â”€ */
+.mp-filter-card { display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.05); margin-bottom:18px; }
+.mp-search { display:flex; align-items:center; flex:1; min-width:180px; border:1.5px solid #e5e7eb; border-radius:8px; overflow:hidden; transition:border .2s; }
+.mp-search:focus-within { border-color:#D10024; }
+.mp-search i { padding:0 10px; color:#aaa; font-size:14px; }
+.search-input { flex:1; border:none; outline:none; padding:9px 0; font-size:13px; background:transparent; font-family:inherit; }
+.filter-status { padding:9px 14px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; outline:none; cursor:pointer; background:#fff; min-width:140px; transition:border .2s; font-family:inherit; }
+.filter-status:focus { border-color:#D10024; }
+.view-toggle { display:flex; gap:6px; }
+.view-btn { padding:8px 12px; border:1.5px solid #e5e7eb; background:#fff; border-radius:8px; cursor:pointer; font-size:12px; font-weight:700; color:#666; transition:all .2s; font-family:inherit; display:flex; align-items:center; gap:5px; }
+.view-btn.active { background:#D10024; color:#fff; border-color:#D10024; }
+
+/* â”€â”€â”€ Product grid â”€â”€â”€ */
+.products-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-bottom:24px; }
+
+/* â”€â”€â”€ Product card â”€â”€â”€ */
+.product-card { background:#fff; border:none; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:box-shadow .2s, transform .15s; }
+.product-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
+.product-image-wrapper { position:relative; width:100%; height:190px; background:#f4f5f7; overflow:hidden; }
+.product-image { width:100%; height:100%; object-fit:cover; }
+.product-status-badge { position:absolute; top:10px; right:10px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#d1fae5; color:#065f46; }
+.product-status-badge.pending { background:#fee2e2; color:#991b1b; }
+.product-info { padding:14px; }
+.product-name { font-size:13px; font-weight:700; color:#1e1f29; margin:0 0 4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.product-category { font-size:11px; color:#aaa; margin:0 0 8px; text-transform:uppercase; letter-spacing:.5px; }
+.product-price { font-size:15px; font-weight:800; color:#D10024; margin-bottom:6px; }
+.product-stock { font-size:12px; color:#666; margin-bottom:12px; }
+.product-actions { display:flex; flex-direction:column; gap:6px; }
+.action-group { display:flex; gap:8px; }
+.action-btn { flex:1; padding:8px 10px; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; transition:background .15s; display:flex; align-items:center; justify-content:center; gap:5px; font-family:inherit; text-decoration:none; }
+.action-btn-primary { background:#dbeafe; color:#1e40af; }
+.action-btn-primary:hover { background:#bfdbfe; color:#1e40af; }
+.action-btn-danger { background:#fee2e2; color:#991b1b; }
+.action-btn-danger:hover { background:#fecaca; }
+
+/* â”€â”€â”€ List view â”€â”€â”€ */
+.products-list { display:flex; flex-direction:column; gap:10px; }
+.product-card.list-view { display:flex; align-items:center; gap:14px; }
+.product-card.list-view .product-image-wrapper { width:90px; height:90px; min-width:90px; border-radius:8px; }
+.product-card.list-view .product-info { flex:1; padding:10px 0; }
+
+/* â”€â”€â”€ Empty state â”€â”€â”€ */
+.empty-state { text-align:center; padding:60px 20px; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.empty-state-icon { font-size:48px; color:#e5e7eb; margin-bottom:14px; }
+.empty-state-text { color:#aaa; font-size:13px; margin:0; }
+
+/* â”€â”€â”€ Modals â”€â”€â”€ */
+.modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.55); animation:mpFadeIn .25s; }
+.modal.show, .modal.active { display:flex; align-items:center; justify-content:center; }
+@keyframes mpFadeIn { from{opacity:0} to{opacity:1} }
+@keyframes mpSlideDown { from{transform:translateY(-40px);opacity:0} to{transform:translateY(0);opacity:1} }
+.modal-content { background:#fff; padding:28px; border-radius:14px; width:90%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 12px 40px rgba(0,0,0,.2); animation:mpSlideDown .3s; }
+#addProductModal .modal-content { max-width:620px; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid #f0f0f0; }
+.modal-header h2 { margin:0; font-size:17px; font-weight:800; color:#1e1f29; }
+.modal-close { background:none; border:none; font-size:24px; cursor:pointer; color:#aaa; padding:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background .15s; }
+.modal-close:hover { background:#f4f5f7; color:#333; }
+.modal-footer { display:flex; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid #f0f0f0; }
+
+/* â”€â”€â”€ Form â”€â”€â”€ */
+.form-group { margin-bottom:14px; }
+.form-label { display:block; margin-bottom:5px; font-size:12px; font-weight:700; color:#555; }
+.form-control { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; font-family:inherit; box-sizing:border-box; transition:border .2s; }
+.form-control:focus { outline:none; border-color:#D10024; box-shadow:0 0 0 3px rgba(209,0,36,.08); }
+.form-control-checkbox { width:auto; margin-right:8px; accent-color:#D10024; }
+.checkbox-label { display:flex; align-items:center; font-size:13px; color:#444; cursor:pointer; }
+
+/* â”€â”€â”€ Photo section â”€â”€â”€ */
+.photo-section { background:#f8f9fb; padding:14px; border-radius:10px; margin-bottom:16px; }
+.current-photo { width:100%; height:140px; background:#e9ecef; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.current-photo img { width:100%; height:100%; object-fit:cover; }
+.photo-actions-group { display:flex; gap:8px; }
+
+/* â”€â”€â”€ Buttons â”€â”€â”€ */
+.btn { padding:10px 16px; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; font-family:inherit; }
+.btn-upload { background:#3b82f6; color:#fff; flex:1; }
+.btn-upload:hover { background:#2563eb; }
+.btn-delete-photo { background:#fee2e2; color:#991b1b; flex:1; }
+.btn-delete-photo:hover { background:#fecaca; }
+.btn-danger { background:#D10024; color:#fff; flex:1; }
+.btn-danger:hover { background:#a8001e; }
+.btn-secondary { background:#f4f5f7; color:#555; flex:1; border:1.5px solid #e5e7eb; }
+.btn-secondary:hover { background:#e5e7eb; }
+.btn-primary { background:#D10024; color:#fff; flex:1; }
+.btn-primary:hover { background:#a8001e; }
+
+/* â”€â”€â”€ Notifications â”€â”€â”€ */
+#notificationContainer { position:fixed; top:20px; right:20px; z-index:9999; max-width:380px; }
+.notification { padding:14px 18px; margin-bottom:10px; border-radius:10px; display:flex; align-items:center; gap:10px; box-shadow:0 4px 14px rgba(0,0,0,.12); animation:notifIn .3s; font-size:13px; }
+@keyframes notifIn { from{transform:translateX(400px);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes notifOut { to{transform:translateX(400px);opacity:0} }
+.notification.success { background:#d1fae5; color:#065f46; border-left:4px solid #10b981; }
+.notification.error { background:#fee2e2; color:#991b1b; border-left:4px solid #ef4444; }
+.notification.warning { background:#fef3c7; color:#92400e; border-left:4px solid #f59e0b; }
+.notification.info { background:#dbeafe; color:#1e40af; border-left:4px solid #3b82f6; }
+.notification.remove { animation:notifOut .3s forwards; }
+.notification-icon { flex-shrink:0; font-size:16px; }
+.notification-content { flex:1; }
+.notification-close { flex-shrink:0; background:none; border:none; font-size:18px; cursor:pointer; color:inherit; opacity:.6; }
+.notification-close:hover { opacity:1; }
+
+/* â”€â”€â”€ Confirmation â”€â”€â”€ */
+.confirmation-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; z-index:9998; animation:mpFadeIn .3s; }
+.confirmation-modal { background:#fff; border-radius:12px; padding:24px; max-width:360px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,.2); animation:mpSlideDown .3s; }
+.confirmation-modal h3 { margin:0 0 10px; font-size:16px; color:#1e1f29; }
+.confirmation-modal p { margin:0 0 20px; font-size:13px; color:#666; line-height:1.5; }
+.confirmation-buttons { display:flex; gap:8px; justify-content:flex-end; }
+.confirmation-btn { padding:9px 16px; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
+.confirmation-btn-cancel { background:#f4f5f7; color:#555; }
+.confirmation-btn-cancel:hover { background:#e5e7eb; }
+.confirmation-btn-confirm { background:#D10024; color:#fff; }
+.confirmation-btn-confirm:hover { background:#a8001e; }
+
+/* â”€â”€â”€ Pagination â”€â”€â”€ */
+.pagination { display:flex; justify-content:center; gap:5px; margin-top:20px; flex-wrap:wrap; }
+.pagination a, .pagination span { font-size:12px !important; padding:6px 10px !important; }
+
+/* â”€â”€â”€ Wizard â”€â”€â”€ */
+.wizard-stepper { display:flex; justify-content:space-between; margin-bottom:28px; position:relative; }
+.wizard-stepper::before { content:''; position:absolute; top:18px; left:0; right:0; height:2px; background:#e5e7eb; z-index:1; }
+.wizard-step { flex:1; text-align:center; position:relative; z-index:2; }
+.wizard-step-circle { width:36px; height:36px; border-radius:50%; background:#e5e7eb; color:#aaa; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:13px; transition:all .3s; }
+.wizard-step.active .wizard-step-circle { background:#D10024; color:#fff; }
+.wizard-step.completed .wizard-step-circle { background:#10b981; color:#fff; }
+.wizard-step-label { font-size:11px; font-weight:700; color:#aaa; }
+.wizard-step.active .wizard-step-label { color:#D10024; }
+.wizard-step.completed .wizard-step-label { color:#10b981; }
+.wizard-content { display:none; }
+.wizard-content.active { display:block; }
+.wizard-buttons { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; padding-top:16px; border-top:1px solid #f0f0f0; }
+.add-product-btn { padding:10px 20px; background:#D10024; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; display:inline-flex; align-items:center; gap:8px; font-family:inherit; }
+.add-product-btn:hover { background:#a8001e; box-shadow:0 4px 12px rgba(209,0,36,.25); }
+.file-input-hidden { display:none; }
+
+@media(max-width:900px) { .products-grid { grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); } }
+@media(max-width:600px) { .products-grid { grid-template-columns:1fr 1fr; gap:12px; } .my-products-header { flex-direction:column; align-items:flex-start; gap:12px; } .mp-filter-card { flex-direction:column; align-items:stretch; } .modal-content { width:95%; padding:20px; } }
 </style>
 @endpush
 
-<div class="my-products-container">
-    <div class="my-products-header">
-        <div>
-            <h1>🛍️ Produk Saya</h1>
-            <div style="color: #999; font-size: 14px;">Total: <strong>{{ $products->total() }}</strong> produk</div>
-        </div>
-        <button class="add-product-btn" onclick="openAddProductWizard()">
-            <i class="fa fa-plus"></i> Tambah Produk
-        </button>
+{{-- Page Header --}}
+<div class="my-products-header">
+    <div>
+        <h1 style="margin:0 0 3px;font-size:20px;font-weight:800;color:#1e1f29;">Produk Saya</h1>
+        <p style="margin:0;font-size:12px;color:#aaa;">Total: <strong>{{ $products->total() }}</strong> produk</p>
     </div>
+    <button class="add-product-btn" onclick="openAddProductWizard()">
+        <i class="fa fa-plus"></i> Tambah Produk
+    </button>
+</div>
 
-    <!-- Search & Filter -->
-    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
-        <form method="GET" class="products-search-filter" style="flex: 1; margin-bottom: 0;">
-            <input type="text" name="search" class="search-input" placeholder="Cari produk..." value="{{ request('search') }}">
-            <select name="status" class="filter-status" onchange="this.form.submit()">
-                <option value="">Semua Status</option>
-                <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
-                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-            </select>
-        </form>
-        <div class="view-toggle">
-            <button class="view-btn active" id="gridViewBtn" onclick="toggleView('grid')"><i class="fa fa-th"></i> Grid</button>
-            <button class="view-btn" id="listViewBtn" onclick="toggleView('list')"><i class="fa fa-list"></i> List</button>
+{{-- Filter bar --}}
+<div class="mp-filter-card">
+    <form method="GET" style="display:flex;flex:1;gap:10px;flex-wrap:wrap;margin:0;">
+        <div class="mp-search">
+            <i class="fa fa-search"></i>
+            <input type="text" name="search" class="search-input" placeholder="Cari nama produk..." value="{{ request('search') }}">
         </div>
+        <select name="status" class="filter-status" onchange="this.form.submit()">
+            <option value="">Semua Status</option>
+            <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Aktif</option>
+            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Nonaktif</option>
+        </select>
+    </form>
+    <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" onclick="toggleView('grid')"><i class="fa fa-th"></i> Grid</button>
+        <button class="view-btn" id="listViewBtn" onclick="toggleView('list')"><i class="fa fa-list"></i> List</button>
     </div>
+</div>
 
     @if($products->count() > 0)
         <div class="products-grid" id="productsContainer">
@@ -843,7 +196,7 @@
                         </div>
                     @endif
                     <span class="product-status-badge {{ $product->is_active ? '' : 'pending' }}">
-                        {{ $product->is_active ? 'Available' : 'Pending' }}
+                        {{ $product->is_active ? 'Aktif' : 'Nonaktif' }}
                     </span>
                 </div>
 
@@ -852,7 +205,7 @@
                     <p class="product-category">{{ $product->category }}</p>
 
                     <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                    <div class="product-stock">📦 Stok: <strong>{{ $product->stock }}</strong></div>
+                    <div class="product-stock"><i class="fa fa-archive" style="color:#aaa;margin-right:4px"></i> Stok: <strong>{{ $product->stock }}</strong></div>
 
                     <div class="product-actions">
                         <div class="action-group">
@@ -877,18 +230,17 @@
         @endif
     @else
         <div class="empty-state">
-            <div class="empty-state-icon">📦</div>
+            <div class="empty-state-icon"><i class="fa fa-cube"></i></div>
             <p class="empty-state-text">Anda belum memiliki produk</p>
         </div>
     @endif
-</div>
 
 <!-- Add Product Wizard Modal -->
 <div id="addProductModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>Tambah Produk</h2>
-            <button class="modal-close" onclick="closeAddProductWizard()">×</button>
+            <button class="modal-close" onclick="closeAddProductWizard()">&times;</button>
         </div>
 
         <!-- Wizard Stepper -->
@@ -929,13 +281,9 @@
                     <label class="form-label">Kategori *</label>
                     <select id="newProductCategory" class="form-control" required>
                         <option value="">-- Pilih Kategori --</option>
-                        <option value="Beverage & Coffee">Beverage & Coffee</option>
-                        <option value="Spices & Herbs">Spices & Herbs</option>
-                        <option value="Leather & Fashion">Leather & Fashion</option>
-                        <option value="Electronics & Technology">Electronics & Technology</option>
-                        <option value="Beauty & Personal Care">Beauty & Personal Care</option>
-                        <option value="Traditional Food">Traditional Food</option>
-                        <option value="Handicraft & Souvenirs">Handicraft & Souvenirs</option>
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -982,8 +330,8 @@
             </div>
 
             <div class="wizard-buttons">
-                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display: none;">← Sebelumnya</button>
-                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Selanjutnya →</button>
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="prevStep()" style="display: none;"><i class="fa fa-arrow-left"></i> Sebelumnya</button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Selanjutnya <i class="fa fa-arrow-right"></i></button>
                 <button type="button" class="btn btn-primary" id="publishBtn" onclick="publishProduct()" style="display: none; background: #28a745;">
                     <i class="fa fa-check"></i> Publish
                 </button>
@@ -997,7 +345,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2>Edit Produk</h2>
-            <button class="modal-close" onclick="closeEditModal()">×</button>
+            <button class="modal-close" onclick="closeEditModal()">&times;</button>
         </div>
 
         <!-- Photo Management Section -->
@@ -1093,16 +441,16 @@ function showNotification(message, type = 'success') {
     notification.className = `notification ${type}`;
 
     const icons = {
-        success: '✓',
-        error: '✕',
-        warning: '⚠',
-        info: 'ℹ'
+        success: '<i class="fa fa-check"></i>',
+        error: '<i class="fa fa-times"></i>',
+        warning: '<i class="fa fa-exclamation-triangle"></i>',
+        info: '<i class="fa fa-info-circle"></i>'
     };
 
     notification.innerHTML = `
-        <div class="notification-icon">${icons[type] || '•'}</div>
+        <div class="notification-icon">${icons[type] || ''}</div>
         <div class="notification-content">${message}</div>
-        <button class="notification-close" onclick="this.parentElement.classList.add('remove'); setTimeout(() => this.parentElement.remove(), 300)">×</button>
+        <button class="notification-close" onclick="this.parentElement.classList.add('remove'); setTimeout(() => this.parentElement.remove(), 300)">&times;</button>
     `;
 
     container.appendChild(notification);
@@ -1525,11 +873,17 @@ window.publishProduct = function() {
     fetch('/produk', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': getCsrfToken()
+            'X-CSRF-TOKEN': getCsrfToken(),
+            'Accept': 'application/json'
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status !== 422) {
+            throw new Error('Server error: ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showNotification('Produk berhasil dipublikasikan!', 'success');

@@ -58,15 +58,121 @@
 .empty-state h3 { font-size: 18px; color: #555; margin-bottom: 8px; }
 
 .pagination-wrap { margin-top: 30px; display: flex; justify-content: center; }
+
+
 </style>
 @endpush
 
 @section('content')
+
+@if($selectedCategory)
+@php
+$catBannerColors = ['#e74c3c','#3498db','#9b59b6','#27ae60','#e67e22','#16a085','#f39c12','#e91e8c','#1abc9c','#2c3e50'];
+$catIdx = ($selectedCategory->id - 1) % count($catBannerColors);
+$bannerColor = $catBannerColors[$catIdx];
+@endphp
+<style>
+.cat-hero {
+    background: linear-gradient(135deg, {{ $bannerColor }}, {{ $bannerColor }}cc);
+    padding: 40px 0 32px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+.cat-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+}
+.cat-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+}
+.cat-hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+.cat-hero-icon {
+    width: 72px; height: 72px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: #fff;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+    border: 2px solid rgba(255,255,255,0.25);
+}
+.cat-hero-info { flex: 1; }
+.cat-hero-breadcrumb {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cat-hero-breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; }
+.cat-hero-breadcrumb a:hover { color: #fff; }
+.cat-hero-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.2;
+}
+.cat-hero-meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.cat-hero-meta span { display: flex; align-items: center; gap: 5px; }
+</style>
+<div class="cat-hero">
+    <div class="container">
+        <div class="cat-hero-inner">
+            <div class="cat-hero-icon"><i class="fa fa-tag"></i></div>
+            <div class="cat-hero-info">
+                <div class="cat-hero-breadcrumb">
+                    <a href="{{ route('home') }}">Beranda</a>
+                    <i class="fa fa-chevron-right" style="font-size:9px"></i>
+                    <a href="{{ route('products.index') }}">Semua Produk</a>
+                    <i class="fa fa-chevron-right" style="font-size:9px"></i>
+                    <span style="color:#fff">{{ $selectedCategory->name }}</span>
+                </div>
+                <div class="cat-hero-title">{{ $selectedCategory->name }}</div>
+                <div class="cat-hero-meta">
+                    <span><i class="fa fa-cube"></i> {{ $products->total() }} produk ditemukan</span>
+                    @if(request('search'))
+                    <span><i class="fa fa-search"></i> "{{ request('search') }}"</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="container shop-page">
+    @if(!$selectedCategory)
     <div class="shop-header">
         <h2>Semua Produk</h2>
         <p>Temukan produk pilihan terbaik dari para penjual kami</p>
     </div>
+    @else
+    <div style="height:24px"></div>
+    @endif
 
     @if(session('success'))
         <div style="background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;">
@@ -79,16 +185,17 @@
         </div>
     @endif
 
+
     <div class="shop-filters">
         <form action="{{ route('products.index') }}" method="GET">
+            @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
             <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
-            <select name="category">
-                <option value="">Semua Kategori</option>
-                @foreach(['Makanan', 'Minuman', 'Fashion', 'Kerajinan', 'Kesehatan', 'Lainnya'] as $cat)
-                    <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                @endforeach
-            </select>
             <button type="submit"><i class="fa fa-search"></i> Cari</button>
+            <select name="per_page" onchange="this.form.submit()">
+                <option value="12" {{ request('per_page', 12) == 12 ? 'selected' : '' }}>12 per halaman</option>
+                <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24 per halaman</option>
+                <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>48 per halaman</option>
+            </select>
         </form>
     </div>
 

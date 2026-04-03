@@ -33,7 +33,15 @@ class AuthController extends Controller
                 return redirect()->route('verification.notice');
             }
 
-            return redirect()->intended('/dashboard');
+            if (Auth::user()->role === 'admin') {
+                return redirect()->intended('/dashboard');
+            }
+
+            if (Auth::user()->role === 'penjual') {
+                return redirect()->intended(route('dashboard'));
+            }
+
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([

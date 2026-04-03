@@ -3,17 +3,19 @@
     $cartCount = 0;
     $cartItems = collect();
     $cartTotal = 0;
+    $wishlistCount = 0;
     if (auth()->check() && auth()->user()->role === 'pembeli') {
         $cartItems = auth()->user()->carts()->with('product')->get();
         $cartCount = $cartItems->sum('quantity');
         $cartTotal = $cartItems->sum(fn($item) => $item->quantity * $item->product->price);
+        $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
     }
 @endphp
 <header class="main-header">
     <div class="container">
         <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fa fa-bars"></i></button>
         <div class="logo-section">
-            <a href="{{ auth()->check() ? route('dashboard') : route('login') }}">
+            <a href="{{ route('home') }}">
                 <div class="logo-icon">N</div>
                 <span class="logo-text">Nusa<span>Mart</span></span>
             </a>
@@ -32,11 +34,13 @@
             </form>
         </div>
         <div class="header-right">
-            <a href="#" class="header-icon">
-                <i class="fa fa-heart-o"></i>
-                <span class="count-badge">0</span>
+            @if(!auth()->check() || auth()->user()->role !== 'penjual')
+            <a href="{{ auth()->check() && auth()->user()->role === 'pembeli' ? route('wishlist.index') : route('login') }}" class="header-icon">
+                <i class="fa {{ $wishlistCount > 0 ? 'fa-heart' : 'fa-heart-o' }}"></i>
+                <span class="count-badge">{{ $wishlistCount }}</span>
                 <span class="icon-label">Wishlist</span>
             </a>
+            @endif
             @if(auth()->user()->role === 'pembeli')
             <div class="cart-summary">
                 <a href="{{ route('cart.index') }}" class="header-icon" id="cartToggle">

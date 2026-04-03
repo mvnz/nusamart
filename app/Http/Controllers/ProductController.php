@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,26 +11,47 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::active()->with('seller');
+        $query = Product::active()->with(['seller', 'category']);
+        $selectedCategory = null;
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->filled('category')) {
+        if ($request->filled('category_id')) {
+            $selectedCategory = Category::find($request->category_id);
+            $query->where('category_id', $request->category_id);
+        } elseif ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
         $products = $query->latest()->paginate(12);
 
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'selectedCategory'));
+    }
+
+    public function categories()
+    {
+        $categories = Category::withCount('products')->orderBy('name')->get();
+
+        // Group alphabetically
+        $grouped = $categories->groupBy(fn($c) => strtoupper(substr($c->name, 0, 1)));
+
+        return view('categories.categories', compact('grouped'));
     }
 
     public function show(Product $product)
     {
         abort_if(!$product->is_active, 404);
 
-        return view('products.show', compact('product'));
+        $isWishlisted = false;
+        if (auth()->check()) {
+            $isWishlisted = \App\Models\Wishlist::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->exists();
+        }
+
+        return view('products.show', compact('product', 'isWishlisted'));
     }
 
     /**
@@ -55,8 +77,9 @@ class ProductController extends Controller
         }
 
         $products = $query->latest()->paginate(12);
+        $categories = \App\Models\Category::orderBy('name')->get();
 
-        return view('products.my-products', compact('products'));
+        return view('products.my-products', compact('products', 'categories'));
     }
 
     /**

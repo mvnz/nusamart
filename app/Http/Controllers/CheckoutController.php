@@ -32,7 +32,8 @@ class CheckoutController extends Controller
             'shipping_address'  => 'required|string|max:500',
             'shipping_city'     => 'required|string|max:100',
             'shipping_province' => 'required|string|max:100',
-            'payment_method'    => 'required|in:transfer',
+            'payment_method'    => 'required|in:transfer,virtual_account',
+            'va_bank'           => 'required_if:payment_method,virtual_account|nullable|in:bca,mandiri,bni,bri',
             'notes'             => 'nullable|string|max:500',
         ]);
 
@@ -52,19 +53,43 @@ class CheckoutController extends Controller
 
         $total = $cartItems->sum(fn($item) => $item->quantity * $item->product->price);
 
+        // Generate unique code (3-digit suffix) for transfer bank identification
+        $uniqueCode = null;
+        if ($request->payment_method === 'transfer') {
+            $uniqueCode = rand(1, 999);
+        }
+
+        // Generate VA number if payment method is virtual_account
+        $vaNumber = null;
+        $vaBank   = null;
+        if ($request->payment_method === 'virtual_account') {
+            $vaBank = $request->va_bank;
+            $prefix = match($vaBank) {
+                'bca'     => '88008',
+                'mandiri' => '88855',
+                'bni'     => '98811',
+                'bri'     => '26215',
+                default   => '88000',
+            };
+            $vaNumber = $prefix . str_pad(auth()->id(), 5, '0', STR_PAD_LEFT) . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+        }
+
         // Buat order
         $order = Order::create([
-            'order_number'      => 'NM-' . strtoupper(Str::random(8)),
-            'user_id'           => auth()->id(),
-            'total_amount'      => $total,
-            'status'            => 'pending',
-            'shipping_name'     => $request->shipping_name,
-            'shipping_phone'    => $request->shipping_phone,
-            'shipping_address'  => $request->shipping_address,
-            'shipping_city'     => $request->shipping_city,
-            'shipping_province' => $request->shipping_province,
-            'payment_method'    => $request->payment_method,
-            'notes'             => $request->notes,
+            'order_number'           => 'NM-' . strtoupper(Str::random(8)),
+            'user_id'                => auth()->id(),
+            'total_amount'           => $total,
+            'status'                 => 'pending',
+            'shipping_name'          => $request->shipping_name,
+            'shipping_phone'         => $request->shipping_phone,
+            'shipping_address'       => $request->shipping_address,
+            'shipping_city'          => $request->shipping_city,
+            'shipping_province'      => $request->shipping_province,
+            'payment_method'         => $request->payment_method,
+            'unique_code'            => $uniqueCode,
+            'virtual_account_number' => $vaNumber,
+            'va_bank'                => $vaBank,
+            'notes'                  => $request->notes,
         ]);
 
         // Buat order items dan kurangi stok

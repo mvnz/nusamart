@@ -3,12 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = auth()->user()->orders()->with('items')->latest()->paginate(10);
+        $query = auth()->user()->orders()->with('items.product.seller')->latest();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('order_number', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('items', fn($i) => $i->where('product_name', 'like', '%' . $request->search . '%'));
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'semua') {
+            $statusMap = [
+                'berlangsung' => ['pending', 'processing', 'shipped'],
+                'selesai'     => ['delivered'],
+                'dibatalkan'  => ['cancelled'],
+            ];
+            if (isset($statusMap[$request->status])) {
+                $query->whereIn('status', $statusMap[$request->status]);
+            } else {
+                $query->where('status', $request->status);
+            }
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
 
         return view('orders.index', compact('orders'));
     }
@@ -20,5 +44,47 @@ class OrderController extends Controller
         $order->load('items.product');
 
         return view('orders.show', compact('order'));
+    }
+
+    public function markReceived(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+        abort_if($order->status !== 'shipped', 422);
+
+        $order->update(['status' => 'delivered']);
+
+        return redirect()->route('orders.show', $order)
+            ->with('success', 'Pesanan telah dikonfirmasi diterima. Terima kasih!');
+    }
+
+    public function track(Order $order)
+    {
+        abort_if($order->user_id !== auth()->id(), 403);
+
+        $apiKey = config('services.binderbyte.key');
+        $awb    = $order->tracking_number;
+
+        if (!$awb) {
+            return response()->json(['error' => 'Nomor resi tidak tersedia.'], 422);
+        }
+
+        if (!$apiKey) {
+            return response()->json(['error' => 'API tracking belum dikonfigurasi.'], 503);
+        }
+
+        $response = Http::timeout(10)->get('https://api.binderbyte.com/v1/track', [
+            'api_key' => $apiKey,
+            'courier' => 'auto',
+            'awb'     => $awb,
+        ]);
+
+        $data = $response->json();
+
+        if (!$response->successful() || ($data['status'] ?? null) !== 200) {
+            $msg = $data['message'] ?? 'Gagal mengambil data tracking (HTTP ' . $response->status() . ').';
+            return response()->json(['error' => $msg], 422);
+        }
+
+        return response()->json($data['data']);
     }
 }

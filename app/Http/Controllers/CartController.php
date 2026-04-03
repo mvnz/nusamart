@@ -83,4 +83,29 @@ class CartController extends Controller
 
         return back()->with('success', 'Keranjang dikosongkan.');
     }
+
+    public function buyNow(Request $request, Product $product)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1|max:' . $product->stock,
+        ]);
+
+        if ($product->stock < 1) {
+            return back()->with('error', 'Produk ini sudah habis.');
+        }
+
+        if ($request->quantity > $product->stock) {
+            return back()->with('error', 'Jumlah melebihi stok yang tersedia (' . $product->stock . ').');
+        }
+
+        // Replace cart with only this item so checkout goes straight to this product
+        Cart::where('user_id', auth()->id())->delete();
+        Cart::create([
+            'user_id'    => auth()->id(),
+            'product_id' => $product->id,
+            'quantity'   => $request->quantity,
+        ]);
+
+        return redirect()->route('checkout.index');
+    }
 }

@@ -64,7 +64,18 @@
 
 .alert-error { background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px; }
 
-.error-msg { color: #ef4444; font-size: 12px; margin-top: 4px; }
+.va-bank-options { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-top: 12px; }
+.va-bank-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;
+    transition: all .2s; background: #fff;
+}
+.va-bank-btn:hover { border-color: #D10024; }
+.va-bank-btn input[type=radio] { display:none; }
+.va-bank-btn.selected { border-color: #D10024; background: #fff5f5; }
+.va-bank-logo { width: 36px; height: 22px; border-radius: 4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:#fff; flex-shrink:0; letter-spacing:.5px; }
+.va-bank-name { font-size: 13px; font-weight: 600; color: #1e1f29; }
+.va-bank-sub { font-size: 11px; color: #888; }
 </style>
 @endpush
 
@@ -135,15 +146,16 @@
                         <i class="fa fa-credit-card"></i> Metode Pembayaran
                     </div>
 
-                    <label class="payment-option active" id="transferOption">
-                        <input type="radio" name="payment_method" value="transfer" checked>
+                    {{-- Transfer Bank --}}
+                    <label class="payment-option {{ old('payment_method','transfer') === 'transfer' ? 'active' : '' }}" id="transferOption" onclick="switchPayment('transfer')">
+                        <input type="radio" name="payment_method" value="transfer" {{ old('payment_method','transfer') === 'transfer' ? 'checked' : '' }}>
                         <div class="payment-option-info">
-                            <h5><i class="fa fa-university" style="margin-right:6px;color:#D10024;"></i> Transfer Bank</h5>
-                            <p>Transfer ke rekening bank yang tersedia</p>
+                            <h5><i class="fa fa-university" style="margin-right:6px;color:#D10024;"></i> Transfer Bank Manual</h5>
+                            <p>Transfer ke rekening bank NusaMart</p>
                         </div>
                     </label>
 
-                    <div class="bank-info">
+                    <div id="transferInfo" class="bank-info" style="{{ old('payment_method','transfer') !== 'transfer' ? 'display:none' : '' }}">
                         <h6><i class="fa fa-info-circle" style="color:#D10024;margin-right:6px;"></i>Informasi Rekening</h6>
                         <div class="bank-row">
                             <span class="bank-label">Bank BCA</span>
@@ -161,6 +173,38 @@
                             <i class="fa fa-exclamation-triangle" style="color:#f59e0b;"></i>
                             Harap transfer sesuai total tagihan. Pesanan akan diproses setelah pembayaran dikonfirmasi.
                         </p>
+                    </div>
+
+                    {{-- Virtual Account --}}
+                    <label class="payment-option {{ old('payment_method') === 'virtual_account' ? 'active' : '' }}" id="vaOption" onclick="switchPayment('virtual_account')" style="margin-top:10px;">
+                        <input type="radio" name="payment_method" value="virtual_account" {{ old('payment_method') === 'virtual_account' ? 'checked' : '' }}>
+                        <div class="payment-option-info">
+                            <h5><i class="fa fa-barcode" style="margin-right:6px;color:#3b82f6;"></i> Virtual Account</h5>
+                            <p>Bayar otomatis via nomor VA yang digenerate</p>
+                        </div>
+                    </label>
+
+                    <div id="vaInfo" style="{{ old('payment_method') !== 'virtual_account' ? 'display:none' : '' }}">
+                        <div class="bank-info">
+                            <h6 style="color:#3b82f6;"><i class="fa fa-bank" style="color:#3b82f6;margin-right:6px;"></i>Pilih Bank</h6>
+                            <div class="va-bank-options">
+                                @foreach(['bca' => ['BCA', '#005baa'], 'mandiri' => ['Mandiri', '#003d91'], 'bni' => ['BNI', '#f15a24'], 'bri' => ['BRI', '#00529b']] as $bankVal => [$bankName, $bankColor])
+                                <label class="va-bank-btn {{ old('va_bank') === $bankVal ? 'selected' : '' }}" onclick="selectVaBank(this)">
+                                    <input type="radio" name="va_bank" value="{{ $bankVal }}" {{ old('va_bank') === $bankVal ? 'checked' : '' }}>
+                                    <div class="va-bank-logo" style="background:{{ $bankColor }}">{{ $bankName }}</div>
+                                    <div>
+                                        <div class="va-bank-name">Bank {{ $bankName }}</div>
+                                        <div class="va-bank-sub">Nomor VA otomatis</div>
+                                    </div>
+                                </label>
+                                @endforeach
+                            </div>
+                            @error('va_bank')<div class="error-msg" style="margin-top:6px;">{{ $message }}</div>@enderror
+                            <p style="font-size:12px;color:#888;margin-top:10px;">
+                                <i class="fa fa-info-circle" style="color:#3b82f6;"></i>
+                                Nomor Virtual Account akan ditampilkan setelah pesanan dibuat. Bayar sebelum batas waktu 24 jam.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -229,3 +273,34 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function switchPayment(method) {
+    var transferOpt = document.getElementById('transferOption');
+    var vaOpt       = document.getElementById('vaOption');
+    var transferInfo = document.getElementById('transferInfo');
+    var vaInfo       = document.getElementById('vaInfo');
+
+    if (method === 'transfer') {
+        transferOpt.classList.add('active');
+        vaOpt.classList.remove('active');
+        transferInfo.style.display = '';
+        vaInfo.style.display = 'none';
+        transferOpt.querySelector('input').checked = true;
+    } else {
+        vaOpt.classList.add('active');
+        transferOpt.classList.remove('active');
+        vaInfo.style.display = '';
+        transferInfo.style.display = 'none';
+        vaOpt.querySelector('input').checked = true;
+    }
+}
+
+function selectVaBank(label) {
+    document.querySelectorAll('.va-bank-btn').forEach(function(l){ l.classList.remove('selected'); });
+    label.classList.add('selected');
+    label.querySelector('input').checked = true;
+}
+</script>
+@endpush

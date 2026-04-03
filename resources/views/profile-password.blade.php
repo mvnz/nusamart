@@ -7,8 +7,8 @@
 <div class="breadcrumb-section">
     <div class="container">
         <ul class="breadcrumb">
-            <li><a href="{{ route('dashboard') }}">Beranda</a></li>
-            <li><a href="{{ route('profile') }}">Akun Saya</a></li>
+            <li><a href="{{ route('home') }}">Beranda</a></li>
+            <li><a href="{{ route('profile.biodata') }}">Akun Saya</a></li>
             <li class="active">Ubah Password</li>
         </ul>
     </div>
@@ -39,7 +39,7 @@
                 <div class="profile-avatar-card">
                     <div class="profile-avatar-wrapper">
                         @if(auth()->user()->photo)
-                            <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
+                            <img src="{{ asset('uploads/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
                         @else
                             <div class="profile-avatar">
                                 <i class="fa fa-user"></i>
@@ -55,8 +55,9 @@
                 </div>
 
                 <nav class="profile-nav">
-                    <a href="{{ route('profile') }}"><i class="fa fa-user"></i> Profil Saya</a>
-                    <a href="{{ route('profile.password') }}" class="active"><i class="fa fa-lock"></i> Ubah Password</a>
+                    <a href="{{ route('profile.biodata') }}" class="{{ request()->routeIs('profile.biodata') ? 'active' : '' }}"><i class="fa fa-user"></i> Biodata</a>
+                    <a href="{{ route('profile.alamat') }}" class="{{ request()->routeIs('profile.alamat') ? 'active' : '' }}"><i class="fa fa-map-marker"></i> Alamat</a>
+                    <a href="{{ route('profile.password') }}" class="{{ request()->routeIs('profile.password*') ? 'active' : '' }}"><i class="fa fa-lock"></i> Ubah Password</a>
                 </nav>
             </div>
 

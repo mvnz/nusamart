@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         ]);
+
+        // Release expired order stock at most once per hour via web traffic
+        $middleware->web(append: [
+            \App\Http\Middleware\ReleaseExpiredOrderStock::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

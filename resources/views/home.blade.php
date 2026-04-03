@@ -919,6 +919,77 @@
     .promo-banner-grid { grid-template-columns: 1fr; }
 }
 
+/* ===== PRODUCT TABS ===== */
+.prod-tabs-section { padding: 32px 0 24px; }
+.prod-tabs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.prod-tabs-nav { display: flex; gap: 0; border-bottom: 2px solid #f0f0f0; position: relative; }
+.prod-tab-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; font-weight: 700; color: #888;
+    padding: 10px 22px 12px; position: relative;
+    transition: color .2s; white-space: nowrap;
+}
+.prod-tab-btn.active { color: #D10024; }
+.prod-tab-btn.active::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -2px;
+    height: 3px; background: #D10024; border-radius: 2px 2px 0 0;
+}
+.prod-tab-btn:hover:not(.active) { color: #444; }
+.prod-tab-pane { display: none; }
+.prod-tab-pane.active { display: block; }
+.prod-tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+/* Product tile (image 3 style) */
+.ptile {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid #f0f0f0;
+    transition: all .22s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.ptile:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.10); border-color: rgba(209,0,36,.18); }
+.ptile-img {
+    position: relative;
+    height: 180px;
+    background: #f6f6f6;
+    overflow: hidden;
+}
+.ptile-img img { width:100%; height:100%; object-fit:cover; transition: transform .35s; }
+.ptile:hover .ptile-img img { transform: scale(1.06); }
+.ptile-img-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.ptile-disc-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: #e67e22; color: #fff;
+    font-size: 10px; font-weight: 800;
+    padding: 3px 8px; border-radius: 4px;
+    letter-spacing: .3px;
+}
+.ptile-body { padding: 12px 12px 14px; }
+.ptile-cat { font-size: 10px; color: #D10024; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.ptile-name {
+    font-size: 13px; font-weight: 700; color: #1e1f29; line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ptile-price-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.ptile-price { font-size: 15px; font-weight: 800; color: #D10024; }
+.ptile-original { font-size: 11px; color: #bbb; text-decoration: line-through; }
+.ptile-pct { background: #fff0f0; color: #D10024; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+.ptile-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid #f5f5f5; }
+.ptile-seller { font-size: 11px; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+.ptile-rating { font-size: 11px; color: #f39c12; display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+.ptile-rating span { color: #888; }
+@media (max-width: 1100px) { .prod-tabs-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px)  { .prod-tabs-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px)  { .prod-tabs-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
 /* ===== NEWSLETTER ===== */
 .newsletter-section {
     background: linear-gradient(135deg, #15161d, #1a1b2e);
@@ -977,6 +1048,7 @@
 <div class="home-wrapper">
 
     {{-- ===== HERO ===== --}}
+    @guest
     <section class="hero-section">
         <div class="container">
             <div class="hero-inner">
@@ -1032,6 +1104,7 @@
             </div>
         </div>
     </section>
+    @endguest
 
     {{-- ===== PROMO STRIP ===== --}}
     <div class="promo-strip">
@@ -1072,83 +1145,208 @@
 
     <div class="home-content-area">
 
-        {{-- ===== KATEGORI ===== --}}
-        <section class="categories-section">
-            <div class="categories-top-bar">
-                <button class="burger-menu-btn" id="categoryBurgerBtn" title="Buka Menu Kategori">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <h2 class="categories-section-title">Kategori Produk</h2>
-                <a href="#" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
-            </div>
-            <div class="categories-grid">
-                @foreach($categories as $cat)
-                <a href="#" class="category-card" data-category="{{ $cat['slug'] }}" onclick="filterByCategory(this); return false;">
-                    <div class="category-icon" style="background: {{ $cat['color'] }};">
-                        <i class="fa {{ $cat['icon'] }}"></i>
-                    </div>
-                    <span class="category-name">{{ $cat['name'] }}</span>
-                </a>
-                @endforeach
-            </div>
-        </section>
+        {{-- ===== KATEGORI POPULER ===== --}}
+        @php
+        $catColors = ['#e74c3c','#3498db','#9b59b6','#27ae60','#e67e22','#16a085','#f39c12','#e91e8c','#1abc9c','#2c3e50'];
+        $catIcons  = ['fa-cutlery','fa-coffee','fa-shopping-bag','fa-leaf','fa-paint-brush','fa-bolt','fa-gift','fa-heart','fa-cube','fa-star'];
+        @endphp
+        <section class="cat-populer-section">
+            <style>
+            .cat-populer-section { padding: 28px 0 8px; }
+            .cat-populer-box {
+                background: #fff;
+                border-radius: 16px;
+                border: 1px solid #f0f0f0;
+                box-shadow: 0 2px 12px rgba(0,0,0,.06);
+                display: flex;
+                gap: 0;
+                overflow: hidden;
+                margin-bottom: 12px;
+            }
+            .cat-promo-card {
+                background: linear-gradient(135deg, #D10024 0%, #8b0000 100%);
+                min-width: 220px;
+                max-width: 220px;
+                padding: 28px 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                position: relative;
+                overflow: hidden;
+            }
+            .cat-promo-card::before {
+                content: '';
+                position: absolute;
+                top: -30px; right: -30px;
+                width: 120px; height: 120px;
+                background: rgba(255,255,255,0.08);
+                border-radius: 50%;
+            }
+            .cat-promo-card::after {
+                content: '';
+                position: absolute;
+                bottom: -20px; left: -20px;
+                width: 90px; height: 90px;
+                background: rgba(255,255,255,0.06);
+                border-radius: 50%;
+            }
+            .cat-promo-label {
+                font-size: 11px;
+                font-weight: 700;
+                color: rgba(255,255,255,0.7);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 10px;
+            }
+            .cat-promo-title {
+                font-size: 18px;
+                font-weight: 800;
+                color: #fff;
+                line-height: 1.35;
+                margin-bottom: 6px;
+            }
+            .cat-promo-sub {
+                font-size: 12px;
+                color: rgba(255,255,255,0.75);
+                line-height: 1.5;
+                margin-bottom: 16px;
+            }
+            .cat-promo-btn {
+                display: inline-block;
+                background: #fff;
+                color: #D10024;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 8px 16px;
+                border-radius: 20px;
+                text-decoration: none;
+                transition: all .2s;
+                width: fit-content;
+                position: relative;
+                z-index: 1;
+            }
+            .cat-promo-btn:hover { background: #fff5f5; }
+            .cat-populer-right {
+                flex: 1;
+                padding: 20px 24px;
+            }
+            .cat-populer-heading {
+                font-size: 16px;
+                font-weight: 800;
+                color: #1a1b28;
+                margin-bottom: 16px;
+            }
+            .cat-chips-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 8px;
+            }
+            .cat-chip {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 16px 9px 10px;
+                background: #f9f9f9;
+                border: 1px solid #ebebeb;
+                border-radius: 50px;
+                text-decoration: none;
+                color: #333;
+                font-size: 13px;
+                font-weight: 500;
+                transition: all .2s;
+                white-space: normal;
+                word-break: break-word;
+            }
+            .cat-chip:hover {
+                background: #fff0f2;
+                border-color: #D10024;
+                color: #D10024;
+            }
+            .cat-chip-icon {
+                width: 26px; height: 26px;
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 12px;
+                color: #fff;
+                flex-shrink: 0;
+            }
 
-        {{-- ===== CATEGORIES DROPDOWN MENU ===== --}}
-        <div class="categories-dropdown-overlay" id="categoryDropdownOverlay"></div>
-        <div class="categories-dropdown-menu" id="categoryDropdownMenu">
-            <div class="dropdown-menu-header">
-                <h3 class="dropdown-menu-title">Kategori</h3>
-                <button class="dropdown-close-btn" id="closeDropdownBtn">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="dropdown-category-list">
-                <a href="#" class="dropdown-category-item" data-category="all" onclick="filterByCategory(null, 'all'); return false;">
-                    <div class="dropdown-category-icon" style="background: #666;">
-                        <i class="fa fa-th"></i>
+            @media (max-width: 768px) {
+                .cat-populer-box { flex-direction: column; }
+                .cat-promo-card { min-width: auto; max-width: none; flex-direction: row; align-items: center; gap: 12px; padding: 16px; }
+                .cat-chips-grid { grid-template-columns: repeat(3, 1fr); }
+            }
+            </style>
+
+            <div class="cat-populer-box">
+                <div class="cat-promo-card">
+                    <div>
+                        <div class="cat-promo-label">UMKM Lokal</div>
+                        <div class="cat-promo-title">Yuk, belanja di NusaMart</div>
+                        <div class="cat-promo-sub">Barang lengkap dari beragam kategori</div>
                     </div>
-                    <span class="dropdown-category-name">Semua Kategori</span>
-                </a>
-                @foreach($categories as $cat)
-                <a href="#" class="dropdown-category-item" data-category="{{ $cat['slug'] }}" onclick="filterByCategory(this); return false;">
-                    <div class="dropdown-category-icon" style="background: {{ $cat['color'] }};">
-                        <i class="fa {{ $cat['icon'] }}"></i>
+                    <a href="{{ route('products.index') }}" class="cat-promo-btn">Cek Sekarang</a>
+                </div>
+                <div class="cat-populer-right">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+                        <div class="cat-populer-heading" style="margin-bottom:0">Kategori Populer</div>
+                        <a href="{{ route('categories.index') }}" style="font-size:13px;font-weight:600;color:#D10024;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                            Semua Kategori <i class="fa fa-arrow-right" style="font-size:11px"></i>
+                        </a>
                     </div>
-                    <span class="dropdown-category-name">{{ $cat['name'] }}</span>
-                </a>
-                @endforeach
+                    <div class="cat-chips-grid">
+                        @foreach($navCategories->take(10) as $idx => $cat)
+                        <a href="{{ route('products.index', ['category_id' => $cat->id]) }}" class="cat-chip">
+                            <div class="cat-chip-icon" style="background: {{ $catColors[$idx % count($catColors)] }};">
+                                <i class="fa {{ $catIcons[$idx % count($catIcons)] }}"></i>
+                            </div>
+                            <span>{{ $cat->name }}</span>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-        </div>
+
+
+        </section>
 
         {{-- ===== PROMO BANNER ===== --}}
+        @php
+            $bannerGradients = [
+                'linear-gradient(135deg,#D10024,#8B0000)',
+                'linear-gradient(135deg,#1565c0,#0d47a1)',
+                'linear-gradient(135deg,#2e7d32,#1b5e20)',
+            ];
+        @endphp
+        @if(!empty($promoBanners))
         <section class="promo-banner-section">
             <div class="promo-banner-grid">
-                <a href="{{ route('login') }}" class="promo-banner-card" style="min-height:200px">
-                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80" alt="Promo Utama">
+                @foreach($promoBanners as $bi => $banner)
+                <a href="{{ route('products.index', ['category_id' => $banner['id']]) }}"
+                   class="promo-banner-card"
+                   @if($bi === 0) style="min-height:200px" @endif>
+                    @if($banner['image'])
+                        <img src="{{ asset('storage/' . $banner['image']) }}" alt="{{ $banner['name'] }}">
+                    @else
+                        <div style="position:absolute;inset:0;{{ $bannerGradients[$bi % 3] }}"></div>
+                    @endif
                     <div class="promo-banner-overlay">
-                        <div class="promo-banner-tag"><i class="fa fa-bolt"></i> Flash Sale Hari Ini</div>
-                        <div class="promo-banner-title">Diskon s/d 50%</div>
-                        <div class="promo-banner-sub">Produk pilihan UMKM unggulan</div>
+                        <div class="promo-banner-tag"><i class="fa fa-tag"></i> {{ $banner['name'] }}</div>
+                        @if($bi === 0)
+                        <div class="promo-banner-title">Produk Pilihan Hari Ini</div>
+                        <div class="promo-banner-sub">Temukan produk unggulan UMKM</div>
+                        @else
+                        <div class="promo-banner-title">{{ $banner['name'] }}</div>
+                        @endif
                     </div>
                 </a>
-                <a href="{{ route('login') }}" class="promo-banner-card">
-                    <img src="https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&q=80" alt="Kerajinan">
-                    <div class="promo-banner-overlay">
-                        <div class="promo-banner-tag">Kerajinan</div>
-                        <div class="promo-banner-title">Handmade Lokal</div>
-                    </div>
-                </a>
-                <a href="{{ route('login') }}" class="promo-banner-card">
-                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=400&q=80" alt="Fashion">
-                    <div class="promo-banner-overlay">
-                        <div class="promo-banner-tag">Fashion</div>
-                        <div class="promo-banner-title">Batik & Tenun</div>
-                    </div>
-                </a>
+                @endforeach
             </div>
         </section>
+        @endif
 
         {{-- ===== FLASH SALE ===== --}}
+        @if(!empty($flashSaleProducts))
         <section class="flash-sale-section">
             <div class="flash-sale-header">
                 <div class="flash-sale-title">
@@ -1158,33 +1356,38 @@
                 <div class="flash-countdown">
                     <span style="color:#888;font-size:12px;margin-right:4px;">Berakhir dalam:</span>
                     <div class="countdown-block">
-                        <span class="countdown-num" id="cd-h">05</span>
+                        <span class="countdown-num" id="cd-h">00</span>
                         <span class="countdown-label">jam</span>
                     </div>
                     <span class="countdown-sep">:</span>
                     <div class="countdown-block">
-                        <span class="countdown-num" id="cd-m">42</span>
+                        <span class="countdown-num" id="cd-m">00</span>
                         <span class="countdown-label">mnt</span>
                     </div>
                     <span class="countdown-sep">:</span>
                     <div class="countdown-block">
-                        <span class="countdown-num" id="cd-s">18</span>
+                        <span class="countdown-num" id="cd-s">00</span>
                         <span class="countdown-label">dtk</span>
                     </div>
                 </div>
             </div>
             <div class="flash-sale-scroll">
                 <div class="flash-products-row">
-                    @foreach($featuredProducts as $p)
-                    @if($p['original_price'] > $p['price'])
-                    <div class="flash-product-card">
+                    @foreach($flashSaleProducts as $p)
+                    <a href="{{ route('products.show', $p['id']) }}" class="flash-product-card" style="text-decoration:none;color:inherit">
+                        @if($p['image'])
                         <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}">
+                        @else
+                        <div style="width:100%;height:140px;background:#2a2b3a;display:flex;align-items:center;justify-content:center">
+                            <i class="fa fa-image" style="font-size:40px;color:#444"></i>
+                        </div>
+                        @endif
                         <div class="flash-product-info">
                             <div class="flash-product-name">{{ $p['name'] }}</div>
                             <div class="flash-price-row">
                                 <span class="flash-price">Rp {{ number_format($p['price'], 0, ',', '.') }}</span>
                                 <span class="flash-original">Rp {{ number_format($p['original_price'], 0, ',', '.') }}</span>
-                                <span class="flash-disc">{{ round((1 - $p['price']/$p['original_price']) * 100) }}%</span>
+                                <span class="flash-disc">{{ round((1 - $p['price'] / $p['original_price']) * 100) }}%</span>
                             </div>
                             <div class="flash-progress">
                                 <div class="flash-progress-bar">
@@ -1193,120 +1396,87 @@
                                 <div class="flash-progress-text">Terjual {{ $p['sold'] }}</div>
                             </div>
                         </div>
-                    </div>
-                    @endif
+                    </a>
                     @endforeach
                 </div>
             </div>
         </section>
+        @endif
 
-        {{-- ===== PRODUK UNGGULAN ===== --}}
-        <section class="products-section">
-            <div class="section-header">
-                <h2 class="section-title">Produk Unggulan UMKM</h2>
-                <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
-            </div>
-        {{-- ===== PRODUK UNGGULAN ===== --}}
-        <section class="products-section">
-            <div class="section-header">
-                <h2 class="section-title">Produk Unggulan UMKM</h2>
-                <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
-            </div>
-            <div class="products-grid">
-                @foreach($featuredProducts as $product)
-                <div class="product-card" data-category="{{ strtolower(str_replace(' ', '-', $product['category'])) }}">
-                    <div class="product-img-wrap">
-                        <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}">
-                        @if($product['badge'])
-                        <span class="product-badge badge-{{ strtolower($product['badge']) }}">{{ $product['badge'] }}</span>
-                        @endif
-                        <button class="product-wishlist"><i class="fa fa-heart-o"></i></button>
+        {{-- ===== TABBED PRODUCTS ===== --}}
+        <section class="prod-tabs-section">
+            <div class="container">
+                @php
+                    $tabUsername = Auth::check() ? explode(' ', Auth::user()->name)[0] : 'Kamu';
+                @endphp
+                <div class="prod-tabs-nav" id="prodTabsNav">
+                    <button class="prod-tab-btn active" onclick="switchProdTab('for_user', this)">
+                        For {{ $tabUsername }}
+                    </button>
+                    <button class="prod-tab-btn" onclick="switchProdTab('rekomendasi', this)">
+                        Rekomendasi
+                    </button>
+                    <button class="prod-tab-btn" onclick="switchProdTab('populer', this)">
+                        Populer
+                    </button>
+                </div>
+
+                @foreach(['for_user' => $tabProducts['for_user'], 'rekomendasi' => $tabProducts['rekomendasi'], 'populer' => $tabProducts['populer']] as $tabKey => $tabItems)
+                <div class="prod-tab-pane {{ $tabKey === 'for_user' ? 'active' : '' }}" id="prod-tab-{{ $tabKey }}" style="padding-top:20px">
+                    @if(count($tabItems) > 0)
+                    <div class="prod-tabs-grid">
+                        @foreach($tabItems as $p)
+                        @php $disc = round((1 - $p['price'] / $p['original_price']) * 100); @endphp
+                        <a href="{{ route('products.show', $p['id']) }}" class="ptile">
+                            <div class="ptile-img">
+                                @if($p['image'])
+                                    <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}">
+                                @else
+                                    <div class="ptile-img-placeholder">
+                                        <i class="fa fa-image" style="font-size:36px;color:#ddd"></i>
+                                    </div>
+                                @endif
+                                @if($disc > 0)
+                                <span class="ptile-disc-badge">{{ $disc }}%</span>
+                                @endif
+                            </div>
+                            <div class="ptile-body">
+                                <div class="ptile-cat">{{ $p['category'] }}</div>
+                                <div class="ptile-name">{{ $p['name'] }}</div>
+                                <div class="ptile-price-row">
+                                    <span class="ptile-price">Rp {{ number_format($p['price'], 0, ',', '.') }}</span>
+                                    @if($disc > 0)
+                                    <span class="ptile-original">Rp {{ number_format($p['original_price'], 0, ',', '.') }}</span>
+                                    <span class="ptile-pct">{{ $disc }}%</span>
+                                    @endif
+                                </div>
+                                <div class="ptile-footer">
+                                    <span class="ptile-seller"><i class="fa fa-store"></i> {{ $p['seller'] }}</span>
+                                    <span class="ptile-rating">
+                                        <i class="fa fa-star"></i>
+                                        {{ $p['rating'] }}
+                                        <span>({{ $p['sold'] }})</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
                     </div>
-                    <div class="product-info">
-                        <div class="product-category-tag">{{ $product['category'] }}</div>
-                        <div class="product-name">{{ $product['name'] }}</div>
-                        <div class="product-price-row">
-                            <span class="product-price">Rp {{ number_format($product['price'], 0, ',', '.') }}</span>
-                            @if($product['original_price'] > $product['price'])
-                            <span class="product-original-price">Rp {{ number_format($product['original_price'], 0, ',', '.') }}</span>
-                            <span class="product-discount">{{ round((1 - $product['price']/$product['original_price']) * 100) }}%</span>
-                            @endif
-                        </div>
-                        <div class="product-footer">
-                            <span class="product-seller"><i class="fa fa-store"></i> {{ $product['seller'] }}</span>
-                            <span class="product-rating">
-                                <i class="fa fa-star"></i>
-                                {{ $product['rating'] }}
-                                <span>({{ $product['sold'] }})</span>
-                            </span>
-                        </div>
+                    @else
+                    <div style="text-align:center;padding:48px;color:#bbb">
+                        <i class="fa fa-box-open" style="font-size:40px;display:block;margin-bottom:12px"></i>
+                        <div>Belum ada produk tersedia</div>
                     </div>
+                    @endif
                 </div>
                 @endforeach
-            </div>
-        </section>
-        </section>
 
-        {{-- ===== PENJUAL UMKM ===== --}}
-        <section class="sellers-section">
-            <div class="section-header">
-                <h2 class="section-title">Toko UMKM Terpercaya</h2>
-                <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
-            </div>
-            <div class="sellers-grid">
-                @foreach($sellers as $seller)
-                <a href="{{ route('login') }}" class="seller-card">
-                    <div class="seller-avatar">
-                        <img src="{{ $seller['image'] }}" alt="{{ $seller['name'] }}">
-                    </div>
-                    <div class="seller-name">{{ $seller['name'] }}</div>
-                    <div class="seller-category">{{ $seller['category'] }}</div>
-                    <div class="seller-stats">
-                        <div class="seller-stat">
-                            <span class="seller-stat-num">{{ $seller['products'] }}</span>
-                            <span class="seller-stat-label">Produk</span>
-                        </div>
-                        <div class="seller-stat">
-                            <span class="seller-stat-num" style="color:#f39c12"><i class="fa fa-star"></i> {{ $seller['rating'] }}</span>
-                            <span class="seller-stat-label">Rating</span>
-                        </div>
-                    </div>
-                </a>
-                @endforeach
-            </div>
-        </section>
-
-        {{-- ===== PRODUK BARU ===== --}}
-        <section class="products-section">
-            <div class="section-header">
-                <h2 class="section-title">Produk Terbaru</h2>
-                <a href="{{ route('login') }}" class="section-view-all">Lihat Semua <i class="fa fa-arrow-right"></i></a>
-            </div>
-            <div class="products-grid">
-                @foreach($newProducts as $product)
-                <div class="product-card" data-category="{{ strtolower(str_replace(' ', '-', $product['category'])) }}">
-                    <div class="product-img-wrap">
-                        <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}">
-                        <span class="product-badge badge-baru">Baru</span>
-                        <button class="product-wishlist"><i class="fa fa-heart-o"></i></button>
-                    </div>
-                    <div class="product-info">
-                        <div class="product-category-tag">{{ $product['category'] }}</div>
-                        <div class="product-name">{{ $product['name'] }}</div>
-                        <div class="product-price-row">
-                            <span class="product-price">Rp {{ number_format($product['price'], 0, ',', '.') }}</span>
-                        </div>
-                        <div class="product-footer">
-                            <span class="product-seller"><i class="fa fa-store"></i> {{ $product['seller'] }}</span>
-                            <span class="product-rating">
-                                <i class="fa fa-star"></i>
-                                {{ $product['rating'] }}
-                                <span>({{ $product['sold'] }})</span>
-                            </span>
-                        </div>
-                    </div>
+                <div style="text-align:center;margin-top:24px">
+                    <a href="{{ route('products.index') }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;border:1.5px solid #D10024;color:#D10024;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s"
+                       onmouseover="this.style.background='#D10024';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#D10024'">
+                        Lihat Semua Produk <i class="fa fa-arrow-right"></i>
+                    </a>
                 </div>
-                @endforeach
             </div>
         </section>
 
@@ -1369,10 +1539,19 @@
 
 @push('scripts')
 <script>
+// Product Tab Switcher
+function switchProdTab(key, btn) {
+    document.querySelectorAll('.prod-tab-pane').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.prod-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('prod-tab-' + key).classList.add('active');
+    btn.classList.add('active');
+}
+
 // Countdown Timer
 (function() {
-    var deadline = new Date();
-    deadline.setHours(deadline.getHours() + 5, deadline.getMinutes() + 42, deadline.getSeconds() + 18);
+    // Countdown to midnight (flash sale resets daily with new products)
+    var now = new Date();
+    var deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
 
     function pad(n) { return n < 10 ? '0' + n : n; }
     function updateCountdown() {

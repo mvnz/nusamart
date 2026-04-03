@@ -93,6 +93,60 @@
     flex-shrink: 0;
 }
 
+.nav-pengaturan { position: relative; }
+.nav-pengaturan-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+.nav-pengaturan-btn:hover, .nav-pengaturan-btn.active {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: #fff;
+}
+.nav-pengaturan-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    display: none;
+    min-width: 200px;
+    z-index: 1000;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.nav-pengaturan-dropdown.active { display: block; }
+.nav-pengaturan-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    text-decoration: none;
+    color: #444;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.nav-pengaturan-dropdown a:hover {
+    background: #f9f9f9;
+    border-left-color: #D10024;
+    color: #D10024;
+}
+.nav-pengaturan-dropdown a i { color: #D10024; width: 16px; text-align: center; }
+
 @media (max-width: 768px) {
     .nav-user-dropdown { display: block !important; position: relative; border-top: 1px solid rgba(255,255,255,0.07); }
     .nav-user-dropdown .user-dropdown-toggle { color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 6px; text-decoration: none; }
@@ -106,75 +160,52 @@
 <nav class="main-nav" id="mainNav">
     <div class="container">
         <div style="position: relative;">
+            @if(!auth()->check() || auth()->user()->role !== 'admin')
+            @php
+            $navIconColors = ['#e74c3c','#3498db','#9b59b6','#27ae60','#e67e22','#16a085','#f39c12','#e91e8c','#1abc9c','#2c3e50'];
+            @endphp
             <button class="nav-categories-btn" id="navCategoryBtn"><i class="fa fa-bars"></i> Kategori</button>
             <div class="nav-categories-dropdown" id="navCategoryDropdown">
                 <div class="nav-dropdown-header">Kategori Produk</div>
                 <div class="nav-dropdown-items">
-                    <a href="#" class="nav-dropdown-item" data-category="all" onclick="filterByCategory(null, 'all'); return false;">
+                    <a href="{{ route('categories.index') }}" class="nav-dropdown-item {{ request()->routeIs('categories.index') ? 'active' : '' }}">
                         <div class="nav-dropdown-item-icon" style="background: #666;">
                             <i class="fa fa-th"></i>
                         </div>
                         <span>Semua Kategori</span>
                     </a>
-                    <a href="#" class="nav-dropdown-item" data-category="makanan" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #e74c3c;">
-                            <i class="fa fa-cutlery"></i>
+                    @foreach($navCategories as $navIdx => $navCat)
+                    <a href="{{ route('products.index', ['category_id' => $navCat->id]) }}" class="nav-dropdown-item {{ request('category_id') == $navCat->id ? 'active' : '' }}">
+                        <div class="nav-dropdown-item-icon" style="background: {{ $navIconColors[$navIdx % count($navIconColors)] }};">
+                            <i class="fa fa-tag"></i>
                         </div>
-                        <span>Makanan</span>
+                        <span>{{ $navCat->name }}</span>
                     </a>
-                    <a href="#" class="nav-dropdown-item" data-category="minuman" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #3498db;">
-                            <i class="fa fa-coffee"></i>
-                        </div>
-                        <span>Minuman</span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+        <div class="nav-menu">
+            @auth
+            @if(auth()->user()->role == 'admin')
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
+            <div class="nav-pengaturan" id="navPengaturan">
+                <button class="nav-pengaturan-btn {{ request()->routeIs('admin.*') ? 'active' : '' }}" id="navPengaturanBtn">
+                    <i class="fa fa-cog"></i> Pengaturan <i class="fa fa-caret-down" style="font-size:11px"></i>
+                </button>
+                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown">
+                    <a href="{{ route('admin.categories') }}" class="{{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
+                        <i class="fa fa-tags"></i> Kategori
                     </a>
-                    <a href="#" class="nav-dropdown-item" data-category="fashion" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #9b59b6;">
-                            <i class="fa fa-shopping-bag"></i>
-                        </div>
-                        <span>Fashion</span>
+                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                        <i class="fa fa-users"></i> Pengguna
                     </a>
-                    <a href="#" class="nav-dropdown-item" data-category="kerajinan" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #e67e22;">
-                            <i class="fa fa-paint-brush"></i>
-                        </div>
-                        <span>Kerajinan</span>
-                    </a>
-                    <a href="#" class="nav-dropdown-item" data-category="kesehatan" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #27ae60;">
-                            <i class="fa fa-leaf"></i>
-                        </div>
-                        <span>Kesehatan</span>
-                    </a>
-                    <a href="#" class="nav-dropdown-item" data-category="pertanian" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #16a085;">
-                            <i class="fa fa-pagelines"></i>
-                        </div>
-                        <span>Pertanian</span>
-                    </a>
-                    <a href="#" class="nav-dropdown-item" data-category="rumah-tangga" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #f39c12;">
-                            <i class="fa fa-home"></i>
-                        </div>
-                        <span>Rumah Tangga</span>
-                    </a>
-                    <a href="#" class="nav-dropdown-item" data-category="souvenir" onclick="filterByCategory(this); return false;">
-                        <div class="nav-dropdown-item-icon" style="background: #e91e8c;">
-                            <i class="fa fa-gift"></i>
-                        </div>
-                        <span>Souvenir</span>
+                    <a href="{{ route('admin.couriers') }}" class="{{ request()->routeIs('admin.couriers*') ? 'active' : '' }}">
+                        <i class="fa fa-truck"></i> Kurir
                     </a>
                 </div>
             </div>
-        </div>
-        <div class="nav-menu">
-            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-            @auth
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            @if(auth()->user()->role == 'admin')
-                <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users') ? 'active' : '' }}">Pengguna</a>
-            @elseif(auth()->user()->role == 'penjual')
-            @else
             @endif
             @endauth
             <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
@@ -214,6 +245,24 @@
         if (categoryBtn && !categoryBtn.contains(e.target) && !categoryDropdown.contains(e.target)) {
             categoryDropdown.classList.remove('active');
             categoryBtn.classList.remove('active');
+        }
+    });
+})();
+
+// Pengaturan dropdown
+(function() {
+    var btn = document.getElementById('navPengaturanBtn');
+    var dropdown = document.getElementById('navPengaturanDropdown');
+    if (!btn) return;
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+        btn.classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+        if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+            btn.classList.remove('active');
         }
     });
 })();

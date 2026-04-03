@@ -22,6 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'username',
         'phone',
+        'tanggal_lahir',
+        'jenis_kelamin',
         'alamat',
         'kota',
         'propinsi',
@@ -76,5 +78,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(UserAddress::class);
     }
 }

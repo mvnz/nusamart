@@ -118,6 +118,30 @@
                     @enderror
                 </div>
 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tanggal_lahir"><i class="fa fa-calendar"></i> Tanggal Lahir</label>
+                        <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" max="{{ date('Y-m-d', strtotime('-1 day')) }}" required>
+                        @error('tanggal_lahir')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa fa-venus-mars"></i> Jenis Kelamin</label>
+                        <div style="display:flex;gap:20px;align-items:center;padding-top:8px">
+                            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:normal;white-space:nowrap">
+                                <input type="radio" name="jenis_kelamin" value="L" {{ old('jenis_kelamin') == 'L' ? 'checked' : '' }} required> Laki-laki
+                            </label>
+                            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:normal;white-space:nowrap">
+                                <input type="radio" name="jenis_kelamin" value="P" {{ old('jenis_kelamin') == 'P' ? 'checked' : '' }}> Perempuan
+                            </label>
+                        </div>
+                        @error('jenis_kelamin')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="alamat"><i class="fa fa-home"></i> Alamat (Nama Jalan/Gang/No. Rumah)</label>
                     <input type="text" id="alamat" name="alamat" value="{{ old('alamat') }}" placeholder="Jl. Contoh No. 123" required>

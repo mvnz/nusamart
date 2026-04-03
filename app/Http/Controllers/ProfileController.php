@@ -12,7 +12,69 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        return view('profile');
+        return redirect()->route('profile.biodata');
+    }
+
+    public function showBiodata()
+    {
+        return view('profile-biodata');
+    }
+
+    public function updateBiodata(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone'          => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+            'tanggal_lahir'  => ['required', 'date', 'before:today'],
+            'jenis_kelamin'  => ['required', 'in:L,P'],
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('profile.biodata')->with('success', 'Biodata berhasil diperbarui.');
+    }
+
+    public function showAlamat()
+    {
+        return view('profile-alamat');
+    }
+
+    public function updateAlamat(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'alamat'          => ['required', 'string', 'max:500'],
+            'province_code'   => ['required', 'string', 'size:2'],
+            'regency_code'    => ['required', 'string', 'size:4'],
+            'district_code'   => ['required', 'string', 'size:6'],
+            'village_code'    => ['required', 'string', 'size:10'],
+            'propinsi'        => ['required', 'string', 'max:255'],
+            'kota'            => ['required', 'string', 'max:255'],
+            'kecamatan'       => ['required', 'string', 'max:255'],
+            'kelurahan'       => ['required', 'string', 'max:255'],
+            'rt'              => ['required', 'string', 'max:5'],
+            'rw'              => ['required', 'string', 'max:5'],
+            'kodepos'         => ['required', 'digits:5'],
+        ], [
+            'province_code.required'  => 'Provinsi wajib dipilih.',
+            'regency_code.required'   => 'Kota/Kabupaten wajib dipilih.',
+            'district_code.required'  => 'Kecamatan wajib dipilih.',
+            'village_code.required'   => 'Kelurahan/Desa wajib dipilih.',
+            'rt.required'             => 'RT wajib diisi.',
+            'rw.required'             => 'RW wajib diisi.',
+            'kodepos.required'        => 'Kode Pos wajib diisi.',
+            'kodepos.digits'          => 'Kode Pos harus tepat 5 digit angka.',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('profile.alamat')->with('success', 'Alamat berhasil diperbarui.');
     }
 
     public function update(Request $request)

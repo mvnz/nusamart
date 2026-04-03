@@ -20,6 +20,9 @@ class Order extends Model
         'shipping_city',
         'shipping_province',
         'payment_method',
+        'virtual_account_number',
+        'va_bank',
+        'unique_code',
         'tracking_number',
         'notes',
     ];
@@ -68,5 +71,15 @@ class Order extends Model
     public function getFormattedTotalAttribute(): string
     {
         return 'Rp ' . number_format($this->total_amount, 0, ',', '.');
+    }
+
+    public function getTransferAmountAttribute(): int
+    {
+        return (int) $this->total_amount + ($this->unique_code ?? 0);
+    }
+
+    public function getFormattedTransferAmountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->transfer_amount, 0, ',', '.');
     }
 }

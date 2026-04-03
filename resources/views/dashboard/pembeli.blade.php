@@ -76,6 +76,72 @@
     margin-left: auto; background: #D10024; color: #fff;
     font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
 }
+
+/* Product list styles */
+.produk-section { margin-top: 32px; }
+.produk-section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+}
+.produk-section-header h3 { font-size: 18px; font-weight: 700; color: #1e1f29; }
+.produk-section-header a { font-size: 13px; color: #D10024; font-weight: 600; text-decoration: none; }
+.produk-section-header a:hover { text-decoration: underline; }
+
+.produk-filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.produk-filter-bar form { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.produk-filter-bar input, .produk-filter-bar select {
+    padding: 8px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px;
+    font-size: 13px; outline: none; transition: border .2s; background: #fff;
+}
+.produk-filter-bar input { flex: 1; min-width: 160px; }
+.produk-filter-bar input:focus, .produk-filter-bar select:focus { border-color: #D10024; }
+.produk-filter-bar button {
+    padding: 8px 18px; background: #D10024; color: #fff;
+    border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: background .2s;
+}
+.produk-filter-bar button:hover { background: #a8001e; }
+
+.produk-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px;
+}
+@media(max-width:768px) { .produk-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+@media(max-width:480px) { .produk-grid { grid-template-columns: 1fr; } }
+
+.produk-card {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07); transition: transform .2s, box-shadow .2s;
+    display: flex; flex-direction: column;
+}
+.produk-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+.produk-card-img {
+    height: 170px; background: #f5f5f5; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+.produk-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.produk-card:hover .produk-card-img img { transform: scale(1.05); }
+.produk-card-img .no-img { font-size: 48px; color: #ccc; }
+.produk-card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; }
+.produk-card-cat { font-size: 11px; color: #D10024; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.produk-card-name { font-size: 14px; font-weight: 700; color: #1e1f29; line-height: 1.4; margin-bottom: 4px; }
+.produk-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; }
+.produk-card-price { font-size: 16px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
+.produk-card-stock { font-size: 11px; margin-bottom: 10px; }
+.produk-card-stock.ok { color: #10b981; }
+.produk-card-stock.low { color: #f59e0b; }
+.produk-card-stock.out { color: #ef4444; }
+.btn-produk-detail {
+    display: block; text-align: center; padding: 9px;
+    background: #1e1f29; color: #fff; border-radius: 8px;
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: background .2s; margin-top: auto;
+}
+.btn-produk-detail:hover { background: #D10024; color: #fff; }
+
+.produk-empty { text-align: center; padding: 48px 20px; color: #aaa; }
+.produk-empty .fa { font-size: 48px; display: block; margin-bottom: 12px; color: #e0e0e0; }
+
+.produk-pagination { margin-top: 24px; display: flex; justify-content: center; }
 </style>
 
 <div class="pembeli-dash">
@@ -165,5 +231,72 @@
                 </a>
             </div>
         </div>
+    </div>
+
+    {{-- Produk Tersedia --}}
+    <div class="produk-section">
+        <div class="produk-section-header">
+            <h3><i class="fa fa-shopping-bag" style="color:#D10024;margin-right:8px"></i>Produk Tersedia</h3>
+            <a href="{{ route('products.index') }}">Lihat Semua <i class="fa fa-arrow-right"></i></a>
+        </div>
+
+        <div class="produk-filter-bar">
+            <form action="{{ route('dashboard') }}" method="GET">
+                <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
+                <select name="category_id">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit"><i class="fa fa-search"></i> Cari</button>
+            </form>
+        </div>
+
+        @if($products->isEmpty())
+            <div class="produk-empty">
+                <i class="fa fa-shopping-bag"></i>
+                <div style="font-size:14px;font-weight:600;color:#bbb">Belum ada produk tersedia saat ini.</div>
+            </div>
+        @else
+            <div class="produk-grid">
+                @foreach($products as $product)
+                <div class="produk-card">
+                    <div class="produk-card-img">
+                        @if($product->image)
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                        @else
+                            <i class="fa fa-shopping-bag no-img"></i>
+                        @endif
+                    </div>
+                    <div class="produk-card-body">
+                        @if($product->category)
+                            <div class="produk-card-cat">{{ $product->category->name }}</div>
+                        @elseif($product->category)
+                            <div class="produk-card-cat">{{ $product->category }}</div>
+                        @endif
+                        <div class="produk-card-name">{{ $product->name }}</div>
+                        <div class="produk-card-seller"><i class="fa fa-store" style="margin-right:4px"></i>{{ $product->seller->name }}</div>
+                        <div class="produk-card-price">{{ $product->formatted_price }}</div>
+                        <div class="produk-card-stock @if($product->stock == 0) out @elseif($product->stock <= 5) low @else ok @endif">
+                            @if($product->stock == 0)
+                                <i class="fa fa-times-circle"></i> Stok habis
+                            @elseif($product->stock <= 5)
+                                <i class="fa fa-exclamation-triangle"></i> Sisa {{ $product->stock }}
+                            @else
+                                <i class="fa fa-check-circle"></i> Stok: {{ $product->stock }}
+                            @endif
+                        </div>
+                        <a href="{{ route('products.show', $product) }}" class="btn-produk-detail">Lihat Detail</a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="produk-pagination">
+                {{ $products->appends(request()->query())->links() }}
+            </div>
+        @endif
     </div>
 </div>
