@@ -40,19 +40,19 @@
             @auth
             @if(auth()->user()->role == 'admin')
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            <div class="nav-pengaturan" id="navPengaturan">
+            <div class="nav-pengaturan" id="navPengaturan" style="position:relative">
                 <button class="nav-pengaturan-btn {{ request()->routeIs('admin.*') ? 'active' : '' }}" id="navPengaturanBtn">
                     <i class="fa fa-cog"></i> Pengaturan <i class="fa fa-caret-down" style="font-size:11px"></i>
                 </button>
-                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown">
-                    <a href="{{ route('admin.categories') }}" class="{{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
-                        <i class="fa fa-tags"></i> Kategori
+                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown" style="position:absolute;top:100%;left:0;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:200px;z-index:1000;padding:8px 0">
+                    <a href="{{ route('admin.categories') }}" class="{{ request()->routeIs('admin.categories*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
+                        <i class="fa fa-tags" style="color:#D10024;width:16px"></i> Kategori
                     </a>
-                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users*') ? 'active' : '' }}">
-                        <i class="fa fa-users"></i> Pengguna
+                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
+                        <i class="fa fa-users" style="color:#D10024;width:16px"></i> Pengguna
                     </a>
-                    <a href="{{ route('admin.couriers') }}" class="{{ request()->routeIs('admin.couriers*') ? 'active' : '' }}">
-                        <i class="fa fa-truck"></i> Kurir
+                    <a href="{{ route('admin.couriers') }}" class="{{ request()->routeIs('admin.couriers*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
+                        <i class="fa fa-truck" style="color:#D10024;width:16px"></i> Kurir
                     </a>
                 </div>
             </div>
