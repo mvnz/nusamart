@@ -56,7 +56,7 @@ th[data-sort-col]:hover { background:rgba(209,0,36,.06); }
                         onfocus="this.style.borderColor='#D10024'" onblur="this.style.borderColor='#e0e0e0'"
                         onkeydown="if(event.key==='Enter'){searchCategories()}">
                     <button onclick="searchCategories()" style="padding:8px 14px;background:#D10024;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer"><i class="fa fa-search"></i></button>
-                    <button class="btn-cat-add" onclick="openAddModal()">
+                    <button class="btn-cat-add" onclick="openAddModal()" style="padding:8px 16px;background:#D10024;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
                         <i class="fa fa-plus"></i> Tambah Kategori
                     </button>
                     <a href="{{ route('dashboard') }}" class="btn-back">
