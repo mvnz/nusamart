@@ -175,7 +175,10 @@
     gap: 10px;
     align-items: center;
 }
-.home-search-inner select {
+.home-cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 10px 14px;
     border: 1.5px solid #e0e0e0;
     border-radius: 8px;
@@ -184,7 +187,58 @@
     color: #555;
     background: #fafafa;
     cursor: pointer;
-    min-width: 140px;
+    min-width: 160px;
+    white-space: nowrap;
+    transition: border-color .2s;
+    position: relative;
+}
+.home-cat-btn:hover, .home-cat-btn.open { border-color: #D10024; color: #D10024; }
+.home-cat-btn .caret { margin-left: auto; font-size: 11px; transition: transform .2s; }
+.home-cat-btn.open .caret { transform: rotate(180deg); }
+.home-cat-wrap { position: relative; }
+.home-cat-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    min-width: 220px;
+    z-index: 9999;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+.home-cat-dropdown.open { display: block; }
+.home-cat-dropdown-header {
+    padding: 10px 16px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.home-cat-dropdown-items { max-height: 280px; overflow-y: auto; }
+.home-cat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #444;
+    border-left: 3px solid transparent;
+    transition: all .15s;
+}
+.home-cat-item:hover { background: #f9f9f9; border-left-color: #D10024; }
+.home-cat-item.selected { background: rgba(209,0,36,.07); border-left-color: #D10024; color: #D10024; font-weight: 600; }
+.home-cat-item-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff; flex-shrink: 0;
 }
 .home-search-inner input {
     flex: 1;
@@ -1128,19 +1182,63 @@
     <div class="home-search-bar">
         <div class="container">
             <form action="{{ route('products.index') }}" method="GET">
+            @php
+            $hsIconColors = ['#666','#e74c3c','#3498db','#9b59b6','#27ae60','#e67e22','#16a085','#f39c12','#e91e8c','#1abc9c','#2c3e50'];
+            $hsIcons = ['fa-th','fa-cutlery','fa-coffee','fa-shopping-bag','fa-leaf','fa-paint-brush','fa-bolt','fa-gift','fa-heart','fa-cube','fa-star'];
+            @endphp
+            <input type="hidden" name="category_id" id="homeCatInput" value="">
             <div class="home-search-inner">
-                <select name="category_id">
-                    <option value="">Semua Kategori</option>
-                    @foreach($navCategories as $cat)
-                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
+                <div class="home-cat-wrap">
+                    <button type="button" class="home-cat-btn" id="homeCatBtn">
+                        <i class="fa fa-th" id="homeCatIcon" style="color:#666"></i>
+                        <span id="homeCatLabel">Semua Kategori</span>
+                        <i class="fa fa-chevron-down caret"></i>
+                    </button>
+                    <div class="home-cat-dropdown" id="homeCatDropdown">
+                        <div class="home-cat-dropdown-header">Kategori Produk</div>
+                        <div class="home-cat-dropdown-items">
+                            <div class="home-cat-item selected" data-value="" data-label="Semua Kategori" data-icon="fa-th" data-color="#666">
+                                <div class="home-cat-item-icon" style="background:#666"><i class="fa fa-th"></i></div>
+                                <span>Semua Kategori</span>
+                            </div>
+                            @foreach($navCategories as $hIdx => $hCat)
+                            <div class="home-cat-item" data-value="{{ $hCat->id }}" data-label="{{ $hCat->name }}" data-icon="{{ $hsIcons[($hIdx+1) % count($hsIcons)] }}" data-color="{{ $hsIconColors[($hIdx+1) % count($hsIconColors)] }}">
+                                <div class="home-cat-item-icon" style="background:{{ $hsIconColors[($hIdx+1) % count($hsIconColors)] }}"><i class="fa {{ $hsIcons[($hIdx+1) % count($hsIcons)] }}"></i></div>
+                                <span>{{ $hCat->name }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
                 <input type="text" name="search" placeholder="Cari produk UMKM favoritmu...">
                 <button type="submit" class="home-search-btn">
                     <i class="fa fa-search"></i> Cari
                 </button>
             </div>
             </form>
+            <script>
+            (function(){
+                var btn = document.getElementById('homeCatBtn');
+                var dd  = document.getElementById('homeCatDropdown');
+                var inp = document.getElementById('homeCatInput');
+                var lbl = document.getElementById('homeCatLabel');
+                var ico = document.getElementById('homeCatIcon');
+                btn.addEventListener('click', function(e){ e.stopPropagation(); btn.classList.toggle('open'); dd.classList.toggle('open'); });
+                dd.querySelectorAll('.home-cat-item').forEach(function(item){
+                    item.addEventListener('click', function(){
+                        dd.querySelectorAll('.home-cat-item').forEach(function(i){ i.classList.remove('selected'); });
+                        item.classList.add('selected');
+                        inp.value = item.dataset.value;
+                        lbl.textContent = item.dataset.label;
+                        ico.className = 'fa ' + item.dataset.icon;
+                        ico.style.color = item.dataset.color;
+                        btn.classList.remove('open'); dd.classList.remove('open');
+                    });
+                });
+                document.addEventListener('click', function(){ btn.classList.remove('open'); dd.classList.remove('open'); });
+                dd.addEventListener('click', function(e){ e.stopPropagation(); });
+            })();
+            </script>
         </div>
     </div>
     @endguest
