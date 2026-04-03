@@ -20,13 +20,13 @@
                 <span class="logo-text">Nusa<span>Mart</span></span>
             </a>
         </div>
-        @if(auth()->check() && auth()->user()->role !== 'admin')
+        @if(!auth()->check() || auth()->user()->role !== 'admin')
         <div class="search-bar">
             <form action="{{ route('products.index') }}" method="GET" style="display:contents;">
-                <select name="category">
+                <select name="category_id">
                     <option value="">Semua Kategori</option>
-                    @foreach(['Makanan', 'Minuman', 'Fashion', 'Kerajinan', 'Kesehatan'] as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                    @foreach($navCategories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
                 </select>
                 <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
