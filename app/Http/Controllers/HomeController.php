@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,6 +23,10 @@ class HomeController extends Controller
             ['icon' => 'fa-home',         'name' => 'Rumah Tangga','slug' => 'rumah-tangga','color' => '#f39c12'],
             ['icon' => 'fa-gift',         'name' => 'Souvenir',    'slug' => 'souvenir',    'color' => '#e91e8c'],
         ];
+
+        $statsProductCount = Product::where('is_active', true)->count();
+        $statsPenjualCount  = User::where('role', 'penjual')->where('is_active', true)->count();
+        $statsOrderCount    = Order::count();
 
         $featuredProducts = Product::where('is_active', true)
             ->inRandomOrder()
@@ -185,6 +191,6 @@ class HomeController extends Controller
             $promoBanners = [];
         }
 
-        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'tabProducts'));
+        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'tabProducts', 'statsProductCount', 'statsPenjualCount', 'statsOrderCount'));
     }
 }

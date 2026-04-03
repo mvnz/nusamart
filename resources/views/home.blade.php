@@ -37,16 +37,16 @@
                     </div>
                     <div class="hero-stats">
                         <div class="hero-stat-item">
-                            <span class="hero-stat-number">500+</span>
-                            <span class="hero-stat-label">Produk UMKM</span>
+                            <span class="hero-stat-number">50+</span>
+                            <span class="hero-stat-label">UMKM</span>
                         </div>
                         <div class="hero-stat-item">
-                            <span class="hero-stat-number">120+</span>
+                            <span class="hero-stat-number">100+</span>
                             <span class="hero-stat-label">Penjual Aktif</span>
                         </div>
                         <div class="hero-stat-item">
-                            <span class="hero-stat-number">10rb+</span>
-                            <span class="hero-stat-label">Transaksi & Senang</span>
+                            <span class="hero-stat-number">100+</span>
+                            <span class="hero-stat-label">Transaksi Terpercaya</span>
                         </div>
                     </div>
                 </div>
