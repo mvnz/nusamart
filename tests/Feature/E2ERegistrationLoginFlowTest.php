@@ -21,6 +21,8 @@ class E2ERegistrationLoginFlowTest extends TestCase
             'username' => 'budisantoso',
             'email' => 'budi@example.com',
             'phone' => '081234567890',
+            'tanggal_lahir' => '1995-06-15',
+            'jenis_kelamin' => 'L',
             'alamat' => 'Jl. Merdeka No. 10',
             'province_code' => '31',
             'regency_code' => '3171',
@@ -80,8 +82,8 @@ class E2ERegistrationLoginFlowTest extends TestCase
         ]);
         $this->assertAuthenticated();
 
-        // Step 3: Visit profile page
-        $this->get('/profile')->assertStatus(200);
+        // Step 3: Visit profile page (redirects to /profile/biodata)
+        $this->get('/profile')->assertRedirect(route('profile.biodata'));
 
         // Step 4: Update profile
         $this->put('/profile', [
@@ -147,6 +149,8 @@ class E2ERegistrationLoginFlowTest extends TestCase
             'rt' => '001',
             'rw' => '001',
             'kodepos' => '10110',
+            'tanggal_lahir' => '1988-03-20',
+            'jenis_kelamin' => 'L',
             'password' => 'SellerPass1!',
             'password_confirmation' => 'SellerPass1!',
             'role' => 'penjual',

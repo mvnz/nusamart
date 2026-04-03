@@ -81,8 +81,8 @@ class E2EAdminFlowTest extends TestCase
         // Step 3: Can access dashboard
         $this->get('/dashboard')->assertStatus(200);
 
-        // Step 4: Can access profile
-        $this->get('/profile')->assertStatus(200);
+        // Step 4: Can access profile (redirects to /profile/biodata by design)
+        $this->get('/profile')->assertRedirect(route('profile.biodata'));
 
         // Step 5: Cannot access admin user management
         $this->get('/admin/users')->assertStatus(403);

@@ -113,6 +113,8 @@ class AuthenticationTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'phone' => '081234567890',
+            'tanggal_lahir' => '1995-06-15',
+            'jenis_kelamin' => 'L',
             'alamat' => 'Jl. Test No. 1',
             'province_code' => '31',
             'regency_code' => '3171',

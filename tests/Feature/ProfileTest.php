@@ -40,8 +40,9 @@ class ProfileTest extends TestCase
     {
         $this->authenticatedUser();
 
+        // /profile redirects to /profile/biodata by design
         $response = $this->get('/profile');
-        $response->assertStatus(200);
+        $response->assertRedirect(route('profile.biodata'));
     }
 
     // ===== PROFILE UPDATE =====

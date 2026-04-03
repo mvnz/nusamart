@@ -41,7 +41,7 @@
                 <span class="icon-label">Wishlist</span>
             </a>
             @endif
-            @if(auth()->user()->role === 'pembeli')
+            @if(auth()->check() && auth()->user()->role === 'pembeli')
             <div class="cart-summary">
                 <a href="{{ route('cart.index') }}" class="header-icon" id="cartToggle">
                     <i class="fa fa-shopping-cart"></i>
