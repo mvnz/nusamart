@@ -1,7 +1,9 @@
 <!-- Navigation -->
 <style>
-.nav-categories-dropdown{display:none}.nav-categories-dropdown.active{display:block}
-.nav-pengaturan-dropdown{display:none}.nav-pengaturan-dropdown.active{display:block}
+.nav-categories-btn{background:none!important;border:1px solid rgba(255,255,255,0.3)!important;color:#fff;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:6px;transition:all .2s}
+.nav-categories-btn:hover,.nav-categories-btn.active{background:rgba(255,255,255,0.1)!important;border-color:rgba(255,255,255,0.5)!important}
+.nav-categories-dropdown{display:none!important}.nav-categories-dropdown.active{display:block!important}
+.nav-pengaturan-dropdown{display:none!important}.nav-pengaturan-dropdown.active{display:block!important}
 </style>
 <nav class="main-nav" id="mainNav">
     <div class="container">
