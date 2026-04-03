@@ -2,6 +2,8 @@
 <style>
 .nav-categories-btn{background:none!important;border:1px solid rgba(255,255,255,0.3)!important;color:#fff;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:6px;transition:all .2s}
 .nav-categories-btn:hover,.nav-categories-btn.active{background:rgba(255,255,255,0.1)!important;border-color:rgba(255,255,255,0.5)!important}
+.nav-pengaturan-btn{background:none!important;border:none!important;color:#fff!important;padding:12px 16px!important;font-size:14px!important;font-weight:600!important;cursor:pointer!important;display:flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;transition:all .2s!important;text-decoration:none!important}
+.nav-pengaturan-btn:hover,.nav-pengaturan-btn.active{background:rgba(255,255,255,0.08)!important;border-radius:6px!important;color:#fff!important}
 #navCategoryDropdown{display:none!important}#navCategoryDropdown.active{display:block!important}
 #navPengaturanDropdown{display:none!important}#navPengaturanDropdown.active{display:block!important}
 </style>
