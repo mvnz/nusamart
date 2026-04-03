@@ -6,6 +6,7 @@
 .nav-pengaturan-btn:hover,.nav-pengaturan-btn.active{background:rgba(255,255,255,0.08)!important;border-radius:6px!important;color:#fff!important}
 #navCategoryDropdown{display:none!important}#navCategoryDropdown.active{display:block!important}
 #navPengaturanDropdown{display:none!important}#navPengaturanDropdown.active{display:block!important}
+@media(max-width:768px){.nav-mobile-login{display:flex!important;align-items:center;gap:8px;padding:12px 20px;color:#fff!important;text-decoration:none;border-top:1px solid rgba(255,255,255,.07);font-size:14px;font-weight:600}.nav-mobile-login:hover{background:rgba(255,255,255,.08)}}
 </style>
 <nav class="main-nav" id="mainNav">
     <div class="container">
@@ -59,6 +60,11 @@
             @endif
             @endauth
             <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
+
+            {{-- Link Masuk hanya tampil di mobile (top-bar tersembunyi) --}}
+            @guest
+            <a href="{{ route('login') }}" style="display:none" class="nav-mobile-login"><i class="fa fa-sign-in"></i> Masuk</a>
+            @endguest
 
             {{-- User dropdown hanya tampil di mobile (top-bar tersembunyi) --}}
             @auth
