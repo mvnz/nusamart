@@ -237,6 +237,20 @@
                 <form method="POST" action="{{ route('seller.orders.status', $order) }}">
                     @csrf @method('PATCH')
                     <input type="hidden" name="status" value="shipped">
+                    <label class="action-input-label">Kurir <span style="color:#D10024">*</span></label>
+                    <select name="courier_name" class="action-input" required style="margin-bottom:10px">
+                        <option value="">-- Pilih Kurir --</option>
+                        <option value="JNE" {{ old('courier_name') == 'JNE' ? 'selected' : '' }}>JNE</option>
+                        <option value="J&T Express" {{ old('courier_name') == 'J&T Express' ? 'selected' : '' }}>J&T Express</option>
+                        <option value="SiCepat" {{ old('courier_name') == 'SiCepat' ? 'selected' : '' }}>SiCepat</option>
+                        <option value="AnterAja" {{ old('courier_name') == 'AnterAja' ? 'selected' : '' }}>AnterAja</option>
+                        <option value="Pos Indonesia" {{ old('courier_name') == 'Pos Indonesia' ? 'selected' : '' }}>Pos Indonesia</option>
+                        <option value="Ninja Xpress" {{ old('courier_name') == 'Ninja Xpress' ? 'selected' : '' }}>Ninja Xpress</option>
+                        <option value="Lion Parcel" {{ old('courier_name') == 'Lion Parcel' ? 'selected' : '' }}>Lion Parcel</option>
+                        <option value="Tiki" {{ old('courier_name') == 'Tiki' ? 'selected' : '' }}>Tiki</option>
+                        <option value="GoSend" {{ old('courier_name') == 'GoSend' ? 'selected' : '' }}>GoSend</option>
+                        <option value="GrabExpress" {{ old('courier_name') == 'GrabExpress' ? 'selected' : '' }}>GrabExpress</option>
+                    </select>
                     <label class="action-input-label">Nomor Resi <span style="color:#D10024">*</span></label>
                     <input type="text" name="tracking_number" class="action-input"
                         placeholder="Contoh: JNE1234567890"
@@ -251,8 +265,13 @@
                 <div class="action-done">
                     <i class="action-done-icon fa fa-truck" style="color:#8b5cf6"></i>
                     <div class="action-done-msg">Paket Sudah Dikirim</div>
+                    @if($order->courier_name)
+                        <div class="tracking-badge" style="margin:8px auto 0;display:inline-flex;background:#f3f0ff;color:#6d28d9">
+                            <i class="fa fa-motorcycle"></i> {{ $order->courier_name }}
+                        </div>
+                    @endif
                     @if($order->tracking_number)
-                        <div class="tracking-badge" style="margin:10px auto 0;display:inline-flex">
+                        <div class="tracking-badge" style="margin:6px auto 0;display:inline-flex">
                             <i class="fa fa-barcode"></i> {{ $order->tracking_number }}
                         </div>
                     @endif

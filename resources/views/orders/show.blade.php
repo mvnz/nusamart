@@ -188,6 +188,11 @@
                     <i class="fa fa-truck"></i>
                     <div class="tracking-box-text">
                         <label>Nomor Resi Pengiriman</label>
+                        @if($order->courier_name)
+                        <div style="font-size:11px;color:#6d28d9;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">
+                            <i class="fa fa-motorcycle" style="margin-right:3px"></i>{{ $order->courier_name }}
+                        </div>
+                        @endif
                         <span>{{ $order->tracking_number }}</span>
                     </div>
                 </div>

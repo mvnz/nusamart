@@ -24,6 +24,7 @@ class Order extends Model
         'va_bank',
         'unique_code',
         'tracking_number',
+        'courier_name',
         'notes',
     ];
 

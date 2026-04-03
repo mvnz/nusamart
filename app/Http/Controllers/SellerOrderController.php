@@ -57,6 +57,7 @@ class SellerOrderController extends Controller
         $request->validate([
             'status'          => 'required|in:processing,shipped',
             'tracking_number' => 'required_if:status,shipped|nullable|string|max:100',
+            'courier_name'    => 'required_if:status,shipped|nullable|string|max:100',
         ]);
 
         $productIds = Product::where('user_id', auth()->id())->pluck('id');
@@ -65,6 +66,7 @@ class SellerOrderController extends Controller
         $data = ['status' => $request->status];
         if ($request->status === 'shipped' && $request->filled('tracking_number')) {
             $data['tracking_number'] = $request->tracking_number;
+            $data['courier_name']    = $request->courier_name;
         }
 
         $order->update($data);
