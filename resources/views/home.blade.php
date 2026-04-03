@@ -1186,7 +1186,7 @@
                     <div class="hero-cards-grid">
                         @foreach($featuredProducts as $p)
                         @php $ci = $loop->index % 4; @endphp
-                        <div class="hero-product-card">
+                        <a href="{{ route('products.show', $p->id) }}" class="hero-product-card" style="text-decoration:none;display:block;">
                             @if($p->image)
                                 <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}">
                             @else
@@ -1198,7 +1198,7 @@
                                 <div class="name">{{ $p->name }}</div>
                                 <div class="price">Rp {{ number_format($p->price, 0, ',', '.') }}</div>
                             </div>
-                        </div>
+                        </a>
                         @endforeach
                     </div>
                 </div>
