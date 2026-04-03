@@ -34,13 +34,15 @@
             </form>
         </div>
         <div class="header-right">
-            @if(!auth()->check() || auth()->user()->role !== 'penjual')
-            <a href="{{ auth()->check() && auth()->user()->role === 'pembeli' ? route('wishlist.index') : route('login') }}" class="header-icon">
+            @auth
+            @if(auth()->user()->role === 'pembeli')
+            <a href="{{ route('wishlist.index') }}" class="header-icon">
                 <i class="fa {{ $wishlistCount > 0 ? 'fa-heart' : 'fa-heart-o' }}"></i>
                 <span class="count-badge">{{ $wishlistCount }}</span>
                 <span class="icon-label">Wishlist</span>
             </a>
             @endif
+            @endauth
             @if(auth()->check() && auth()->user()->role === 'pembeli')
             <div class="cart-summary">
                 <a href="{{ route('cart.index') }}" class="header-icon" id="cartToggle">
