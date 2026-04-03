@@ -266,6 +266,13 @@
     transition: background 0.2s;
 }
 .home-search-btn:hover { background: #a8001d; }
+@media(max-width:768px){
+    .home-search-inner { flex-wrap: wrap; }
+    .home-cat-wrap { flex: 1; min-width: 100px; }
+    .home-cat-btn { min-width: 0; width: 100%; box-sizing: border-box; }
+    .home-search-inner > input { flex: 2; min-width: 100px; }
+    .home-search-btn { width: 100%; justify-content: center; }
+}
 
 /* ===== PROMO STRIP ===== */
 .promo-strip {
@@ -1374,7 +1381,8 @@
             @media (max-width: 768px) {
                 .cat-populer-box { flex-direction: column; }
                 .cat-promo-card { min-width: auto; max-width: none; flex-direction: row; align-items: center; gap: 12px; padding: 16px; }
-                .cat-chips-grid { grid-template-columns: repeat(3, 1fr); }
+                .cat-chips-grid { grid-template-columns: repeat(2, 1fr); }
+                .cat-chip { font-size: 12px; padding: 8px 10px 8px 8px; }
             }
             </style>
 
