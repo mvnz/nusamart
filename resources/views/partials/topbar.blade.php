@@ -1,4 +1,29 @@
 <!-- Top Bar -->
+<style>
+.user-dropdown{position:relative}
+.user-dropdown-toggle{cursor:pointer;display:flex;align-items:center;gap:6px}
+.user-dropdown-toggle .fa-caret-down{font-size:10px;transition:transform .2s}
+.user-dropdown.open .fa-caret-down{transform:rotate(180deg)}
+.user-dropdown-menu{position:absolute;top:calc(100% + 12px);right:0;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:1000;display:none;overflow:hidden;border:1px solid rgba(0,0,0,.06)}
+.user-dropdown.open .user-dropdown-menu{display:block}
+.td-dropdown-wide{min-width:360px;display:none;flex-direction:row}
+.user-dropdown.open .td-dropdown-wide{display:flex}
+.td-drop-left{width:180px;background:#fafafa;border-right:1px solid #f0f0f0;padding:20px 16px;display:flex;flex-direction:column;gap:0}
+.td-drop-profile{display:flex;flex-direction:column;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f0f0f0;gap:8px}
+.td-drop-username{font-size:14px;font-weight:700;color:#1e1f29;text-align:center;word-break:break-word}
+.td-role-badge{background:#fff0f0;color:#D10024;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px}
+.td-drop-stat{display:flex;align-items:center;gap:8px;font-size:13px;color:#444;padding:6px 0}
+.td-drop-stat .fa{width:14px;text-align:center}
+.td-drop-right{flex:1;padding:12px 0;display:flex;flex-direction:column}
+.td-drop-link{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:13px;color:#333!important;text-decoration:none;transition:background .15s,color .15s}
+.td-drop-link .fa{width:16px;text-align:center;color:#888}
+.td-drop-link:hover{background:#f6f6f6;color:#D10024!important}
+.td-drop-link:hover .fa{color:#D10024}
+.td-drop-divider{height:1px;background:#f0f0f0;margin:4px 0}
+.td-drop-logout{display:flex;align-items:center;gap:10px;width:100%;padding:11px 18px;font-size:13px;color:#D10024;background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;transition:background .15s}
+.td-drop-logout .fa{width:16px;text-align:center}
+.td-drop-logout:hover{background:#fff0f0}
+</style>
 @php
     $tdUser = auth()->user() ?? null;
     $tdOrderCount = 0;
