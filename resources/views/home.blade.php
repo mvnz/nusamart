@@ -134,6 +134,11 @@
     transition: transform 0.3s, box-shadow 0.3s;
 }
 .hero-product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+.hero-product-card > img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+}
 .hero-card-icon {
     height: 110px;
     display: flex;
@@ -1177,18 +1182,21 @@
                             ['#34d399','#059669'],
                             ['#fbbf24','#d97706'],
                         ];
-                        $hcEmojis = ['🛍️','👗','🍵','🏺'];
                     @endphp
                     <div class="hero-cards-grid">
-                        @foreach(array_slice($featuredProducts, 0, 4) as $p)
-                        @php $ci = $loop->index; @endphp
+                        @foreach($featuredProducts as $p)
+                        @php $ci = $loop->index % 4; @endphp
                         <div class="hero-product-card">
-                            <div class="hero-card-icon" style="background: linear-gradient(135deg, {{ $hcColors[$ci][0] }}, {{ $hcColors[$ci][1] }});">
-                                <span style="position:relative;z-index:1;">{{ $hcEmojis[$ci] }}</span>
-                            </div>
+                            @if($p->image)
+                                <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}">
+                            @else
+                                <div class="hero-card-icon" style="background: linear-gradient(135deg, {{ $hcColors[$ci][0] }}, {{ $hcColors[$ci][1] }});">
+                                    <span style="position:relative;z-index:1;">🛍️</span>
+                                </div>
+                            @endif
                             <div class="hero-product-info">
-                                <div class="name">{{ $p['name'] }}</div>
-                                <div class="price">Rp {{ number_format($p['price'], 0, ',', '.') }}</div>
+                                <div class="name">{{ $p->name }}</div>
+                                <div class="price">Rp {{ number_format($p->price, 0, ',', '.') }}</div>
                             </div>
                         </div>
                         @endforeach
