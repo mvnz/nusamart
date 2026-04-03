@@ -190,14 +190,14 @@
                         $awb = urlencode($order->tracking_number);
                         $courier = strtolower($order->courier_name ?? '');
                         $trackUrl = match(true) {
-                            str_contains($courier, 'jne')      => 'https://www.jne.co.id/id/tracking/trace/' . $awb,
+                            str_contains($courier, 'jne')      => 'https://www.jne.co.id/tracking-package',
                             str_contains($courier, 'j&t')      => 'https://jet.co.id/track',
-                            str_contains($courier, 'sicepat')  => 'https://www.sicepat.com/checkAwb?awb=' . $awb,
-                            str_contains($courier, 'anteraja') => 'https://anteraja.id/tracking/' . $awb,
-                            str_contains($courier, 'pos')      => 'https://www.posindonesia.co.id/id/tracking?noResi=' . $awb,
-                            str_contains($courier, 'ninja')    => 'https://www.ninjaxpress.co/id-id/tracking?id=' . $awb,
-                            str_contains($courier, 'lion')     => 'https://lionparcel.com/track?awb=' . $awb,
-                            str_contains($courier, 'tiki')     => 'https://tiki.id/id/tracking?airwaybill=' . $awb,
+                            str_contains($courier, 'sicepat')  => 'https://www.sicepat.com/',
+                            str_contains($courier, 'anteraja') => 'https://anteraja.id/id/tracking',
+                            str_contains($courier, 'pos')      => 'https://www.posindonesia.co.id/id/tracking',
+                            str_contains($courier, 'ninja')    => 'https://www.ninjaxpress.co/id-id/tracking',
+                            str_contains($courier, 'lion')     => 'https://lionparcel.com/',
+                            str_contains($courier, 'tiki')     => 'https://tiki.id/id/track',
                             default                            => 'https://cekresi.com/?noresi=' . $awb,
                         };
                     @endphp
