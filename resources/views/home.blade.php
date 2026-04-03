@@ -132,9 +132,6 @@
     border-radius: 16px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-    text-decoration: none;
-    display: block;
 }
 .hero-product-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
 .hero-card-icon {
@@ -1185,7 +1182,7 @@
                     <div class="hero-cards-grid">
                         @foreach(array_slice($featuredProducts, 0, 4) as $p)
                         @php $ci = $loop->index; @endphp
-                        <a href="{{ route('products.show', $p['id']) }}" class="hero-product-card">
+                        <div class="hero-product-card">
                             <div class="hero-card-icon" style="background: linear-gradient(135deg, {{ $hcColors[$ci][0] }}, {{ $hcColors[$ci][1] }});">
                                 <span style="position:relative;z-index:1;">{{ $hcEmojis[$ci] }}</span>
                             </div>
@@ -1193,7 +1190,7 @@
                                 <div class="name">{{ $p['name'] }}</div>
                                 <div class="price">Rp {{ number_format($p['price'], 0, ',', '.') }}</div>
                             </div>
-                        </a>
+                        </div>
                         @endforeach
                     </div>
                 </div>
