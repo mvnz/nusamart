@@ -4,62 +4,160 @@
 
 @push('styles')
 <style>
-.shop-page { padding: 30px 0 50px; }
-.shop-header { margin-bottom: 24px; }
+/* ===== SHOP PAGE ===== */
+.shop-page { padding: 24px 0 50px; }
+.shop-header { margin-bottom: 20px; }
 .shop-header h2 { font-size: 22px; font-weight: 700; color: #1e1f29; }
 .shop-header p { color: #888; font-size: 13px; margin-top: 4px; }
 
-.shop-filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
-.shop-filters form { display: flex; gap: 10px; flex: 1; flex-wrap: wrap; }
-.shop-filters input, .shop-filters select {
-    padding: 9px 14px; border: 1px solid #ddd; border-radius: 6px;
-    font-family: inherit; font-size: 13px; outline: none;
+/* ===== FILTER BAR ===== */
+.shop-filter-bar {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border: 1px solid #f0f0f0;
+    padding: 14px 16px;
+    margin-bottom: 24px;
 }
-.shop-filters input { flex: 1; min-width: 180px; }
-.shop-filters button {
-    padding: 9px 20px; background: #D10024; color: #fff;
-    border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 13px;
+.shop-filter-bar form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
 }
-.shop-filters button:hover { background: #a8001e; }
+.shop-filter-bar input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s;
+}
+.shop-filter-bar input[type="text"]:focus { border-color: #D10024; }
+.shop-filter-bar select {
+    padding: 10px 12px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    background: #fafafa;
+    outline: none;
+    color: #555;
+}
+.shop-filter-bar button[type="submit"] {
+    padding: 10px 20px;
+    background: #D10024;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background .2s;
+}
+.shop-filter-bar button[type="submit"]:hover { background: #a8001e; }
 
+/* ===== PRODUCT GRID ===== */
 .products-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
 }
 
+/* ===== PRODUCT CARD ===== */
 .product-card {
-    background: #fff; border-radius: 10px; overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,.07); transition: transform .2s, box-shadow .2s;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    border: 1px solid #f0f0f0;
+    transition: transform .2s, box-shadow .2s;
+    display: flex;
+    flex-direction: column;
 }
-.product-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+.product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.11); }
 
 .product-card-img {
-    height: 180px; background: #f0f0f0; display: flex; align-items: center;
-    justify-content: center; overflow: hidden;
+    height: 170px;
+    background: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
 }
 .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
-.product-card-img .no-img { font-size: 52px; color: #ccc; }
+.product-card-img .no-img { font-size: 48px; color: #ddd; }
 
-.product-card-body { padding: 14px; }
-.product-card-category { font-size: 11px; color: #D10024; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
-.product-card-name { font-size: 14px; font-weight: 600; color: #1e1f29; margin: 6px 0 4px; line-height: 1.4; }
-.product-card-seller { font-size: 12px; color: #888; margin-bottom: 10px; }
-.product-card-price { font-size: 16px; font-weight: 700; color: #D10024; margin-bottom: 6px; }
-.product-card-stock { font-size: 12px; color: #888; margin-bottom: 12px; }
+.product-card-body { padding: 12px 14px 14px; flex: 1; display: flex; flex-direction: column; }
+.product-card-category {
+    font-size: 10px; color: #D10024; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .6px;
+    background: rgba(209,0,36,.07); display: inline-block;
+    padding: 2px 7px; border-radius: 20px; margin-bottom: 6px;
+}
+.product-card-name {
+    font-size: 13px; font-weight: 600; color: #1e1f29;
+    margin-bottom: 4px; line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
+.product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 10px; flex: 1; }
 .product-card-stock.low { color: #f59e0b; }
 .product-card-stock.out { color: #ef4444; }
 .btn-detail {
-    display: block; text-align: center; padding: 9px; background: #1e1f29; color: #fff;
-    border-radius: 6px; font-size: 13px; font-weight: 500; transition: background .2s;
+    display: block; text-align: center; padding: 8px;
+    background: linear-gradient(135deg,#1e1f29,#2d2e3a);
+    color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600;
+    transition: background .2s; letter-spacing: .3px;
 }
-.btn-detail:hover { background: #D10024; }
+.btn-detail:hover { background: linear-gradient(135deg,#D10024,#a8001e); color: #fff; }
 
-.empty-state { text-align: center; padding: 60px 20px; color: #999; }
-.empty-state .fa { font-size: 52px; margin-bottom: 16px; display: block; }
-.empty-state h3 { font-size: 18px; color: #555; margin-bottom: 8px; }
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    text-align: center; padding: 60px 20px; color: #bbb;
+    background: #fff; border-radius: 16px; border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.empty-state .empty-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: #f5f5f5; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 16px;
+}
+.empty-state .empty-icon .fa { font-size: 30px; color: #ccc; }
+.empty-state h3 { font-size: 17px; color: #555; margin-bottom: 6px; font-weight: 700; }
+.empty-state p { font-size: 13px; color: #aaa; }
+.empty-state .btn-reset {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    padding: 9px 20px; background: #D10024; color: #fff;
+    border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: background .2s;
+}
+.empty-state .btn-reset:hover { background: #a8001e; }
 
 .pagination-wrap { margin-top: 30px; display: flex; justify-content: center; }
 
-
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .product-card-img { height: 140px; }
+    .product-card-body { padding: 10px 10px 12px; }
+    .product-card-price { font-size: 14px; }
+    .shop-filter-bar form { gap: 8px; }
+    .shop-filter-bar input[type="text"] { min-width: 0; }
+    .shop-filter-bar select { width: 100%; }
+    .shop-filter-bar button[type="submit"] { width: 100%; justify-content: center; }
+}
 </style>
 @endpush
 
@@ -138,6 +236,12 @@ $bannerColor = $catBannerColors[$catIdx];
     gap: 16px;
 }
 .cat-hero-meta span { display: flex; align-items: center; gap: 5px; }
+@media(max-width:768px){
+    .cat-hero { padding: 24px 0 20px; }
+    .cat-hero-icon { width: 52px; height: 52px; font-size: 22px; border-radius: 14px; }
+    .cat-hero-title { font-size: 20px; }
+    .cat-hero-meta { font-size: 12px; gap: 10px; flex-wrap: wrap; }
+}
 </style>
 <div class="cat-hero">
     <div class="container">
@@ -186,7 +290,7 @@ $bannerColor = $catBannerColors[$catIdx];
     @endif
 
 
-    <div class="shop-filters">
+    <div class="shop-filter-bar">
         <form action="{{ route('products.index') }}" method="GET">
             @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
             <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
@@ -201,9 +305,10 @@ $bannerColor = $catBannerColors[$catIdx];
 
     @if($products->isEmpty())
         <div class="empty-state">
-            <i class="fa fa-search"></i>
+            <div class="empty-icon"><i class="fa fa-search"></i></div>
             <h3>Tidak ada produk ditemukan</h3>
             <p>Coba ubah kata kunci atau kategori pencarian.</p>
+            <a href="{{ route('products.index') }}" class="btn-reset"><i class="fa fa-refresh"></i> Reset Pencarian</a>
         </div>
     @else
         <div class="products-grid">
