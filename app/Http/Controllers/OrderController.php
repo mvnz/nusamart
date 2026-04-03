@@ -94,11 +94,19 @@ class OrderController extends Controller
             $courierKey = $courierMap[strtolower($order->courier_name)] ?? 'auto';
         }
 
-        $response = Http::timeout(10)->get('https://api.binderbyte.com/v1/track', [
+        $params = [
             'api_key' => $apiKey,
             'courier' => $courierKey,
             'awb'     => $awb,
-        ]);
+        ];
+
+        // JNE butuh 5 digit terakhir nomor HP untuk history lengkap
+        if ($courierKey === 'jne' && $order->shipping_phone) {
+            $phone = preg_replace('/\D/', '', $order->shipping_phone);
+            $params['number'] = substr($phone, -5);
+        }
+
+        $response = Http::timeout(10)->get('https://api.binderbyte.com/v1/track', $params);
 
         $data = $response->json();
 
