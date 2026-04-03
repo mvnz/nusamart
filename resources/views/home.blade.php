@@ -1127,18 +1127,20 @@
     @guest
     <div class="home-search-bar">
         <div class="container">
+            <form action="{{ route('products.index') }}" method="GET">
             <div class="home-search-inner">
-                <select>
-                    <option>Semua Kategori</option>
-                    @foreach($categories as $cat)
-                    <option>{{ $cat['name'] }}</option>
+                <select name="category_id">
+                    <option value="">Semua Kategori</option>
+                    @foreach($navCategories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                     @endforeach
                 </select>
-                <input type="text" placeholder="Cari produk UMKM favoritmu...">
-                <button class="home-search-btn">
+                <input type="text" name="search" placeholder="Cari produk UMKM favoritmu...">
+                <button type="submit" class="home-search-btn">
                     <i class="fa fa-search"></i> Cari
                 </button>
             </div>
+            </form>
         </div>
     </div>
     @endguest
