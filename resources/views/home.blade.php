@@ -1518,21 +1518,6 @@
         </div>
     </div>
 
-    {{-- ===== NEWSLETTER ===== --}}
-    <section class="newsletter-section">
-        <div class="container">
-            <div class="newsletter-inner">
-                <div class="newsletter-text">
-                    <h2>Dapatkan <span>Promo Eksklusif</span> Produk UMKM</h2>
-                    <p>Daftarkan email kamu dan jadilah yang pertama tahu penawaran terbaru, produk baru, dan diskon spesial dari NusaMart.</p>
-                </div>
-                <div class="newsletter-form">
-                    <input type="email" placeholder="Masukkan alamat email kamu...">
-                    <button type="button"><i class="fa fa-envelope-o"></i> Daftar</button>
-                </div>
-            </div>
-        </div>
-    </section>
 
 </div>{{-- /home-wrapper --}}
 @endsection
