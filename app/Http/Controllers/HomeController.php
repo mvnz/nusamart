@@ -164,7 +164,7 @@ class HomeController extends Controller
 
         // Daily-seeded random categories for promo banners
         try {
-            $dbCategories = Category::withCount('products')->get();
+            $dbCategories = Category::withCount(['products' => fn($q) => $q->where('is_active', true)])->having('products_count', '>', 0)->get();
             $arr = $dbCategories->all();
             $seed = crc32(date('Y-m-d'));
             mt_srand($seed);
@@ -174,8 +174,10 @@ class HomeController extends Controller
             }
             $promoBanners = collect(array_slice($arr, 0, 3))->map(function ($cat) {
                 $image = Product::where('category_id', $cat->id)
+                    ->where('is_active', true)
                     ->whereNotNull('image')
                     ->where('image', '!=', '')
+                    ->inRandomOrder()
                     ->value('image');
                 return ['id' => $cat->id, 'name' => $cat->name, 'image' => $image];
             })->values()->all();

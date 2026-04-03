@@ -435,7 +435,7 @@
                 @endphp
                 <div class="prod-tabs-nav" id="prodTabsNav">
                     <button class="prod-tab-btn active" onclick="switchProdTab('for_user', this)">
-                        For {{ $tabUsername }}
+                        Untuk {{ $tabUsername }}
                     </button>
                     <button class="prod-tab-btn" onclick="switchProdTab('rekomendasi', this)">
                         Rekomendasi
