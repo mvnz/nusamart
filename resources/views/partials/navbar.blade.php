@@ -1,4 +1,8 @@
 <!-- Navigation -->
+<style>
+.nav-categories-dropdown{display:none}.nav-categories-dropdown.active{display:block}
+.nav-pengaturan-dropdown{display:none}.nav-pengaturan-dropdown.active{display:block}
+</style>
 <nav class="main-nav" id="mainNav">
     <div class="container">
         <div style="position: relative;">
