@@ -213,7 +213,7 @@
                     @endif
                 @endif
             @else
-                <a href="{{ route('login') }}" class="btn-buy-now" style="text-decoration:none;">
+                <a href="{{ route('login') }}" class="btn-buy-now" style="text-decoration:none;flex:none;padding:10px 24px;font-size:14px;border-radius:8px;width:auto;">
                     <i class="fa fa-sign-in"></i> Login untuk Membeli
                 </a>
             @endauth
