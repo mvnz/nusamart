@@ -1,4 +1,9 @@
 <!-- Main Header -->
+<style>
+@media(max-width:768px){
+    .search-bar{display:none!important;}
+}
+</style>
 @php
     $cartCount = 0;
     $cartItems = collect();
