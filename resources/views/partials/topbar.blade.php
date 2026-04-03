@@ -21,11 +21,11 @@
             <div class="user-dropdown" id="userDropdownWrap">
                 <a href="#" class="user-dropdown-toggle" id="userDropdownToggle">
                     @if($tdUser->photo)
-                    <span class="td-avatar-sm" style="background:#f0f0f0;padding:0;overflow:hidden">
+                    <span class="td-avatar-sm" style="width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:#f0f0f0;padding:0;vertical-align:middle">
                         <img src="{{ asset('uploads/' . $tdUser->photo) }}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
                     </span>
                     @else
-                    <span class="td-avatar-sm" style="background:{{ $tdColor }}">{{ $tdInitial }}</span>
+                    <span class="td-avatar-sm" style="width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;background:{{ $tdColor }};color:#fff;font-size:11px;font-weight:700;vertical-align:middle">{{ $tdInitial }}</span>
                     @endif
                     {{ auth()->user()->username }} <i class="fa fa-caret-down"></i>
                 </a>
@@ -33,11 +33,11 @@
                     <div class="td-drop-left">
                         <div class="td-drop-profile">
                             @if($tdUser->photo)
-                            <div class="td-avatar-lg" style="background:#f0f0f0;padding:0;overflow:hidden">
+                            <div class="td-avatar-lg" style="width:56px;height:56px;border-radius:50%;overflow:hidden;background:#f0f0f0;padding:0;flex-shrink:0">
                                 <img src="{{ asset('uploads/' . $tdUser->photo) }}" alt="" style="width:100%;height:100%;object-fit:cover">
                             </div>
                             @else
-                            <div class="td-avatar-lg" style="background:{{ $tdColor }}">{{ $tdInitial }}</div>
+                            <div class="td-avatar-lg" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ $tdColor }};color:#fff;font-size:22px;font-weight:700;flex-shrink:0">{{ $tdInitial }}</div>
                             @endif
                             <div class="td-drop-username">{{ $tdUser->name ?? $tdUser->username }}</div>
                             @if($tdRoleLabel)
