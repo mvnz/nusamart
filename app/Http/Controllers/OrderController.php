@@ -72,9 +72,31 @@ class OrderController extends Controller
             return response()->json(['error' => 'API tracking belum dikonfigurasi.'], 503);
         }
 
+        // Map nama kurir ke kode BinderByte
+        $courierMap = [
+            'jne'          => 'jne',
+            'j&t express'  => 'jet',
+            'j&t'          => 'jet',
+            'sicepat'      => 'sicepat',
+            'anteraja'     => 'anteraja',
+            'pos indonesia' => 'pos',
+            'pos'          => 'pos',
+            'ninja xpress' => 'ninja',
+            'ninja'        => 'ninja',
+            'lion parcel'  => 'lion',
+            'tiki'         => 'tiki',
+            'gosend'       => 'gosend',
+            'grabexpress'  => 'grab',
+        ];
+
+        $courierKey = 'auto';
+        if ($order->courier_name) {
+            $courierKey = $courierMap[strtolower($order->courier_name)] ?? 'auto';
+        }
+
         $response = Http::timeout(10)->get('https://api.binderbyte.com/v1/track', [
             'api_key' => $apiKey,
-            'courier' => 'auto',
+            'courier' => $courierKey,
             'awb'     => $awb,
         ]);
 
