@@ -47,15 +47,41 @@ echo "[5/6] Running database migrations..."
 php "$APP_DIR/artisan" migrate --force
 echo "      Done."
 
-# 6. Storage symlink di webroot (public_html/storage → nusamart/storage/app/public)
-echo "[6/7] Creating storage symlink at webroot..."
+# 6. Generate index.php di webroot (public_html/index.php → nusamart app)
+echo "[6/8] Writing index.php at webroot..."
+cat > "$PUBLIC_HTML/index.php" <<'PHP'
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/nusamart/storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+// Register the Composer autoloader...
+require __DIR__.'/nusamart/vendor/autoload.php';
+
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/nusamart/bootstrap/app.php';
+
+$app->handleRequest(Request::capture());
+PHP
+echo "      Done."
+
+# 7. Storage symlink di webroot (public_html/storage → nusamart/storage/app/public)
+echo "[7/8] Creating storage symlink at webroot..."
 # Remove existing dir/symlink first — ln -sfn won't replace a real directory
 rm -rf "$PUBLIC_HTML/storage"
 ln -s "$APP_DIR/storage/app/public" "$PUBLIC_HTML/storage"
 echo "      Done. ($PUBLIC_HTML/storage -> $APP_DIR/storage/app/public)"
 
-# 7. Clear semua cache Laravel
-echo "[7/7] Clearing caches..."
+# 8. Clear semua cache Laravel
+echo "[8/8] Clearing caches..."
 php "$APP_DIR/artisan" config:clear
 php "$APP_DIR/artisan" cache:clear
 php "$APP_DIR/artisan" view:clear
