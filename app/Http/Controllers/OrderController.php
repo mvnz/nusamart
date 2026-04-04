@@ -57,6 +57,23 @@ class OrderController extends Controller
             ->with('success', 'Pesanan telah dikonfirmasi diterima. Terima kasih!');
     }
 
+    public function cancel(Order $order)
+    {
+        abort_if((int)$order->user_id !== (int)auth()->id(), 403);
+        abort_if($order->status !== 'pending', 422);
+
+        foreach ($order->items as $item) {
+            if ($item->product) {
+                $item->product->increment('stock', $item->quantity);
+            }
+        }
+
+        $order->update(['status' => 'cancelled']);
+
+        return redirect()->route('orders.show', $order)
+            ->with('success', 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.');
+    }
+
     public function track(Order $order)
     {
         abort_if((int)$order->user_id !== (int)auth()->id(), 403);

@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/pesanan/{order}/terima', [OrderController::class, 'markReceived'])->name('orders.received');
+    Route::patch('/pesanan/{order}/batalkan', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/pesanan/{order}/lacak', [OrderController::class, 'track'])->name('orders.track');
 
     // Wishlist routes

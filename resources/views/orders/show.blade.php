@@ -176,6 +176,18 @@
                 </div>
                 @endif
 
+                {{-- Tombol batalkan (hanya saat menunggu konfirmasi) --}}
+                @if($order->status === 'pending')
+                <div class="order-actions-inline">
+                    <form method="POST" action="{{ route('orders.cancel', $order) }}" onsubmit="return confirm('Yakin ingin membatalkan pesanan ini? Stok produk akan dikembalikan.')" style="margin:0">
+                        @csrf @method('PATCH')
+                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">
+                            <i class="fa fa-times-circle"></i> Batalkan Pesanan
+                        </button>
+                    </form>
+                </div>
+                @endif
+
                 {{-- Tombol konfirmasi & lacak (hanya saat status Dikirim) --}}
                 @if($order->status === 'shipped')
                 <div class="order-actions-inline">
