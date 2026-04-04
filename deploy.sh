@@ -43,8 +43,13 @@ if [ -f "$APP_DIR/public/favicon.ico" ]; then
 fi
 
 # 5. Jalankan migrasi database
-echo "[5/6] Running database migrations..."
+echo "[5/8] Running database migrations..."
 php "$APP_DIR/artisan" migrate --force
+echo "      Done."
+
+# 5b. Jalankan seeder produk sample (reassign ke SELLER_EMAIL jika diset)
+echo "[5b] Running SampleProductSeeder..."
+php "$APP_DIR/artisan" db:seed --class=SampleProductSeeder --force
 echo "      Done."
 
 # 6. Generate index.php di webroot (public_html/index.php → nusamart app)

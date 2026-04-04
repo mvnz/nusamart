@@ -13,9 +13,11 @@ class SampleProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // Seller
+        // Seller — gunakan SELLER_EMAIL dari .env, fallback ke akun demo
+        $sellerEmail = env('SELLER_EMAIL', 'penjual@nusamart.com');
+
         $penjual = User::firstOrCreate(
-            ['email' => 'penjual@nusamart.com'],
+            ['email' => $sellerEmail],
             [
                 'name'               => 'Toko Nusantara',
                 'username'           => 'toko_nusantara',
@@ -28,6 +30,19 @@ class SampleProductSeeder extends Seeder
                 'email_verified_at'  => now(),
             ]
         );
+
+        // Pastikan role penjual (jika akun sudah ada tapi role-nya beda)
+        if ($penjual->role !== 'penjual') {
+            $penjual->update(['role' => 'penjual']);
+        }
+
+        // Reassign produk dari akun lama (penjual@nusamart.com) ke akun baru jika berbeda
+        if ($sellerEmail !== 'penjual@nusamart.com') {
+            $lama = User::where('email', 'penjual@nusamart.com')->first();
+            if ($lama) {
+                Product::where('user_id', $lama->id)->update(['user_id' => $penjual->id]);
+            }
+        }
 
         // Categories
         $categoryNames = ['Makanan', 'Minuman', 'Fashion', 'Kerajinan', 'Kesehatan', 'Elektronik'];
