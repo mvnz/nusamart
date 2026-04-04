@@ -16,8 +16,26 @@ class CategoryController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $categories = $query->paginate(10)->withQueryString();
-        return view('categories.index', compact('categories'));
+        $filter = $request->get('status', 'active');
+        if ($filter === 'inactive') {
+            $query->where('is_active', false);
+        } elseif ($filter === 'all') {
+            // no filter
+        } else {
+            $query->where('is_active', true);
+        }
+
+        $categories = $query->paginate(15)->withQueryString();
+
+        $all = Category::withCount('products')->get();
+        $stats = [
+            'total'          => $all->count(),
+            'with_products'  => $all->where('products_count', '>', 0)->where('is_active', true)->count(),
+            'empty'          => $all->where('products_count', 0)->where('is_active', true)->count(),
+            'total_products' => $all->where('is_active', true)->sum('products_count'),
+        ];
+
+        return view('categories.index', compact('categories', 'stats', 'filter'));
     }
 
     public function store(Request $request)
@@ -44,12 +62,16 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        if ($category->products()->count() > 0) {
-            return redirect()->route('admin.categories')->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh produk.');
-        }
+        $category->update(['is_active' => false]);
 
-        $category->delete();
+        return redirect()->route('admin.categories')->with('success', 'Kategori "' . $category->name . '" berhasil dinonaktifkan.');
+    }
 
-        return redirect()->route('admin.categories')->with('success', 'Kategori berhasil dihapus.');
+    public function toggleActive(Category $category)
+    {
+        $category->update(['is_active' => !$category->is_active]);
+
+        $msg = $category->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->route('admin.categories')->with('success', 'Kategori "' . $category->name . '" berhasil ' . $msg . '.');
     }
 }

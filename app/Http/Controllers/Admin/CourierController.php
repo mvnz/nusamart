@@ -87,13 +87,9 @@ class CourierController extends Controller
 
     public function destroy(Courier $courier)
     {
-        if ($courier->logo) {
-            Storage::disk('public')->delete($courier->logo);
-        }
+        $courier->update(['is_active' => false]);
 
-        $courier->delete();
-
-        return redirect()->route('admin.couriers')->with('success', 'Kurir ' . $courier->name . ' berhasil dihapus.');
+        return redirect()->route('admin.couriers')->with('success', 'Kurir ' . $courier->name . ' berhasil dinonaktifkan.');
     }
 
     public function toggleActive(Courier $courier)
@@ -126,9 +122,9 @@ class CourierController extends Controller
 
     public function destroyService(CourierService $service)
     {
-        $service->delete();
+        $service->update(['is_active' => false]);
 
-        return redirect()->route('admin.couriers')->with('success', 'Layanan berhasil dihapus.');
+        return redirect()->route('admin.couriers')->with('success', 'Layanan ' . $service->name . ' berhasil dinonaktifkan.');
     }
 
     public function toggleService(CourierService $service)

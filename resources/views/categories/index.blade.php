@@ -1,257 +1,354 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
-@section('title', 'Manajemen Kategori - NusaMart')
+@section('title', 'Manajemen Kategori - NusaMart Admin')
 
 @section('content')
 <style>
-.cat-page { padding: 28px 0 40px; }
-.cat-hero { background: linear-gradient(135deg, #1e1f29 0%, #2d2e3e 100%); border-radius: 16px; padding: 28px 32px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-.cat-hero-left h2 { margin: 0 0 4px; font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
-.cat-hero-left p { margin: 0; font-size: 13px; color: rgba(255,255,255,.55); }
-.cat-hero-stat { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 14px 24px; text-align: center; }
-.cat-hero-stat .stat-num { font-size: 28px; font-weight: 800; color: #fff; line-height: 1; }
-.cat-hero-stat .stat-label { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; }
-.cat-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-.cat-search-wrap { display: flex; align-items: center; gap: 8px; }
-.cat-search-wrap input { padding: 9px 14px; border: 1.5px solid #e8e8e8; border-radius: 10px; font-size: 13px; outline: none; width: 220px; background: #fff; transition: all .2s; }
-.cat-search-wrap input:focus { border-color: #D10024; box-shadow: 0 0 0 3px rgba(209,0,36,.08); }
-.btn-search { padding: 9px 14px; background: #D10024; color: #fff; border: none; border-radius: 10px; font-size: 13px; cursor: pointer; transition: background .2s; }
-.btn-search:hover { background: #b0001e; }
-.btn-add { padding: 9px 18px; background: linear-gradient(135deg, #D10024, #ff4f4f); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: opacity .2s; box-shadow: 0 4px 12px rgba(209,0,36,.3); text-decoration: none; white-space: nowrap; }
-.btn-add:hover { opacity: .88; color: #fff; }
-.btn-back-link { padding: 9px 16px; background: #f4f4f6; color: #555; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: background .2s; text-decoration: none; white-space: nowrap; }
-.btn-back-link:hover { background: #e8e8ec; color: #333; }
-.cat-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,.06); overflow: hidden; }
-.cat-table { width: 100%; border-collapse: collapse; }
-.cat-table thead tr { background: #fafafa; border-bottom: 2px solid #f0f0f0; }
-.cat-table thead th { padding: 13px 20px; font-size: 11px; color: #999; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; text-align: left; }
-.cat-table thead th.center { text-align: center; }
-.cat-table tbody tr { border-bottom: 1px solid #f5f5f7; transition: background .15s; }
-.cat-table tbody tr:hover { background: #fef8f9; }
-.cat-table tbody tr:last-child { border-bottom: none; }
-.cat-table td { padding: 14px 20px; font-size: 13px; color: #444; vertical-align: middle; }
-.cat-table td.center { text-align: center; }
-.cat-num { font-size: 12px; color: #ccc; font-weight: 700; }
-.cat-name-cell { display: flex; align-items: center; gap: 12px; }
-.cat-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #D10024, #ff6b6b); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(209,0,36,.25); }
-.cat-icon i { color: #fff; font-size: 15px; }
-.cat-name { font-size: 14px; font-weight: 700; color: #1e1f29; }
-.badge-count { background: #f0f0f5; color: #666; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
-.badge-count.has-items { background: #e8f5e9; color: #27ae60; }
-.cat-date { font-size: 12px; color: #aaa; font-weight: 500; }
-.btn-edit { border: none; cursor: pointer; font-size: 11px; font-weight: 700; padding: 6px 13px; border-radius: 8px; transition: all .2s; background: #e8f4fd; color: #1a85d3; letter-spacing: .3px; }
-.btn-edit:hover { background: #1a85d3; color: #fff; }
-.btn-del { border: none; cursor: pointer; font-size: 11px; font-weight: 700; padding: 6px 13px; border-radius: 8px; transition: all .2s; background: #fde8ec; color: #D10024; letter-spacing: .3px; }
-.btn-del:hover { background: #D10024; color: #fff; }
-.btn-del:disabled { opacity: .35; cursor: not-allowed; }
-.cat-empty { padding: 60px 20px; text-align: center; }
-.cat-empty-icon { width: 72px; height: 72px; border-radius: 20px; background: linear-gradient(135deg, #f5f5f5, #ebebeb); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-.cat-empty-icon i { font-size: 30px; color: #ccc; }
-.cat-empty h5 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #aaa; }
-.cat-empty p { margin: 0; font-size: 13px; color: #ccc; }
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
-.modal-overlay.active { display: flex; }
-.modal-box { background: #fff; border-radius: 16px; width: 440px; max-width: 92vw; position: relative; box-shadow: 0 24px 64px rgba(0,0,0,.2); animation: modalIn .25s ease; }
-@keyframes modalIn { from{opacity:0;transform:translateY(-16px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
-.modal-header { padding: 22px 24px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
-.modal-header h4 { margin: 0; font-size: 16px; font-weight: 800; color: #1e1f29; display: flex; align-items: center; gap: 8px; }
-.modal-header .modal-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.modal-close { background: #f5f5f5; border: none; width: 30px; height: 30px; border-radius: 8px; font-size: 18px; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
-.modal-close:hover { background: #fde8ec; color: #D10024; }
-.modal-body { padding: 22px 24px 26px; }
-.form-group { margin-bottom: 18px; }
-.form-group label { display: block; font-size: 12px; font-weight: 700; color: #888; margin-bottom: 7px; text-transform: uppercase; letter-spacing: .5px; }
-.form-group input { width: 100%; padding: 10px 13px; border: 1.5px solid #e8e8e8; border-radius: 10px; font-size: 14px; transition: all .2s; box-sizing: border-box; outline: none; }
-.form-group input:focus { border-color: #D10024; box-shadow: 0 0 0 3px rgba(209,0,36,.08); }
-.btn-submit { border: none; padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-submit-red { background: linear-gradient(135deg, #D10024, #ff4f4f); color: #fff; box-shadow: 0 4px 12px rgba(209,0,36,.3); }
-.btn-submit-red:hover { opacity: .9; }
-.btn-submit-blue { background: linear-gradient(135deg, #1a85d3, #42a5f5); color: #fff; box-shadow: 0 4px 12px rgba(26,133,211,.3); }
-.btn-submit-blue:hover { opacity: .9; }
-.alert-success { margin-bottom: 20px; padding: 12px 16px; background: #e8f5e9; border-left: 4px solid #27ae60; border-radius: 10px; color: #27ae60; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.alert-error { margin-bottom: 20px; padding: 12px 16px; background: #fde8ec; border-left: 4px solid #D10024; border-radius: 10px; color: #D10024; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.table-responsive { overflow-x: auto; }
+.ck-wrap { max-width:1140px; margin:0 auto; padding:28px 16px 48px; }
+
+.ck-page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:26px; flex-wrap:wrap; gap:12px; }
+.ck-page-title  { font-size:21px; font-weight:800; color:#1e1f29; display:flex; align-items:center; gap:10px; margin:0; }
+.ck-page-title i { color:#D10024; font-size:20px; }
+.ck-back-btn { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; transition:background .15s; font-family:inherit; }
+.ck-back-btn:hover { background:#e5e7eb; color:#1e1f29; }
+
+.ck-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+@media(max-width:700px){ .ck-stats{ grid-template-columns:repeat(2,1fr); } }
+.ck-stat { background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.06); padding:20px; display:flex; align-items:center; gap:14px; }
+.ck-si { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+.ck-si.red   { background:linear-gradient(135deg,#ffd6d6,#ffefef); color:#D10024; }
+.ck-si.green { background:linear-gradient(135deg,#c8f7d6,#edfff3); color:#1a9e50; }
+.ck-si.grey  { background:linear-gradient(135deg,#e5e7eb,#f3f4f6); color:#6b7280; }
+.ck-si.blue  { background:linear-gradient(135deg,#c9e9ff,#edf6ff); color:#1565c0; }
+.ck-sv { font-size:26px; font-weight:800; color:#1e1f29; line-height:1; }
+.ck-sl { font-size:12px; color:#8d8d8d; margin-top:3px; font-weight:500; }
+
+.ck-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
+
+.ck-toolbar { display:flex; align-items:center; gap:12px; padding:18px 22px; border-bottom:1px solid #f2f2f5; flex-wrap:wrap; }
+.ck-search { display:flex; align-items:center; border:1.5px solid #e5e7eb; border-radius:10px; overflow:hidden; transition:border .2s; background:#f9fafb; flex:1; min-width:180px; max-width:280px; }
+.ck-search:focus-within { border-color:#D10024; background:#fff; }
+.ck-search i { padding:0 12px; color:#c0c0c0; font-size:13px; }
+.ck-search input { flex:1; border:none; outline:none; padding:10px 0; font-size:13px; background:transparent; font-family:inherit; }
+.ck-filters { display:flex; gap:6px; flex-wrap:wrap; }
+.ck-fbtn { padding:8px 16px; border:1.5px solid #e5e7eb; border-radius:20px; background:#fff; font-size:12px; font-weight:700; color:#666; cursor:pointer; font-family:inherit; transition:all .2s; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.ck-fbtn:hover { border-color:#D10024; color:#D10024; }
+.ck-fbtn.active { background:#D10024; border-color:#D10024; color:#fff; }
+.ck-addbtn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; background:#D10024; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .18s,transform .1s; margin-left:auto; white-space:nowrap; }
+.ck-addbtn:hover { background:#a8001e; }
+.ck-addbtn:active { transform:scale(.97); }
+
+.ck-alert { display:flex; align-items:center; gap:8px; padding:12px 22px; font-size:13px; }
+.ck-alert.success { background:#d1fae5; border-bottom:1px solid #6ee7b7; color:#065f46; }
+.ck-alert.error   { background:#fee2e2; border-bottom:1px solid #fca5a5; color:#991b1b; }
+
+.ck-table-wrap { overflow-x:auto; }
+.ck-table { width:100%; border-collapse:collapse; font-size:13px; }
+.ck-table th { background:#f8f9fb; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#8d8d8d; padding:11px 16px; text-align:left; border-bottom:1px solid #f0f0f0; white-space:nowrap; }
+.ck-table td { padding:13px 16px; border-bottom:1px solid #f7f7f9; vertical-align:middle; }
+.ck-table tbody tr:last-child td { border-bottom:none; }
+.ck-table tbody tr:hover td { background:#fafbfc; }
+
+.cat-cc { display:flex; align-items:center; gap:12px; }
+.cat-avatar { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#D10024,#ff6b6b); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; font-size:17px; font-weight:800; text-transform:uppercase; box-shadow:0 4px 10px rgba(209,0,36,.2); }
+.cat-cn { font-size:14px; font-weight:700; color:#1e1f29; }
+
+.ck-badge { display:inline-block; padding:3px 11px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.ck-badge.has      { background:#ede9fe; color:#5b21b6; }
+.ck-badge.none     { background:#f3f4f6; color:#9ca3af; }
+.ck-badge.aktif    { background:#d1fae5; color:#065f46; }
+.ck-badge.nonaktif { background:#fee2e2; color:#991b1b; }
+
+.ck-date { font-size:12px; color:#9ca3af; }
+
+.ck-actions { display:flex; gap:6px; align-items:center; }
+.ck-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border:none; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; white-space:nowrap; }
+.ck-btn.edit { background:#e3f2fd; color:#1565c0; }
+.ck-btn.edit:hover { background:#bbdefb; }
+.ck-btn.del  { background:#fee2e2; color:#991b1b; }
+.ck-btn.del:hover  { background:#fecaca; }
+.ck-btn.ton  { background:#d1fae5; color:#065f46; }
+.ck-btn.ton:hover  { background:#a7f3d0; }
+
+.ck-empty { text-align:center; padding:64px 24px; }
+.ck-empty-icon { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#ffd6d6,#ffefef); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+.ck-empty-icon i { font-size:28px; color:#D10024; }
+.ck-empty h4 { font-size:15px; font-weight:700; color:#374151; margin:0 0 6px; }
+.ck-empty p { font-size:13px; color:#9ca3af; margin:0; }
+
+/* Modals */
+.cm-overlay { display:none; position:fixed; inset:0; background:rgba(10,12,20,.55); z-index:9000; justify-content:center; align-items:center; padding:20px; }
+.cm-overlay.open { display:flex; }
+.cm-modal { background:#fff; border-radius:18px; width:440px; max-width:100%; box-shadow:0 24px 64px rgba(0,0,0,.28); animation:cmSlideIn .22s ease; }
+@keyframes cmSlideIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+.cm-header { padding:18px 24px 16px; background:linear-gradient(135deg,#1a1f2e 0%,#2d3347 100%); border-radius:18px 18px 0 0; display:flex; align-items:center; justify-content:space-between; }
+.cm-title { font-size:15px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; }
+.cm-title i { color:rgba(255,255,255,.55); }
+.cm-close { background:rgba(255,255,255,.12); border:none; font-size:18px; color:#fff; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px; transition:background .15s; line-height:1; }
+.cm-close:hover { background:rgba(255,255,255,.25); }
+.cm-body { padding:20px 24px 24px; }
+.cm-field { margin-bottom:16px; }
+.cm-field label { display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:7px; text-transform:uppercase; letter-spacing:.4px; }
+.cm-field input { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; font-family:inherit; outline:none; box-sizing:border-box; transition:border .2s; }
+.cm-field input:focus { border-color:#D10024; box-shadow:0 0 0 3px rgba(209,0,36,.08); }
+.cm-field .cm-err { font-size:11px; color:#D10024; margin-top:4px; }
+.cm-footer { display:flex; justify-content:flex-end; gap:10px; padding-top:4px; }
+.btn-cm-save { padding:10px 22px; background:#D10024; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; }
+.btn-cm-save:hover { background:#a8001e; }
+.btn-cm-cancel { padding:10px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
+.btn-cm-cancel:hover { background:#e5e7eb; }
+.del-modal { width:360px; }
+.del-icon { text-align:center; padding:8px 0 16px; font-size:44px; color:#D10024; }
+.del-text { text-align:center; font-size:14px; color:#333; line-height:1.6; margin-bottom:6px; }
+.del-sub  { text-align:center; font-size:12px; color:#aaa; }
 </style>
 
-<div class="cat-page">
-<div class="container">
+<div class="ck-wrap">
 
-    {{-- Hero Header --}}
-    <div class="cat-hero">
-        <div class="cat-hero-left">
-            <h2><i class="fa fa-tags" style="color:#ff6b6b;margin-right:10px"></i>Manajemen Kategori</h2>
-            <p>Kelola semua kategori produk di NusaMart</p>
+    <div class="ck-page-header">
+        <h1 class="ck-page-title"><i class="fa fa-tags"></i> Manajemen Kategori</h1>
+        <a href="{{ route('dashboard') }}" class="ck-back-btn"><i class="fa fa-arrow-left"></i> Kembali</a>
+    </div>
+
+    {{-- Stats --}}
+    <div class="ck-stats">
+        <div class="ck-stat">
+            <div class="ck-si red"><i class="fa fa-tags"></i></div>
+            <div><div class="ck-sv">{{ $stats['total'] }}</div><div class="ck-sl">Total Kategori</div></div>
         </div>
-        <div class="cat-hero-stat">
-            <div class="stat-num">{{ $categories->total() }}</div>
-            <div class="stat-label">Total Kategori</div>
+        <div class="ck-stat">
+            <div class="ck-si green"><i class="fa fa-check-circle"></i></div>
+            <div><div class="ck-sv">{{ $stats['with_products'] }}</div><div class="ck-sl">Digunakan</div></div>
+        </div>
+        <div class="ck-stat">
+            <div class="ck-si grey"><i class="fa fa-ban"></i></div>
+            <div><div class="ck-sv">{{ $stats['empty'] }}</div><div class="ck-sl">Kosong</div></div>
+        </div>
+        <div class="ck-stat">
+            <div class="ck-si blue"><i class="fa fa-box"></i></div>
+            <div><div class="ck-sv">{{ $stats['total_products'] }}</div><div class="ck-sl">Total Produk</div></div>
         </div>
     </div>
 
-    {{-- Alerts --}}
-    @if(session(''success''))
-    <div class="alert-success"><i class="fa fa-check-circle"></i> {{ session(''success'') }}</div>
-    @endif
-    @if(session(''error''))
-    <div class="alert-error"><i class="fa fa-exclamation-circle"></i> {{ session(''error'') }}</div>
-    @endif
+    <div class="ck-card">
 
-    {{-- Toolbar --}}
-    <div class="cat-toolbar">
-        <div class="cat-search-wrap">
-            <input type="text" id="searchInput" placeholder="Cari kategori..."
-                value="{{ request(''search'') }}"
-                onkeydown="if(event.key===''Enter''){searchCategories()}">
-            <button class="btn-search" onclick="searchCategories()"><i class="fa fa-search"></i></button>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-            <button class="btn-add" onclick="openAddModal()">
+        {{-- Toolbar --}}
+        <div class="ck-toolbar">
+            <form method="GET" action="{{ route('admin.categories') }}" id="searchForm" style="display:contents">
+                <div class="ck-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" name="search" id="searchInput"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nama kategori..."
+                        onkeydown="if(event.key==='Enter'){document.getElementById('searchForm').submit()}">
+                </div>
+            </form>
+            <div class="ck-filters">
+                <a href="{{ route('admin.categories', ['status' => 'active'] + request()->except('status','page')) }}"   class="ck-fbtn {{ $filter === 'active'   ? 'active' : '' }}">Aktif</a>
+                <a href="{{ route('admin.categories', ['status' => 'inactive'] + request()->except('status','page')) }}" class="ck-fbtn {{ $filter === 'inactive' ? 'active' : '' }}"><i class="fa fa-ban" style="font-size:10px"></i> Nonaktif</a>
+                <a href="{{ route('admin.categories', ['status' => 'all'] + request()->except('status','page')) }}"      class="ck-fbtn {{ $filter === 'all'      ? 'active' : '' }}">Semua</a>
+            </div>
+            <button type="button" class="ck-addbtn" onclick="openAddModal()">
                 <i class="fa fa-plus"></i> Tambah Kategori
             </button>
-            <a href="{{ route(''dashboard'') }}" class="btn-back-link">
-                <i class="fa fa-arrow-left"></i> Kembali
-            </a>
         </div>
-    </div>
 
-    {{-- Table Card --}}
-    <div class="cat-card">
-        <div class="table-responsive">
-            <table class="cat-table" id="categoryTable">
+        @if(session('success'))
+            <div class="ck-alert success"><i class="fa fa-check-circle"></i> {{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="ck-alert error"><i class="fa fa-exclamation-circle"></i> {{ session('error') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="ck-alert error"><i class="fa fa-exclamation-triangle"></i> {{ $errors->first() }}</div>
+        @endif
+
+        <div class="ck-table-wrap">
+            @if($categories->isEmpty())
+                <div class="ck-empty">
+                    <div class="ck-empty-icon"><i class="fa fa-tags"></i></div>
+                    <h4>Belum Ada Kategori</h4>
+                    <p>Klik <strong>Tambah Kategori</strong> untuk menambahkan kategori pertama.</p>
+                </div>
+            @else
+            <table class="ck-table">
                 <thead>
                     <tr>
-                        <th style="width:48px">#</th>
-                        <th>Nama Kategori</th>
-                        <th class="center">Jumlah Produk</th>
-                        <th class="center">Dibuat</th>
-                        <th class="center">Aksi</th>
+                        <th>Kategori</th>
+                        <th>Produk</th>
+                        <th>Status</th>
+                        <th>Dibuat</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($categories as $category)
-                    <tr data-name="{{ strtolower($category->name) }}">
-                        <td><span class="cat-num">{{ $categories->firstItem() + $loop->index }}</span></td>
+                    @foreach($categories as $category)
+                    <tr>
                         <td>
-                            <div class="cat-name-cell">
-                                <div class="cat-icon"><i class="fa fa-tag"></i></div>
-                                <span class="cat-name">{{ $category->name }}</span>
+                            <div class="cat-cc">
+                                <div class="cat-avatar" style="{{ !$category->is_active ? 'background:linear-gradient(135deg,#9ca3af,#d1d5db);box-shadow:none' : '' }}">{{ mb_substr($category->name, 0, 1) }}</div>
+                                <div class="cat-cn" style="{{ !$category->is_active ? 'color:#9ca3af' : '' }}">{{ $category->name }}</div>
                             </div>
                         </td>
-                        <td class="center">
-                            <span class="badge-count {{ $category->products_count > 0 ? ''has-items'' : '''' }}">
-                                <i class="fa fa-cube" style="font-size:10px"></i>
+                        <td>
+                            <span class="ck-badge {{ $category->products_count > 0 ? 'has' : 'none' }}">
+                                <i class="fa fa-box" style="font-size:10px"></i>
                                 {{ $category->products_count }} produk
                             </span>
                         </td>
-                        <td class="center"><span class="cat-date">{{ $category->created_at->format(''d M Y'') }}</span></td>
-                        <td class="center">
-                            <div style="display:inline-flex;gap:6px">
-                                <button class="btn-edit" onclick=''openEditModal({{ $category->id }}, "{{ addslashes($category->name) }}")''>
+                        <td>
+                            <span class="ck-badge {{ $category->is_active ? 'aktif' : 'nonaktif' }}">
+                                {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
+                            </span>
+                        </td>
+                        <td><span class="ck-date">{{ $category->created_at->format('d M Y') }}</span></td>
+                        <td>
+                            <div class="ck-actions">
+                                @if($category->is_active)
+                                <button class="ck-btn edit" onclick="openEditModal({{ $category->id }}, '{{ addslashes($category->name) }}')">
                                     <i class="fa fa-pencil"></i> Edit
                                 </button>
-                                @if($category->products_count === 0)
-                                <form method="POST" action="{{ route(''admin.categories.destroy'', $category) }}" style="display:inline" onsubmit="return confirm(''Hapus kategori {{ addslashes($category->name) }}?'')">
-                                    @csrf @method(''DELETE'')
-                                    <button type="submit" class="btn-del"><i class="fa fa-trash"></i> Hapus</button>
-                                </form>
+                                <button class="ck-btn del" onclick="openDelModal({{ $category->id }}, '{{ addslashes($category->name) }}')">
+                                    <i class="fa fa-ban"></i>
+                                </button>
                                 @else
-                                <button class="btn-del" disabled title="Tidak bisa dihapus, masih ada produk"><i class="fa fa-trash"></i> Hapus</button>
+                                <form method="POST" action="{{ route('admin.categories.toggle', $category) }}" style="display:inline">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="ck-btn ton">
+                                        <i class="fa fa-check-circle"></i> Aktifkan
+                                    </button>
+                                </form>
                                 @endif
                             </div>
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5">
-                            <div class="cat-empty">
-                                <div class="cat-empty-icon"><i class="fa fa-tags"></i></div>
-                                <h5>Belum ada kategori</h5>
-                                <p>Klik "Tambah Kategori" untuk membuat kategori pertama</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
-        </div>
-        @if($categories->hasPages())
-        <div style="padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:center">
-            {{ $categories->links() }}
-        </div>
-        @endif
-    </div>
 
-</div>
-</div>
-
-{{-- Modal Tambah --}}
-<div class="modal-overlay" id="addModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h4>
-                <span class="modal-icon" style="background:#fde8ec"><i class="fa fa-plus" style="color:#D10024;font-size:14px"></i></span>
-                Tambah Kategori
-            </h4>
-            <button class="modal-close" onclick="closeModal(''addModal'')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="{{ route(''admin.categories.store'') }}">
-                @csrf
-                <div class="form-group">
-                    <label>Nama Kategori</label>
-                    <input type="text" name="name" placeholder="Contoh: Elektronik" required autofocus>
-                    @error(''name'')<div style="color:#D10024;font-size:12px;margin-top:4px"><i class="fa fa-exclamation-circle"></i> {{ $message }}</div>@enderror
-                </div>
-                <button type="submit" class="btn-submit btn-submit-red"><i class="fa fa-save"></i> Simpan Kategori</button>
-            </form>
+            {{-- Pagination --}}
+            @if($categories->hasPages())
+            <div style="padding:16px 22px; border-top:1px solid #f2f2f5; display:flex; justify-content:center;">
+                {{ $categories->links() }}
+            </div>
+            @endif
+            @endif
         </div>
     </div>
 </div>
 
-{{-- Modal Edit --}}
-<div class="modal-overlay" id="editModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h4>
-                <span class="modal-icon" style="background:#e8f4fd"><i class="fa fa-pencil" style="color:#1a85d3;font-size:14px"></i></span>
-                Edit Kategori
-            </h4>
-            <button class="modal-close" onclick="closeModal(''editModal'')">&times;</button>
+{{-- Add Modal --}}
+<div class="cm-overlay" id="addModal">
+    <div class="cm-modal">
+        <div class="cm-header">
+            <div class="cm-title"><i class="fa fa-plus-circle"></i> Tambah Kategori</div>
+            <button class="cm-close" onclick="closeModal('addModal')">&times;</button>
         </div>
-        <div class="modal-body">
-            <form method="POST" action="" id="editForm">
-                @csrf @method(''PUT'')
-                <div class="form-group">
+        <form method="POST" action="{{ route('admin.categories.store') }}">
+            @csrf
+            <div class="cm-body">
+                <div class="cm-field">
                     <label>Nama Kategori</label>
-                    <input type="text" name="name" id="editName" required>
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Contoh: Elektronik" autofocus required>
+                    @error('name')<div class="cm-err">{{ $message }}</div>@enderror
                 </div>
-                <button type="submit" class="btn-submit btn-submit-blue"><i class="fa fa-save"></i> Perbarui Kategori</button>
-            </form>
+            </div>
+            <div class="cm-footer">
+                <button type="button" class="btn-cm-cancel" onclick="closeModal('addModal')">Batal</button>
+                <button type="submit" class="btn-cm-save"><i class="fa fa-check"></i> Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Edit Modal --}}
+<div class="cm-overlay" id="editModal">
+    <div class="cm-modal">
+        <div class="cm-header">
+            <div class="cm-title"><i class="fa fa-pencil"></i> Edit Kategori</div>
+            <button class="cm-close" onclick="closeModal('editModal')">&times;</button>
         </div>
+        <form method="POST" id="editForm" action="">
+            @csrf
+            @method('PUT')
+            <div class="cm-body">
+                <div class="cm-field">
+                    <label>Nama Kategori</label>
+                    <input type="text" name="name" id="editName" placeholder="Nama kategori" required>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button type="button" class="btn-cm-cancel" onclick="closeModal('editModal')">Batal</button>
+                <button type="submit" class="btn-cm-save"><i class="fa fa-check"></i> Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Delete Modal --}}
+<div class="cm-overlay" id="delModal">
+    <div class="cm-modal del-modal">
+        <div class="cm-header">
+            <div class="cm-title"><i class="fa fa-ban"></i> Nonaktifkan Kategori</div>
+            <button class="cm-close" onclick="closeModal('delModal')">&times;</button>
+        </div>
+        <form method="POST" id="delForm" action="">
+            @csrf
+            @method('DELETE')
+            <div class="cm-body">
+                <div class="del-icon"><i class="fa fa-ban"></i></div>
+                <div class="del-text">Nonaktifkan kategori <strong id="delName"></strong>?</div>
+                <div class="del-sub" id="delSub"></div>
+            </div>
+            <div class="cm-footer">
+                <button type="button" class="btn-cm-cancel" onclick="closeModal('delModal')">Batal</button>
+                <button type="submit" class="btn-cm-save" id="delConfirmBtn" style="background:#6b7280"><i class="fa fa-ban"></i> Nonaktifkan</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
-function openAddModal() { document.getElementById(''addModal'').classList.add(''active''); }
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+
 function openEditModal(id, name) {
-    document.getElementById(''editName'').value = name;
-    document.getElementById(''editForm'').action = ''/admin/categories/'' + id;
-    document.getElementById(''editModal'').classList.add(''active'');
+    document.getElementById('editName').value = name;
+    document.getElementById('editForm').action = '/admin/categories/' + id;
+    document.getElementById('editModal').classList.add('open');
 }
-function closeModal(id) { document.getElementById(id).classList.remove(''active''); }
-document.querySelectorAll(''.modal-overlay'').forEach(function(overlay) {
-    overlay.addEventListener(''click'', function(e) { if (e.target === overlay) overlay.classList.remove(''active''); });
+
+function openDelModal(id, name) {
+    document.getElementById('delName').textContent = name;
+    document.getElementById('delSub').textContent = 'Kategori akan dinonaktifkan dan tidak muncul di toko. Dapat diaktifkan kembali.';
+    document.getElementById('delConfirmBtn').disabled = false;
+    document.getElementById('delConfirmBtn').style.opacity = '1';
+    document.getElementById('delForm').action = '/admin/categories/' + id;
+    document.getElementById('delModal').classList.add('open');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.cm-overlay').forEach(function(el) {
+    el.addEventListener('click', function(e) { if (e.target === el) closeModal(el.id); });
 });
-document.addEventListener(''keydown'', function(e) { if (e.key === ''Escape'') { document.querySelectorAll(''.modal-overlay.active'').forEach(function(m) { m.classList.remove(''active''); }); } });
-function searchCategories() {
-    var val = document.getElementById(''searchInput'').value;
-    var url = new URL(window.location.href);
-    url.searchParams.set(''search'', val);
-    url.searchParams.delete(''page'');
-    window.location.href = url.toString();
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.querySelectorAll('.cm-overlay.open').forEach(function(el) { closeModal(el.id); });
+});
+
+function ckSetFilter(val) {
+    var rows = document.querySelectorAll('.ck-table tbody tr');
+    rows.forEach(function(r) {
+        r.style.display = (!val || r.dataset.filter === val) ? '' : 'none';
+    });
+    document.querySelectorAll('.ck-fbtn').forEach(function(b) { b.classList.remove('active'); });
+    var map = {'': 'ckFAll', 'used': 'ckFUsed', 'empty': 'ckFEmpty'};
+    if (map[val]) document.getElementById(map[val]).classList.add('active');
 }
-@if($errors->has(''name''))
-document.getElementById(''addModal'').classList.add(''active'');
+
+@if($errors->has('name') && !old('_method'))
+document.getElementById('addModal').classList.add('open');
 @endif
 </script>
 @endsection
+
