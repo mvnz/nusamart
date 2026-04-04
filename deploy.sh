@@ -47,10 +47,24 @@ echo "[5/8] Running database migrations..."
 php "$APP_DIR/artisan" migrate --force
 echo "      Done."
 
-# 5b. Jalankan seeder produk sample (reassign ke SELLER_EMAIL jika diset)
-echo "[5b] Running SampleProductSeeder..."
-php "$APP_DIR/artisan" db:seed --class=SampleProductSeeder --force
-echo "      Done."
+# 5b. Reassign produk ke SELLER_EMAIL (jika diset di .env)
+SELLER_EMAIL=$(grep -E '^SELLER_EMAIL=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+if [ -n "$SELLER_EMAIL" ] && [ "$SELLER_EMAIL" != "penjual@nusamart.com" ]; then
+    DB_HOST=$(grep -E '^ *DB_HOST=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+    DB_PORT=$(grep -E '^ *DB_PORT=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+    DB_DATABASE=$(grep -E '^ *DB_DATABASE=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+    DB_USERNAME=$(grep -E '^ *DB_USERNAME=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+    DB_PASSWORD=$(grep -E '^ *DB_PASSWORD=' "$APP_DIR/.env" | cut -d '=' -f2 | tr -d ' \r')
+    echo "[5b] Reassigning products to $SELLER_EMAIL ..."
+    mysql -h "${DB_HOST:-127.0.0.1}" -P "${DB_PORT:-3306}" -u "$DB_USERNAME" -p"$DB_PASSWORD" "$DB_DATABASE" <<SQL
+UPDATE products p
+JOIN users u ON u.email = '$SELLER_EMAIL'
+JOIN users old ON old.email = 'penjual@nusamart.com'
+SET p.user_id = u.id
+WHERE p.user_id = old.id;
+SQL
+    echo "      Done."
+fi
 
 # 6. Generate index.php di webroot (public_html/index.php → nusamart app)
 echo "[6/8] Writing index.php at webroot..."
