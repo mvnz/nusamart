@@ -126,6 +126,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     Route::patch('/categories/{category}/toggle', [\App\Http\Controllers\Admin\CategoryController::class, 'toggleActive'])->name('admin.categories.toggle');
 
+    // Visitor stats
+    Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
+
     // Courier management
     Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');
     Route::post('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'store'])->name('admin.couriers.store');

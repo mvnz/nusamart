@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
+    public function visitors()
+    {
+        $allCities = VisitorLog::whereNotNull('city')
+            ->where('city', '!=', '')
+            ->selectRaw('city, COUNT(*) as total')
+            ->groupBy('city')
+            ->orderByDesc('total')
+            ->paginate(20);
+
+        $visitorsToday     = VisitorLog::where('visit_date', now()->toDateString())->count();
+        $visitorsThisWeek  = VisitorLog::where('visit_date', '>=', now()->startOfWeek()->toDateString())->count();
+        $visitorsThisMonth = VisitorLog::where('visit_date', '>=', now()->startOfMonth()->toDateString())->count();
+        $visitorsTotal     = VisitorLog::count();
+        $deviceStats       = VisitorLog::selectRaw('device_type, COUNT(*) as total')
+            ->groupBy('device_type')
+            ->pluck('total', 'device_type');
+
+        return view('visitors.index', compact(
+            'allCities', 'visitorsToday', 'visitorsThisWeek', 'visitorsThisMonth', 'visitorsTotal', 'deviceStats'
+        ));
+    }
+
     public function dashboard()
     {
         /** @var User $user */
@@ -44,7 +66,7 @@ class AdminDashboardController extends Controller
                 ->selectRaw('city, COUNT(*) as total')
                 ->groupBy('city')
                 ->orderByDesc('total')
-                ->take(8)
+                ->take(10)
                 ->get();            $deviceStats = VisitorLog::selectRaw('device_type, COUNT(*) as total')
                 ->groupBy('device_type')
                 ->pluck('total', 'device_type');

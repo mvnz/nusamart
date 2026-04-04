@@ -350,6 +350,7 @@
         <div class="orders-card">
             <div class="card-header">
                 <h3><i class="fa fa-users"></i> Statistik Pengunjung</h3>
+                <a href="{{ route('admin.visitors') }}" class="view-all">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
             </div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 20px">
                 <div style="background:#fff7f7;border-radius:10px;padding:14px 10px;text-align:center">
