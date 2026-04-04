@@ -100,37 +100,32 @@
         </div>
     </div>
 
-    {{-- Order distribution bar --}}
+    {{-- Order distribution --}}
     <div class="sc-card">
         <div class="sc-card-header">
-            <div class="sc-section-title"><i class="fa fa-bar-chart"></i> Distribusi Pesanan</div>
+            <div class="sc-section-title"><i class="fa fa-list-ul"></i> Status Pesanan</div>
         </div>
-        @php
-            $totalOrders = $deliveredCount + $shippedCount + $processingCount + $newOrdersCount;
-            $totalOrders = $totalOrders ?: 1;
-            $distSeg = [
-                ['label' => 'Selesai',  'val' => $deliveredCount,  'color' => '#10b981', 'bg' => '#d1fae5', 'icon' => 'fa-check-circle'],
-                ['label' => 'Dikirim',  'val' => $shippedCount,    'color' => '#8b5cf6', 'bg' => '#ede9fe', 'icon' => 'fa-truck'],
-                ['label' => 'Diproses', 'val' => $processingCount, 'color' => '#3b82f6', 'bg' => '#dbeafe', 'icon' => 'fa-cog'],
-                ['label' => 'Menunggu', 'val' => $newOrdersCount,  'color' => '#f97316', 'bg' => '#ffedd5', 'icon' => 'fa-clock-o'],
-            ];
-        @endphp
-        <div class="sc-dist-wrap">
-            @foreach($distSeg as $s)
-            @php $pct = round(($s['val'] / $totalOrders) * 100); @endphp
-            <div class="sc-dist-row">
-                <div class="sc-dist-icon" style="background:{{ $s['bg'] }};color:{{ $s['color'] }};"><i class="fa {{ $s['icon'] }}"></i></div>
-                <div class="sc-dist-info">
-                    <div class="sc-dist-top">
-                        <span class="sc-dist-label">{{ $s['label'] }}</span>
-                        <span class="sc-dist-count" style="color:{{ $s['color'] }};">{{ $s['val'] }}</span>
-                    </div>
-                    <div class="sc-dist-bar-track">
-                        <div class="sc-dist-bar-fill" style="width:{{ $pct }}%;background:{{ $s['color'] }};"></div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+        <div class="sc-dist-grid">
+            <a href="{{ route('seller.orders') }}?status=delivered" class="sc-dist-box" style="--dc:#10b981;--db:#d1fae5;">
+                <i class="fa fa-check-circle sc-dist-box-icon"></i>
+                <div class="sc-dist-box-val">{{ $deliveredCount }}</div>
+                <div class="sc-dist-box-lbl">Selesai</div>
+            </a>
+            <a href="{{ route('seller.orders') }}?status=shipped" class="sc-dist-box" style="--dc:#8b5cf6;--db:#ede9fe;">
+                <i class="fa fa-truck sc-dist-box-icon"></i>
+                <div class="sc-dist-box-val">{{ $shippedCount }}</div>
+                <div class="sc-dist-box-lbl">Dikirim</div>
+            </a>
+            <a href="{{ route('seller.orders') }}?status=processing" class="sc-dist-box" style="--dc:#3b82f6;--db:#dbeafe;">
+                <i class="fa fa-cog sc-dist-box-icon"></i>
+                <div class="sc-dist-box-val">{{ $processingCount }}</div>
+                <div class="sc-dist-box-lbl">Diproses</div>
+            </a>
+            <a href="{{ route('seller.orders') }}?status=pending" class="sc-dist-box" style="--dc:#f97316;--db:#ffedd5;">
+                <i class="fa fa-clock-o sc-dist-box-icon"></i>
+                <div class="sc-dist-box-val">{{ $newOrdersCount }}</div>
+                <div class="sc-dist-box-lbl">Menunggu</div>
+            </a>
         </div>
     </div>
 </div>

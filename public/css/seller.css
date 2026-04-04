@@ -262,16 +262,13 @@ body { font-family: 'Montserrat', sans-serif; background: #f4f5f7; color: #1e1f2
 .sc-donut-name { color: #555; font-weight: 500; flex: 1; }
 .sc-donut-count { font-weight: 800; color: #1e1f29; min-width: 24px; text-align: right; }
 
-/* Distribution bar chart */
-.sc-dist-wrap { padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
-.sc-dist-row { display: flex; align-items: center; gap: 14px; }
-.sc-dist-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-.sc-dist-info { flex: 1; min-width: 0; }
-.sc-dist-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.sc-dist-label { font-size: 13px; font-weight: 600; color: #444; }
-.sc-dist-count { font-size: 14px; font-weight: 800; }
-.sc-dist-bar-track { height: 7px; background: #f0f0f0; border-radius: 99px; overflow: hidden; }
-.sc-dist-bar-fill { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); min-width: 4px; }
+/* Distribution status boxes */
+.sc-dist-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #f5f5f5; }
+.sc-dist-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 20px 12px; background: #fff; text-decoration: none; transition: background .15s; }
+.sc-dist-box:hover { background: #fafafa; }
+.sc-dist-box-icon { font-size: 22px; color: var(--dc); background: var(--db); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.sc-dist-box-val { font-size: 26px; font-weight: 800; color: #1e1f29; line-height: 1; }
+.sc-dist-box-lbl { font-size: 12px; font-weight: 600; color: #888; }
 
 /* Product list */
 .sc-prod-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
