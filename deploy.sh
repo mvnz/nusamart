@@ -47,8 +47,13 @@ echo "[5/6] Running database migrations..."
 php "$APP_DIR/artisan" migrate --force
 echo "      Done."
 
-# 6. Clear semua cache Laravel
-echo "[6/6] Clearing caches..."
+# 6. Storage symlink
+echo "[6/7] Creating storage symlink..."
+php "$APP_DIR/artisan" storage:link --force 2>/dev/null || echo "      Symlink already exists."
+echo "      Done."
+
+# 7. Clear semua cache Laravel
+echo "[7/7] Clearing caches..."
 php "$APP_DIR/artisan" config:clear
 php "$APP_DIR/artisan" cache:clear
 php "$APP_DIR/artisan" view:clear
