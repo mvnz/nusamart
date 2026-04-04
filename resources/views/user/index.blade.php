@@ -210,7 +210,7 @@
                                 @endif
                                 <div>
                                     <div class="um-user-name">{{ $user->name }}</div>
-                                    <div class="um-user-uname">@{{ $user->username }}</div>
+                                    <div class="um-user-uname">{{ '@' . $user->username }}</div>
                                 </div>
                             </div>
                         </td>
