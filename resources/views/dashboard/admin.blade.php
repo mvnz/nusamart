@@ -366,6 +366,45 @@
                 </div>
             </div>
 
+            {{-- Device stats --}}
+            @php
+                $cntDesktop = $deviceStats['desktop'] ?? 0;
+                $cntMobile  = $deviceStats['mobile']  ?? 0;
+                $cntAll     = $cntDesktop + $cntMobile;
+                $pctDesktop = $cntAll > 0 ? round($cntDesktop / $cntAll * 100) : 0;
+                $pctMobile  = $cntAll > 0 ? 100 - $pctDesktop : 0;
+            @endphp
+            <div style="padding:12px 20px;border-top:1px solid #f5f5f5">
+                <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:10px">Perangkat Digunakan</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <div style="background:#f8f9fb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+                        <div style="width:36px;height:36px;background:#e8f4fd;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                            <i class="fa fa-desktop" style="color:#2196f3;font-size:16px"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:18px;font-weight:800;color:#2196f3;line-height:1">{{ $cntDesktop }}</div>
+                            <div style="font-size:11px;color:#888;margin-top:2px">PC / Desktop</div>
+                        </div>
+                        <div style="margin-left:auto;font-size:12px;font-weight:700;color:#aaa">{{ $pctDesktop }}%</div>
+                    </div>
+                    <div style="background:#f8f9fb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+                        <div style="width:36px;height:36px;background:#fff0f5;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                            <i class="fa fa-mobile" style="color:#D10024;font-size:20px"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:18px;font-weight:800;color:#D10024;line-height:1">{{ $cntMobile }}</div>
+                            <div style="font-size:11px;color:#888;margin-top:2px">HP / Mobile</div>
+                        </div>
+                        <div style="margin-left:auto;font-size:12px;font-weight:700;color:#aaa">{{ $pctMobile }}%</div>
+                    </div>
+                </div>
+                @if($cntAll > 0)
+                <div style="margin-top:10px;background:#f0f0f0;border-radius:4px;height:7px;overflow:hidden">
+                    <div style="height:7px;border-radius:4px;background:linear-gradient(90deg,#2196f3 {{ $pctDesktop }}%,#D10024 {{ $pctDesktop }}%)"></div>
+                </div>
+                @endif
+            </div>
+
             <div style="padding:0 20px 6px;border-top:1px solid #f5f5f5">
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 8px">
                     <span style="font-size:12px;font-weight:700;color:#555">Statistik Kota Pengunjung</span>

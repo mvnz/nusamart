@@ -45,8 +45,9 @@ class AdminDashboardController extends Controller
                 ->groupBy('city')
                 ->orderByDesc('total')
                 ->take(8)
-                ->get();
-
+                ->get();            $deviceStats = VisitorLog::selectRaw('device_type, COUNT(*) as total')
+                ->groupBy('device_type')
+                ->pluck('total', 'device_type');
             $salesDelivered  = (float) Order::where('status', 'delivered')->sum('total_amount');
             $salesProcessing = (float) Order::where('status', 'processing')->sum('total_amount');
             $salesShipped    = (float) Order::where('status', 'shipped')->sum('total_amount');
@@ -58,7 +59,7 @@ class AdminDashboardController extends Controller
                 'totalUsers', 'totalSellers', 'totalBuyers', 'totalAdmins',
                 'totalActive', 'totalInactive', 'newThisMonth', 'newThisWeek',
                 'recentUsers', 'recentLogins',
-                'visitorsToday', 'visitorsThisWeek', 'visitorsThisMonth', 'visitorsTotal', 'topCities',
+                'visitorsToday', 'visitorsThisWeek', 'visitorsThisMonth', 'visitorsTotal', 'topCities', 'deviceStats',
                 'salesDelivered', 'salesProcessing', 'salesShipped', 'salesPending', 'salesCancelled', 'totalSales'
             ));
         }

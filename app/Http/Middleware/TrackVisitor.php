@@ -22,6 +22,11 @@ class TrackVisitor
                     ->exists();
 
                 if (!$exists) {
+                    // Detect device type from User-Agent
+                    $ua = strtolower($request->userAgent() ?? '');
+                    $device = preg_match('/(android|iphone|ipad|ipod|mobile|blackberry|windows phone|opera mini|opera mobi)/i', $ua)
+                        ? 'mobile' : 'desktop';
+
                     $city = null;
                     // Skip geolocation for localhost/private IPs
                     $privateIp = in_array($ip, ['127.0.0.1', '::1'])
@@ -41,10 +46,11 @@ class TrackVisitor
                     }
 
                     VisitorLog::create([
-                        'user_id'    => auth()->id(),
-                        'ip_address' => $ip,
-                        'city'       => $city,
-                        'visit_date' => $today,
+                        'user_id'     => auth()->id(),
+                        'ip_address'  => $ip,
+                        'city'        => $city,
+                        'device_type' => $device,
+                        'visit_date'  => $today,
                     ]);
                 }
             } catch (\Exception $e) {
