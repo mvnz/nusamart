@@ -72,7 +72,6 @@
                         <div class="td-drop-divider"></div>
                         @endif
                         @if($tdUser?->role === 'penjual')
-                        <a href="{{ route('dashboard') }}" class="td-drop-link"><i class="fa fa-tachometer"></i> Dashboard</a>
                         <a href="{{ route('seller.orders') }}" class="td-drop-link"><i class="fa fa-shopping-bag"></i> Pesanan</a>
                         <a href="{{ route('products.my-products') }}" class="td-drop-link"><i class="fa fa-cube"></i> Produk Saya</a>
                         <div class="td-drop-divider"></div>
