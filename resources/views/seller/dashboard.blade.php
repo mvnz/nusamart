@@ -10,7 +10,7 @@
 {{-- Welcome --}}
 <div class="sc-welcome">
     <div>
-        <h2>Selamat datang, {{ auth()->user()->name }}! ðŸ‘‹</h2>
+        <h2>Selamat datang, {{ auth()->user()->name }}!</h2>
         <p>{{ now()->translatedFormat('l, d F Y') }} &mdash; Seller Center NusaMart</p>
     </div>
     <i class="fa fa-store sc-welcome-icon"></i>
@@ -100,47 +100,37 @@
         </div>
     </div>
 
-    {{-- Order distribution donut --}}
+    {{-- Order distribution bar --}}
     <div class="sc-card">
         <div class="sc-card-header">
-            <div class="sc-section-title"><i class="fa fa-pie-chart"></i> Distribusi Pesanan</div>
+            <div class="sc-section-title"><i class="fa fa-bar-chart"></i> Distribusi Pesanan</div>
         </div>
         @php
             $totalOrders = $deliveredCount + $shippedCount + $processingCount + $newOrdersCount;
             $totalOrders = $totalOrders ?: 1;
-            $r = 52; $cx = 68; $cy = 68; $circ = 2 * M_PI * $r;
-            $donutSeg = [
-                ['label' => 'Selesai',   'val' => $deliveredCount,   'color' => '#10b981'],
-                ['label' => 'Dikirim',   'val' => $shippedCount,     'color' => '#8b5cf6'],
-                ['label' => 'Diproses',  'val' => $processingCount,  'color' => '#3b82f6'],
-                ['label' => 'Menunggu',  'val' => $newOrdersCount,   'color' => '#f97316'],
+            $distSeg = [
+                ['label' => 'Selesai',  'val' => $deliveredCount,  'color' => '#10b981', 'bg' => '#d1fae5', 'icon' => 'fa-check-circle'],
+                ['label' => 'Dikirim',  'val' => $shippedCount,    'color' => '#8b5cf6', 'bg' => '#ede9fe', 'icon' => 'fa-truck'],
+                ['label' => 'Diproses', 'val' => $processingCount, 'color' => '#3b82f6', 'bg' => '#dbeafe', 'icon' => 'fa-cog'],
+                ['label' => 'Menunggu', 'val' => $newOrdersCount,  'color' => '#f97316', 'bg' => '#ffedd5', 'icon' => 'fa-clock-o'],
             ];
-            $donutOffset = 0;
         @endphp
-        <div class="sc-donut-wrap">
-            <svg width="136" height="136" viewBox="0 0 136 136" class="sc-donut-svg">
-                <circle cx="{{ $cx }}" cy="{{ $cy }}" r="{{ $r }}" fill="none" stroke="#f0f0f0" stroke-width="14"/>
-                @foreach($donutSeg as $s)
-                    @if($s['val'] > 0)
-                    @php $dash = ($s['val']/$totalOrders)*$circ; @endphp
-                    <circle cx="{{ $cx }}" cy="{{ $cy }}" r="{{ $r }}" fill="none" stroke="{{ $s['color'] }}" stroke-width="14"
-                        stroke-dasharray="{{ $dash }} {{ $circ - $dash }}"
-                        stroke-dashoffset="{{ -$donutOffset }}" transform="rotate(-90 {{ $cx }} {{ $cy }})"/>
-                    @php $donutOffset += $dash; @endphp
-                    @endif
-                @endforeach
-                <text x="{{ $cx }}" y="{{ $cy - 6 }}" text-anchor="middle" font-size="18" font-weight="800" fill="#1e1f29">{{ $deliveredCount + $shippedCount + $processingCount + $newOrdersCount }}</text>
-                <text x="{{ $cx }}" y="{{ $cy + 12 }}" text-anchor="middle" font-size="10" fill="#aaa">pesanan</text>
-            </svg>
-            <div class="sc-donut-legend">
-                @foreach($donutSeg as $s)
-                <div class="sc-donut-item">
-                    <div class="sc-donut-dot" style="background:{{ $s['color'] }}"></div>
-                    <span class="sc-donut-name">{{ $s['label'] }}</span>
-                    <span class="sc-donut-count">{{ $s['val'] }}</span>
+        <div class="sc-dist-wrap">
+            @foreach($distSeg as $s)
+            @php $pct = round(($s['val'] / $totalOrders) * 100); @endphp
+            <div class="sc-dist-row">
+                <div class="sc-dist-icon" style="background:{{ $s['bg'] }};color:{{ $s['color'] }};"><i class="fa {{ $s['icon'] }}"></i></div>
+                <div class="sc-dist-info">
+                    <div class="sc-dist-top">
+                        <span class="sc-dist-label">{{ $s['label'] }}</span>
+                        <span class="sc-dist-count" style="color:{{ $s['color'] }};">{{ $s['val'] }}</span>
+                    </div>
+                    <div class="sc-dist-bar-track">
+                        <div class="sc-dist-bar-fill" style="width:{{ $pct }}%;background:{{ $s['color'] }};"></div>
+                    </div>
                 </div>
-                @endforeach
             </div>
+            @endforeach
         </div>
     </div>
 </div>
