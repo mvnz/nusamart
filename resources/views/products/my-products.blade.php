@@ -589,6 +589,7 @@ function uploadPhotoToServer(file, callback) {
     fetch(`/produk/${currentProductId}/photo`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': getCsrfToken()
         },
         body: formData
@@ -617,6 +618,7 @@ function deletePhotoFromServer(callback) {
     fetch(`/produk/${currentProductId}/photo`, {
         method: 'DELETE',
         headers: {
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': getCsrfToken()
         }
     })
@@ -648,6 +650,7 @@ function saveProductData() {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': getCsrfToken()
         },
         body: JSON.stringify(data)
@@ -684,6 +687,7 @@ function deleteProduct(productId) {
             fetch(`/produk/${productId}`, {
                 method: 'DELETE',
                 headers: {
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': getCsrfToken()
                 }
             })
