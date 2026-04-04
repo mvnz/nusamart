@@ -17,7 +17,4 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// Support PUT/DELETE method override for shared hosting that blocks non-POST methods
-Illuminate\Http\Request::enableHttpMethodParameterOverride();
-
 $app->handleRequest(Request::capture());
