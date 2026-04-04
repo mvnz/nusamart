@@ -23,8 +23,21 @@ class TrackVisitor
 
                 if (!$exists) {
                     $city = null;
-                    if (auth()->check()) {
-                        $city = auth()->user()->kota ?: null;
+                    // Skip geolocation for localhost/private IPs
+                    $privateIp = in_array($ip, ['127.0.0.1', '::1'])
+                        || preg_match('/^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.)/', $ip);
+
+                    if (!$privateIp) {
+                        try {
+                            $geo = json_decode(file_get_contents(
+                                "http://ip-api.com/json/{$ip}?fields=status,city&lang=id"
+                            ), true);
+                            if (isset($geo['status']) && $geo['status'] === 'success') {
+                                $city = $geo['city'] ?? null;
+                            }
+                        } catch (\Exception $e) {
+                            // Geolocation failed, city stays null
+                        }
                     }
 
                     VisitorLog::create([
