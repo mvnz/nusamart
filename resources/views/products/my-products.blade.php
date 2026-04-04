@@ -616,9 +616,10 @@ function uploadPhotoToServer(file, callback) {
 
 function deletePhotoFromServer(callback) {
     fetch(`/produk/${currentProductId}/photo`, {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
             'Accept': 'application/json',
+            'X-HTTP-Method-Override': 'DELETE',
             'X-CSRF-TOKEN': getCsrfToken()
         }
     })
@@ -647,10 +648,11 @@ function saveProductData() {
     };
 
     fetch(`/produk/${currentProductId}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'X-HTTP-Method-Override': 'PUT',
             'X-CSRF-TOKEN': getCsrfToken()
         },
         body: JSON.stringify(data)
@@ -685,9 +687,10 @@ function deleteProduct(productId) {
         'Apakah Anda yakin ingin menghapus produk ini?',
         function() {
             fetch(`/produk/${productId}`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
+                    'X-HTTP-Method-Override': 'DELETE',
                     'X-CSRF-TOKEN': getCsrfToken()
                 }
             })
