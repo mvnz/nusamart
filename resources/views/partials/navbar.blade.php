@@ -84,12 +84,12 @@
             </div>
             @endif
             @endauth
-            <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
             @auth
             @if(auth()->user()->role === 'seller')
             <a href="{{ route('seller.dashboard') }}" class="{{ request()->routeIs('seller.*') ? 'active' : '' }}">Dashboard</a>
             @endif
             @endauth
+            <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
 
             {{-- Link Masuk hanya tampil di mobile (top-bar tersembunyi) --}}
             @guest
