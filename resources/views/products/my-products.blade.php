@@ -685,7 +685,10 @@ function saveProductData() {
     .catch(error => {
         console.error('saveProduct error:', error);
         showNotification('Terjadi kesalahan! ' + error.message, 'error');
-    });(productId) {
+    });
+}
+
+function deleteProduct(productId) {
     showConfirmation(
         'Tindakan ini tidak dapat dibatalkan!',
         'Apakah Anda yakin ingin menghapus produk ini?',
