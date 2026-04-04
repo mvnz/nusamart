@@ -126,14 +126,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $user = auth()->user();
-        if ($product->user_id !== $user->id) {
-            return response()->json([
-                'message' => 'Forbidden',
-                'debug_product_user_id' => $product->user_id,
-                'debug_auth_user_id' => $user->id,
-                'debug_product_id' => $product->id,
-            ], 403);
-        }
+        abort_if((int)$product->user_id !== (int)$user->id, 403);
 
         $validated = $request->validate([
             'name' => 'string|max:255',
@@ -164,7 +157,7 @@ class ProductController extends Controller
     public function uploadPhoto(Request $request, Product $product)
     {
         $user = auth()->user();
-        abort_if($product->user_id !== $user->id, 403);
+        abort_if((int)$product->user_id !== (int)$user->id, 403);
 
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -192,7 +185,7 @@ class ProductController extends Controller
     public function deletePhoto(Request $request, Product $product)
     {
         $user = auth()->user();
-        abort_if($product->user_id !== $user->id, 403);
+        abort_if((int)$product->user_id !== (int)$user->id, 403);
 
         if ($product->image && Storage::disk('public')->exists($product->image)) {
             Storage::disk('public')->delete($product->image);
@@ -212,14 +205,7 @@ class ProductController extends Controller
     public function destroy(Request $request, Product $product)
     {
         $user = auth()->user();
-        if ($product->user_id !== $user->id) {
-            return response()->json([
-                'message' => 'Forbidden',
-                'debug_product_user_id' => $product->user_id,
-                'debug_auth_user_id' => $user->id,
-                'debug_product_id' => $product->id,
-            ], 403);
-        }
+        abort_if((int)$product->user_id !== (int)$user->id, 403);
 
         if ($product->image && Storage::disk('public')->exists($product->image)) {
             Storage::disk('public')->delete($product->image);
