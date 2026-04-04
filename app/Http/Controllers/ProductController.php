@@ -131,10 +131,17 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'string|max:255',
             'description' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
             'price' => 'numeric|min:0',
             'stock' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
+
+        if (array_key_exists('category_id', $validated)) {
+            $validated['category'] = $validated['category_id']
+                ? \App\Models\Category::find($validated['category_id'])?->name ?? ''
+                : '';
+        }
 
         $product->update($validated);
 

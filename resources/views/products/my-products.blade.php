@@ -209,7 +209,7 @@
 
                     <div class="product-actions">
                         <div class="action-group">
-                            <button class="action-btn action-btn-primary" onclick="openEditModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, {{ $product->stock }}, {{ $product->is_active ? 'true' : 'false' }}, '{{ $product->image ? asset('storage/' . $product->image) : '' }}')">
+                            <button class="action-btn action-btn-primary" onclick="openEditModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, {{ $product->stock }}, {{ $product->is_active ? 'true' : 'false' }}, '{{ $product->image ? asset('storage/' . $product->image) : '' }}', {{ $product->category_id ?? 'null' }})">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
                             <button class="action-btn action-btn-danger" onclick="deleteProduct({{ $product->id }})">
@@ -376,6 +376,16 @@
             </div>
 
             <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <select id="productCategory" class="form-control">
+                    <option value="">-- Pilih Kategori --</option>
+                    @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Harga (Rp)</label>
                 <input type="number" id="productPrice" class="form-control" min="0" step="1000" required>
             </div>
@@ -475,12 +485,13 @@ let currentProductId = null;
 let currentPhotoUrl = null;
 let photoHasChanged = false;
 
-function openEditModal(productId, name, price, stock, isActive, photoUrl) {
+function openEditModal(productId, name, price, stock, isActive, photoUrl, categoryId) {
     currentProductId = productId;
     currentPhotoUrl = photoUrl;
     photoHasChanged = false;
     
     document.getElementById('productName').value = name;
+    document.getElementById('productCategory').value = categoryId || '';
     document.getElementById('productPrice').value = price;
     document.getElementById('productStock').value = stock;
     document.getElementById('productStatus').checked = isActive;
@@ -624,8 +635,10 @@ function deletePhotoFromServer(callback) {
 }
 
 function saveProductData() {
+    const categoryId = document.getElementById('productCategory').value;
     const data = {
         name: document.getElementById('productName').value,
+        category_id: categoryId ? parseInt(categoryId) : null,
         price: document.getElementById('productPrice').value,
         stock: document.getElementById('productStock').value,
         is_active: document.getElementById('productStatus').checked
