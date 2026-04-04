@@ -26,6 +26,7 @@ class Order extends Model
         'tracking_number',
         'courier_name',
         'notes',
+        'cancelled_by',
     ];
 
     protected function casts(): array

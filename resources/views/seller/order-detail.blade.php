@@ -165,6 +165,13 @@
                         <i class="fa fa-check"></i> Proses Pesanan
                     </button>
                 </form>
+                <form method="POST" action="{{ route('seller.orders.status', $order) }}" onsubmit="return confirm('Yakin ingin membatalkan pesanan ini? Stok produk akan dikembalikan.')" style="margin-top:10px">
+                    @csrf @method('PATCH')
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="action-btn" style="background:#ef4444;color:#fff">
+                        <i class="fa fa-times"></i> Batalkan Pesanan
+                    </button>
+                </form>
                 <p class="action-note">Dengan memproses pesanan, pembeli akan mendapat notifikasi bahwa pesanan sedang disiapkan.</p>
 
             @elseif($order->status === 'processing')
@@ -225,6 +232,9 @@
                     <i class="action-done-icon fa fa-times-circle" style="color:#ef4444"></i>
                     <div class="action-done-msg" style="color:#991b1b">Pesanan Dibatalkan</div>
                 </div>
+                @if($order->cancelled_by)
+                <p class="action-note" style="color:#991b1b">Dibatalkan oleh <strong>{{ $order->cancelled_by }}</strong>.</p>
+                @endif
             @endif
 
         </div>

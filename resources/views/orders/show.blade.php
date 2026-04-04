@@ -156,7 +156,8 @@
                 </div>
                 @else
                 <div style="background:#fee2e2;border-radius:8px;padding:12px 16px;color:#991b1b;font-size:13px;margin:12px 0;">
-                    <i class="fa fa-times-circle"></i> Pesanan ini telah dibatalkan.
+                    <i class="fa fa-times-circle"></i> Pesanan ini telah dibatalkan
+                    @if($order->cancelled_by) oleh <strong>{{ $order->cancelled_by }}</strong>@endif.
                 </div>
                 @endif
 

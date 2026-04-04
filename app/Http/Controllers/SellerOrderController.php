@@ -55,7 +55,7 @@ class SellerOrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status'          => 'required|in:processing,shipped',
+            'status'          => 'required|in:processing,shipped,cancelled',
             'tracking_number' => 'required_if:status,shipped|nullable|string|max:100',
             'courier_name'    => 'required_if:status,shipped|nullable|string|max:100',
         ]);
@@ -63,13 +63,23 @@ class SellerOrderController extends Controller
         $productIds = Product::where('user_id', auth()->id())->pluck('id');
         abort_unless($order->items()->whereIn('product_id', $productIds)->exists(), 403);
 
-        $data = ['status' => $request->status];
-        if ($request->status === 'shipped' && $request->filled('tracking_number')) {
-            $data['tracking_number'] = $request->tracking_number;
-            $data['courier_name']    = $request->courier_name;
+        if ($request->status === 'cancelled') {
+            abort_if(!in_array($order->status, ['pending', 'processing']), 422);
+            $order->load('items.product');
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
+            $order->update(['status' => 'cancelled', 'cancelled_by' => 'penjual']);
+        } else {
+            $data = ['status' => $request->status];
+            if ($request->status === 'shipped' && $request->filled('tracking_number')) {
+                $data['tracking_number'] = $request->tracking_number;
+                $data['courier_name']    = $request->courier_name;
+            }
+            $order->update($data);
         }
-
-        $order->update($data);
 
         return redirect()->route('seller.orders.show', $order)
             ->with('success', 'Status pesanan berhasil diperbarui.');

@@ -68,7 +68,7 @@ class OrderController extends Controller
             }
         }
 
-        $order->update(['status' => 'cancelled']);
+        $order->update(['status' => 'cancelled', 'cancelled_by' => 'pembeli']);
 
         return redirect()->route('orders.show', $order)
             ->with('success', 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.');
