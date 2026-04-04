@@ -615,11 +615,10 @@ function uploadPhotoToServer(file, callback) {
 }
 
 function deletePhotoFromServer(callback) {
-    fetch(`/produk/${currentProductId}/photo`, {
+    fetch(`/produk/${currentProductId}/photo?_method=DELETE`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
-            'X-HTTP-Method-Override': 'DELETE',
             'X-CSRF-TOKEN': getCsrfToken()
         }
     })
@@ -647,12 +646,11 @@ function saveProductData() {
         is_active: document.getElementById('productStatus').checked
     };
 
-    fetch(`/produk/${currentProductId}`, {
+    fetch(`/produk/${currentProductId}?_method=PUT`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-HTTP-Method-Override': 'PUT',
             'X-CSRF-TOKEN': getCsrfToken()
         },
         body: JSON.stringify(data)
@@ -686,11 +684,10 @@ function deleteProduct(productId) {
         'Tindakan ini tidak dapat dibatalkan!',
         'Apakah Anda yakin ingin menghapus produk ini?',
         function() {
-            fetch(`/produk/${productId}`, {
+            fetch(`/produk/${productId}?_method=DELETE`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'X-HTTP-Method-Override': 'DELETE',
                     'X-CSRF-TOKEN': getCsrfToken()
                 }
             })
