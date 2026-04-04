@@ -226,21 +226,33 @@
                         <i class="fa fa-shopping-bag"></i> Ringkasan Pesanan
                     </div>
 
-                    @foreach($cartItems as $item)
-                    <div class="order-item-row">
-                        <div class="order-item-img">
-                            @if($item->product->image)
-                                <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}">
-                            @else
-                                <i class="fa fa-shopping-bag" style="color:#ccc;font-size:18px;"></i>
-                            @endif
+                    @foreach($itemsBySeller as $sellerId => $sellerItems)
+                    @php $sellerSubtotal = $sellerItems->sum(fn($i) => $i->quantity * $i->product->price); @endphp
+                    <div style="margin-bottom:10px;">
+                        <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed #f0f0f0;display:flex;align-items:center;gap:6px;">
+                            <i class="fa fa-store" style="color:#D10024;"></i>
+                            {{ $sellerItems->first()->product->seller->name ?? 'Toko' }}
                         </div>
-                        <div style="flex:1;">
-                            <div class="order-item-name">{{ $item->product->name }}</div>
-                            <div class="order-item-qty">{{ $item->quantity }} x {{ $item->product->formatted_price }}</div>
+                        @foreach($sellerItems as $item)
+                        <div class="order-item-row">
+                            <div class="order-item-img">
+                                @if($item->product->image)
+                                    <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}">
+                                @else
+                                    <i class="fa fa-shopping-bag" style="color:#ccc;font-size:18px;"></i>
+                                @endif
+                            </div>
+                            <div style="flex:1;">
+                                <div class="order-item-name">{{ $item->product->name }}</div>
+                                <div class="order-item-qty">{{ $item->quantity }} x {{ $item->product->formatted_price }}</div>
+                            </div>
+                            <div class="order-item-price">
+                                Rp {{ number_format($item->quantity * $item->product->price, 0, ',', '.') }}
+                            </div>
                         </div>
-                        <div class="order-item-price">
-                            Rp {{ number_format($item->quantity * $item->product->price, 0, ',', '.') }}
+                        @endforeach
+                        <div style="display:flex;justify-content:flex-end;font-size:12px;color:#888;padding-top:6px;">
+                            Subtotal toko: <strong style="color:#1e1f29;margin-left:4px;">Rp {{ number_format($sellerSubtotal, 0, ',', '.') }}</strong>
                         </div>
                     </div>
                     @endforeach

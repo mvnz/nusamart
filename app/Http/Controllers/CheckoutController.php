@@ -12,16 +12,18 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        $cartItems = auth()->user()->carts()->with('product')->get();
+        $cartItems = auth()->user()->carts()->with('product.seller')->get();
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong.');
         }
 
+        // Kelompokkan per penjual
+        $itemsBySeller = $cartItems->groupBy(fn($item) => $item->product->user_id);
         $total = $cartItems->sum(fn($item) => $item->quantity * $item->product->price);
         $user  = auth()->user();
 
-        return view('checkout.index', compact('cartItems', 'total', 'user'));
+        return view('checkout.index', compact('cartItems', 'itemsBySeller', 'total', 'user'));
     }
 
     public function store(Request $request)
@@ -37,13 +39,13 @@ class CheckoutController extends Controller
             'notes'             => 'nullable|string|max:500',
         ]);
 
-        $cartItems = auth()->user()->carts()->with('product')->get();
+        $cartItems = auth()->user()->carts()->with('product.seller')->get();
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong.');
         }
 
-        // Validasi stok untuk semua item
+        // Validasi stok semua item
         foreach ($cartItems as $item) {
             if ($item->product->stock < $item->quantity) {
                 return redirect()->route('cart.index')
@@ -51,15 +53,7 @@ class CheckoutController extends Controller
             }
         }
 
-        $total = $cartItems->sum(fn($item) => $item->quantity * $item->product->price);
-
-        // Generate unique code (3-digit suffix) for transfer bank identification
-        $uniqueCode = null;
-        if ($request->payment_method === 'transfer') {
-            $uniqueCode = rand(1, 999);
-        }
-
-        // Generate VA number if payment method is virtual_account
+        // Generate VA sekali untuk semua order (nomor sama, tapi setiap order punya total berbeda)
         $vaNumber = null;
         $vaBank   = null;
         if ($request->payment_method === 'virtual_account') {
@@ -74,42 +68,58 @@ class CheckoutController extends Controller
             $vaNumber = $prefix . str_pad(auth()->id(), 5, '0', STR_PAD_LEFT) . str_pad(rand(1000, 9999), 4, '0', STR_PAD_LEFT);
         }
 
-        // Buat order
-        $order = Order::create([
-            'order_number'           => 'NM-' . strtoupper(Str::random(8)),
-            'user_id'                => auth()->id(),
-            'total_amount'           => $total,
-            'status'                 => 'pending',
-            'shipping_name'          => $request->shipping_name,
-            'shipping_phone'         => $request->shipping_phone,
-            'shipping_address'       => $request->shipping_address,
-            'shipping_city'          => $request->shipping_city,
-            'shipping_province'      => $request->shipping_province,
-            'payment_method'         => $request->payment_method,
-            'unique_code'            => $uniqueCode,
-            'virtual_account_number' => $vaNumber,
-            'va_bank'                => $vaBank,
-            'notes'                  => $request->notes,
-        ]);
+        // Kelompokkan per penjual → buat 1 order per penjual
+        $itemsBySeller = $cartItems->groupBy(fn($item) => $item->product->user_id);
+        $orders = [];
 
-        // Buat order items dan kurangi stok
-        foreach ($cartItems as $item) {
-            OrderItem::create([
-                'order_id'     => $order->id,
-                'product_id'   => $item->product_id,
-                'product_name' => $item->product->name,
-                'price'        => $item->product->price,
-                'quantity'     => $item->quantity,
-                'subtotal'     => $item->quantity * $item->product->price,
+        foreach ($itemsBySeller as $sellerId => $sellerItems) {
+            $sellerTotal = $sellerItems->sum(fn($item) => $item->quantity * $item->product->price);
+
+            $uniqueCode = ($request->payment_method === 'transfer') ? rand(1, 999) : null;
+
+            $order = Order::create([
+                'order_number'           => 'NM-' . strtoupper(Str::random(8)),
+                'user_id'                => auth()->id(),
+                'total_amount'           => $sellerTotal,
+                'status'                 => 'pending',
+                'shipping_name'          => $request->shipping_name,
+                'shipping_phone'         => $request->shipping_phone,
+                'shipping_address'       => $request->shipping_address,
+                'shipping_city'          => $request->shipping_city,
+                'shipping_province'      => $request->shipping_province,
+                'payment_method'         => $request->payment_method,
+                'unique_code'            => $uniqueCode,
+                'virtual_account_number' => $vaNumber,
+                'va_bank'                => $vaBank,
+                'notes'                  => $request->notes,
             ]);
 
-            $item->product->decrement('stock', $item->quantity);
+            foreach ($sellerItems as $item) {
+                OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'price'        => $item->product->price,
+                    'quantity'     => $item->quantity,
+                    'subtotal'     => $item->quantity * $item->product->price,
+                ]);
+
+                $item->product->decrement('stock', $item->quantity);
+            }
+
+            $orders[] = $order;
         }
 
         // Kosongkan keranjang
         auth()->user()->carts()->delete();
 
-        return redirect()->route('orders.show', $order)
-            ->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
+        // Jika hanya 1 penjual → tampilkan detail order, jika lebih → daftar pesanan
+        if (count($orders) === 1) {
+            return redirect()->route('orders.show', $orders[0])
+                ->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
+        }
+
+        return redirect()->route('orders.index')
+            ->with('success', count($orders) . ' pesanan berhasil dibuat dari ' . count($orders) . ' toko berbeda! Silakan lakukan pembayaran.');
     }
 }
