@@ -283,6 +283,7 @@
         <div class="orders-card">
             <div class="card-header">
                 <h3><i class="fa fa-sign-in"></i> 10 Pengguna Login Terakhir</h3>
+                <a href="{{ route('admin.logins') }}" class="view-all">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
             </div>
             @if($recentLogins->isEmpty())
                 <div style="text-align:center;padding:40px 24px;color:#bbb;font-size:13px">

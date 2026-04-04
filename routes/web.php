@@ -128,6 +128,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
 
     // Visitor stats
     Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
+    Route::get('/logins', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'logins'])->name('admin.logins');
 
     // Courier management
     Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');

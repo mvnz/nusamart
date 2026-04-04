@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
+    public function logins()
+    {
+        $allLogins = User::whereNotNull('last_login_at')
+            ->orderByDesc('last_login_at')
+            ->paginate(20);
+
+        return view('logins.index', compact('allLogins'));
+    }
+
     public function visitors()
     {
         $allCities = VisitorLog::whereNotNull('city')
