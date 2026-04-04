@@ -39,7 +39,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        abort_if($order->user_id !== auth()->id(), 403);
+        abort_if((int)$order->user_id !== (int)auth()->id(), 403);
 
         $order->load('items.product');
 
@@ -48,7 +48,7 @@ class OrderController extends Controller
 
     public function markReceived(Order $order)
     {
-        abort_if($order->user_id !== auth()->id(), 403);
+        abort_if((int)$order->user_id !== (int)auth()->id(), 403);
         abort_if($order->status !== 'shipped', 422);
 
         $order->update(['status' => 'delivered']);
@@ -59,7 +59,7 @@ class OrderController extends Controller
 
     public function track(Order $order)
     {
-        abort_if($order->user_id !== auth()->id(), 403);
+        abort_if((int)$order->user_id !== (int)auth()->id(), 403);
 
         $apiKey = config('services.binderbyte.key');
         $awb    = $order->tracking_number;

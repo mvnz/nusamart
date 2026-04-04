@@ -53,7 +53,7 @@ class CartController extends Controller
 
     public function update(Request $request, Cart $cart)
     {
-        abort_if($cart->user_id !== auth()->id(), 403);
+        abort_if((int)$cart->user_id !== (int)auth()->id(), 403);
 
         $request->validate([
             'quantity' => 'required|integer|min:1',
@@ -70,7 +70,7 @@ class CartController extends Controller
 
     public function remove(Cart $cart)
     {
-        abort_if($cart->user_id !== auth()->id(), 403);
+        abort_if((int)$cart->user_id !== (int)auth()->id(), 403);
 
         $cart->delete();
 

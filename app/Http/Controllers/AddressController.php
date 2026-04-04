@@ -34,7 +34,7 @@ class AddressController extends Controller
 
     public function update(Request $request, UserAddress $address)
     {
-        abort_if($address->user_id !== Auth::id(), 403);
+        abort_if((int)$address->user_id !== (int)Auth::id(), 403);
 
         $validated = $this->validateAddress($request);
         $address->update($validated);
@@ -48,7 +48,7 @@ class AddressController extends Controller
 
     public function destroy(UserAddress $address)
     {
-        abort_if($address->user_id !== Auth::id(), 403);
+        abort_if((int)$address->user_id !== (int)Auth::id(), 403);
         abort_if($address->is_primary, 422, 'Tidak bisa menghapus alamat utama. Jadikan alamat lain sebagai utama terlebih dahulu.');
 
         $address->delete();
@@ -58,7 +58,7 @@ class AddressController extends Controller
 
     public function setPrimary(UserAddress $address)
     {
-        abort_if($address->user_id !== Auth::id(), 403);
+        abort_if((int)$address->user_id !== (int)Auth::id(), 403);
 
         /** @var User $user */
         $user = Auth::user();
