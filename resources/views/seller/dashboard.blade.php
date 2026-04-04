@@ -1,4 +1,4 @@
-@extends('layouts.seller')
+﻿@extends('layouts.seller')
 
 @section('title', 'Beranda - Seller Center NusaMart')
 
@@ -10,96 +10,148 @@
 {{-- Welcome --}}
 <div class="sc-welcome">
     <div>
-        <h2>Selamat datang, {{ auth()->user()->name }}! 👋</h2>
-        <p>Pantau perkembangan toko dan kelola pesanan dari sini.</p>
+        <h2>Selamat datang, {{ auth()->user()->name }}! ðŸ‘‹</h2>
+        <p>{{ now()->translatedFormat('l, d F Y') }} &mdash; Seller Center NusaMart</p>
     </div>
-    <div class="sc-welcome-date">
-        <div style="font-size:20px;font-weight:800;">{{ now()->format('d') }}</div>
-        <div>{{ now()->translatedFormat('F Y') }}</div>
-    </div>
+    <i class="fa fa-store sc-welcome-icon"></i>
 </div>
 
-{{-- ══ Stat cards ══ --}}
-<div style="margin-bottom:10px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;">Penting Hari Ini</div>
+{{-- â•â• Stat cards â•â• --}}
+<div style="margin-bottom:14px;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.8px;">Penting Hari Ini</div>
 <div class="sc-stat-grid">
-    <div class="sc-stat-card orange">
-        <div class="sc-stat-label orange"><i class="fa fa-bell"></i> Pesanan Baru</div>
-        <div class="sc-stat-value">{{ $newOrdersCount }}</div>
-        <div class="sc-stat-sub">Menunggu konfirmasi</div>
-        <a href="{{ route('seller.orders') }}?status=pending" class="sc-stat-link"><i class="fa fa-arrow-right"></i> Lihat Semua</a>
+    <div class="sc-stat-card">
+        <div class="sc-stat-icon" style="background:linear-gradient(135deg,#f97316,#fb923c);"><i class="fa fa-bell"></i></div>
+        <div class="sc-stat-info">
+            <div class="sc-stat-value">{{ $newOrdersCount }}</div>
+            <div class="sc-stat-label">Pesanan Baru</div>
+            <div class="sc-stat-sub">Menunggu konfirmasi</div>
+        </div>
+        <a href="{{ route('seller.orders') }}?status=pending" class="sc-stat-arrow"><i class="fa fa-arrow-right"></i></a>
     </div>
-    <div class="sc-stat-card blue">
-        <div class="sc-stat-label blue"><i class="fa fa-truck"></i> Siap Dikirim</div>
-        <div class="sc-stat-value">{{ $processingCount }}</div>
-        <div class="sc-stat-sub">Sedang diproses</div>
-        <a href="{{ route('seller.orders') }}?status=processing" class="sc-stat-link"><i class="fa fa-arrow-right"></i> Lihat Semua</a>
+    <div class="sc-stat-card">
+        <div class="sc-stat-icon" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);"><i class="fa fa-truck"></i></div>
+        <div class="sc-stat-info">
+            <div class="sc-stat-value">{{ $processingCount }}</div>
+            <div class="sc-stat-label">Siap Dikirim</div>
+            <div class="sc-stat-sub">Sedang diproses</div>
+        </div>
+        <a href="{{ route('seller.orders') }}?status=processing" class="sc-stat-arrow"><i class="fa fa-arrow-right"></i></a>
     </div>
-    <div class="sc-stat-card green">
-        <div class="sc-stat-label green"><i class="fa fa-cube"></i> Produk Aktif</div>
-        <div class="sc-stat-value">{{ $activeProductsCount }}</div>
-        <div class="sc-stat-sub">Dari {{ $totalProductsCount }} total produk</div>
-        <a href="{{ route('products.my-products') }}" class="sc-stat-link"><i class="fa fa-arrow-right"></i> Kelola Produk</a>
+    <div class="sc-stat-card">
+        <div class="sc-stat-icon" style="background:linear-gradient(135deg,#10b981,#34d399);"><i class="fa fa-cube"></i></div>
+        <div class="sc-stat-info">
+            <div class="sc-stat-value">{{ $activeProductsCount }}</div>
+            <div class="sc-stat-label">Produk Aktif</div>
+            <div class="sc-stat-sub">Dari {{ $totalProductsCount }} total produk</div>
+        </div>
+        <a href="{{ route('products.my-products') }}" class="sc-stat-arrow"><i class="fa fa-arrow-right"></i></a>
     </div>
-    <div class="sc-stat-card red">
-        <div class="sc-stat-label red"><i class="fa fa-money"></i> Pendapatan Bulan Ini</div>
-        <div class="sc-stat-value" style="font-size:18px;">Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}</div>
-        <div class="sc-stat-sub">{{ now()->translatedFormat('F Y') }}</div>
-        <a href="{{ route('seller.orders') }}?status=delivered" class="sc-stat-link"><i class="fa fa-arrow-right"></i> Riwayat</a>
+    <div class="sc-stat-card">
+        <div class="sc-stat-icon" style="background:linear-gradient(135deg,#D10024,#ff6b6b);"><i class="fa fa-money"></i></div>
+        <div class="sc-stat-info">
+            <div class="sc-stat-value" style="font-size:18px;">Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}</div>
+            <div class="sc-stat-label">Pendapatan Bulan Ini</div>
+            <div class="sc-stat-sub">{{ now()->translatedFormat('F Y') }}</div>
+        </div>
+        <a href="{{ route('seller.orders') }}?status=delivered" class="sc-stat-arrow"><i class="fa fa-arrow-right"></i></a>
     </div>
 </div>
 
-{{-- ══ Quick actions ══ --}}
+{{-- â•â• Quick actions â•â• --}}
 <div class="sc-quick-grid">
     <a href="{{ route('products.my-products') }}#tambah" class="sc-quick-btn">
-        <div class="icon" style="background:#10b981;"><i class="fa fa-plus"></i></div>
+        <div class="icon" style="background:linear-gradient(135deg,#10b981,#34d399);"><i class="fa fa-plus"></i></div>
         <span>Tambah Produk</span>
     </a>
     <a href="{{ route('seller.orders') }}" class="sc-quick-btn">
-        <div class="icon" style="background:#3b82f6;"><i class="fa fa-shopping-bag"></i></div>
+        <div class="icon" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);"><i class="fa fa-shopping-bag"></i></div>
         <span>Daftar Pesanan</span>
     </a>
     <a href="{{ route('profile') }}" class="sc-quick-btn">
-        <div class="icon" style="background:#8b5cf6;"><i class="fa fa-user"></i></div>
+        <div class="icon" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);"><i class="fa fa-user"></i></div>
         <span>Profil Toko</span>
     </a>
     <a href="{{ route('home') }}" class="sc-quick-btn">
-        <div class="icon" style="background:#f97316;"><i class="fa fa-eye"></i></div>
+        <div class="icon" style="background:linear-gradient(135deg,#f97316,#fb923c);"><i class="fa fa-eye"></i></div>
         <span>Lihat Marketplace</span>
     </a>
 </div>
 
-{{-- ══ Revenue + Products ══ --}}
+{{-- â•â• Revenue + Donut â•â• --}}
 <div class="sc-two-col">
-    {{-- Revenue summary --}}
-    <div>
-        <div class="sc-revenue-card">
-            <div class="sc-revenue-label">Total Pendapatan Keseluruhan</div>
-            <div class="sc-revenue-value">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
-            <div class="sc-revenue-sub">Dari pesanan yang sudah selesai</div>
-            <div class="sc-revenue-stats">
-                <div class="sc-revenue-stat-item">
-                    <div class="sc-revenue-stat-label">Pesanan Selesai</div>
-                    <div class="sc-revenue-stat-value">{{ $deliveredCount }}</div>
-                </div>
-                <div class="sc-revenue-stat-item">
-                    <div class="sc-revenue-stat-label">Sedang Dikirim</div>
-                    <div class="sc-revenue-stat-value">{{ $shippedCount }}</div>
-                </div>
-                <div class="sc-revenue-stat-item">
-                    <div class="sc-revenue-stat-label">Total Produk</div>
-                    <div class="sc-revenue-stat-value">{{ $totalProductsCount }}</div>
-                </div>
+    {{-- Revenue card --}}
+    <div class="sc-revenue-card">
+        <div class="sc-revenue-label">Total Pendapatan Keseluruhan</div>
+        <div class="sc-revenue-value">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
+        <div class="sc-revenue-sub">Dari pesanan yang sudah selesai</div>
+        <div class="sc-revenue-stats">
+            <div class="sc-revenue-stat-item">
+                <div class="sc-revenue-stat-label">Pesanan Selesai</div>
+                <div class="sc-revenue-stat-value">{{ $deliveredCount }}</div>
+            </div>
+            <div class="sc-revenue-stat-item">
+                <div class="sc-revenue-stat-label">Sedang Dikirim</div>
+                <div class="sc-revenue-stat-value">{{ $shippedCount }}</div>
+            </div>
+            <div class="sc-revenue-stat-item">
+                <div class="sc-revenue-stat-label">Total Produk</div>
+                <div class="sc-revenue-stat-value">{{ $totalProductsCount }}</div>
             </div>
         </div>
     </div>
 
+    {{-- Order distribution donut --}}
+    <div class="sc-card">
+        <div class="sc-card-header">
+            <div class="sc-section-title"><i class="fa fa-pie-chart"></i> Distribusi Pesanan</div>
+        </div>
+        @php
+            $totalOrders = $deliveredCount + $shippedCount + $processingCount + $newOrdersCount;
+            $totalOrders = $totalOrders ?: 1;
+            $r = 52; $cx = 68; $cy = 68; $circ = 2 * M_PI * $r;
+            $donutSeg = [
+                ['label' => 'Selesai',   'val' => $deliveredCount,   'color' => '#10b981'],
+                ['label' => 'Dikirim',   'val' => $shippedCount,     'color' => '#8b5cf6'],
+                ['label' => 'Diproses',  'val' => $processingCount,  'color' => '#3b82f6'],
+                ['label' => 'Menunggu',  'val' => $newOrdersCount,   'color' => '#f97316'],
+            ];
+            $donutOffset = 0;
+        @endphp
+        <div class="sc-donut-wrap">
+            <svg width="136" height="136" viewBox="0 0 136 136" class="sc-donut-svg">
+                <circle cx="{{ $cx }}" cy="{{ $cy }}" r="{{ $r }}" fill="none" stroke="#f0f0f0" stroke-width="14"/>
+                @foreach($donutSeg as $s)
+                    @if($s['val'] > 0)
+                    @php $dash = ($s['val']/$totalOrders)*$circ; @endphp
+                    <circle cx="{{ $cx }}" cy="{{ $cy }}" r="{{ $r }}" fill="none" stroke="{{ $s['color'] }}" stroke-width="14"
+                        stroke-dasharray="{{ $dash }} {{ $circ - $dash }}"
+                        stroke-dashoffset="{{ -$donutOffset }}" transform="rotate(-90 {{ $cx }} {{ $cy }})"/>
+                    @php $donutOffset += $dash; @endphp
+                    @endif
+                @endforeach
+                <text x="{{ $cx }}" y="{{ $cy - 6 }}" text-anchor="middle" font-size="18" font-weight="800" fill="#1e1f29">{{ $deliveredCount + $shippedCount + $processingCount + $newOrdersCount }}</text>
+                <text x="{{ $cx }}" y="{{ $cy + 12 }}" text-anchor="middle" font-size="10" fill="#aaa">pesanan</text>
+            </svg>
+            <div class="sc-donut-legend">
+                @foreach($donutSeg as $s)
+                <div class="sc-donut-item">
+                    <div class="sc-donut-dot" style="background:{{ $s['color'] }}"></div>
+                    <span class="sc-donut-name">{{ $s['label'] }}</span>
+                    <span class="sc-donut-count">{{ $s['val'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- â•â• Products + Orders â•â• --}}
+<div class="sc-two-col">
     {{-- Top products --}}
     <div class="sc-card">
-        <div style="padding:16px 20px 12px;border-bottom:1px solid #f5f5f5;">
-            <div class="sc-section-header" style="margin-bottom:0;">
-                <div class="sc-section-title"><i class="fa fa-cube"></i> Produk Terbaru</div>
-                <a href="{{ route('products.my-products') }}" class="sc-section-link">Lihat Semua</a>
-            </div>
+        <div class="sc-card-header">
+            <div class="sc-section-title"><i class="fa fa-cube"></i> Produk Terbaru</div>
+            <a href="{{ route('products.my-products') }}" class="sc-section-link">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
         </div>
         <div class="sc-card-body">
             @forelse($latestProducts as $product)
@@ -132,62 +184,33 @@
             @endforelse
         </div>
     </div>
-</div>
 
-{{-- ══ Recent orders table ══ --}}
-<div class="sc-card">
-    <div style="padding:16px 20px 12px;border-bottom:1px solid #f5f5f5;">
-        <div class="sc-section-header" style="margin-bottom:0;">
+    {{-- Recent orders --}}
+    <div class="sc-card">
+        <div class="sc-card-header">
             <div class="sc-section-title"><i class="fa fa-shopping-bag"></i> Pesanan Terbaru</div>
-            <a href="{{ route('seller.orders') }}" class="sc-section-link">Lihat Semua</a>
+            <a href="{{ route('seller.orders') }}" class="sc-section-link">Lihat Semua <i class="fa fa-arrow-circle-right"></i></a>
         </div>
-    </div>
-    <div style="overflow-x:auto;">
-        @if($recentOrders->isEmpty())
-            <div class="sc-empty" style="padding:40px">
+        <div class="sc-card-body" style="padding:0">
+            @forelse($recentOrders as $order)
+            <div class="sc-order-row">
+                <div class="sc-order-buyer-av">{{ strtoupper(substr($order->user->name ?? 'U', 0, 1)) }}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:700;color:#1e1f29;">#{{ $order->order_number }}</div>
+                    <div style="font-size:11px;color:#aaa;">{{ $order->user->name ?? '-' }} &middot; {{ $order->created_at->format('d M Y') }}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-size:13px;font-weight:700;color:#1e1f29;margin-bottom:3px;">{{ $order->formatted_total }}</div>
+                    <span class="sc-status-chip {{ $order->status }}">{{ $order->status_label }}</span>
+                </div>
+            </div>
+            @empty
+            <div class="sc-empty" style="padding:30px;">
                 <i class="fa fa-shopping-bag"></i>
                 <p>Belum ada pesanan masuk.</p>
             </div>
-        @else
-        <table class="sc-table">
-            <thead>
-                <tr>
-                    <th>No. Pesanan</th>
-                    <th>Pembeli</th>
-                    <th>Produk</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($recentOrders as $order)
-                <tr>
-                    <td><span class="sc-order-num">#{{ $order->order_number }}</span></td>
-                    <td>
-                        <div class="sc-order-buyer">
-                            <div class="sc-order-buyer-av">{{ strtoupper(substr($order->user->name ?? 'U', 0, 1)) }}</div>
-                            <span>{{ $order->user->name ?? '-' }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="sc-order-product" title="{{ $order->items->pluck('product_name')->join(', ') }}">
-                            {{ Str::limit($order->items->first()->product_name ?? '-', 30) }}
-                            @if($order->items->count() > 1)
-                                <span style="color:#888;font-size:11px;"> +{{ $order->items->count() - 1 }} lainnya</span>
-                            @endif
-                        </div>
-                    </td>
-                    <td><span class="sc-order-amount">{{ $order->formatted_total }}</span></td>
-                    <td>
-                        <span class="sc-status-chip {{ $order->status }}">{{ $order->status_label }}</span>
-                    </td>
-                    <td><span class="sc-order-date">{{ $order->created_at->format('d M Y') }}</span></td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @endif
+            @endforelse
+        </div>
     </div>
 </div>
 
