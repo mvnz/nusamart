@@ -255,9 +255,29 @@
 </section>
 
 <!-- Last Login + Pengunjung -->
+<style>
+.ll-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start }
+.ll-tbl { width:100%; border-collapse:collapse; font-size:13px; table-layout:fixed }
+.ll-tbl th { padding:10px 14px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#8d8d8d; text-align:left; border-bottom:1px solid #f0f0f0; background:#f8f9fb }
+.ll-tbl td { padding:10px 14px; vertical-align:middle }
+.ll-tbl tr { border-bottom:1px solid #f7f7f9 }
+.ll-tbl tr:last-child { border-bottom:none }
+.ll-col-no  { width:36px }
+.ll-col-role { width:80px }
+.ll-col-date { width:130px }
+.ll-col-ago  { width:90px }
+@media(max-width:992px) {
+    .ll-grid { grid-template-columns:1fr }
+}
+@media(max-width:576px) {
+    .ll-col-no, .ll-col-ago { display:none }
+    .ll-tbl th, .ll-tbl td { padding:8px 10px; font-size:12px }
+    .ll-col-date { width:auto }
+}
+</style>
 <section class="orders-section" style="padding-top:0;padding-bottom:32px">
     <div class="container">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+        <div class="ll-grid">
 
         {{-- 10 Login Terakhir --}}
         <div class="orders-card">
@@ -270,54 +290,59 @@
                     Belum ada data login
                 </div>
             @else
-            <div style="overflow-x:auto">
-                <table style="width:100%;border-collapse:collapse;font-size:13px">
-                    <thead>
-                        <tr style="background:#f8f9fb">
-                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">#</th>
-                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Pengguna</th>
-                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Role</th>
-                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Login Terakhir</th>
-                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Waktu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentLogins as $i => $u)
-                        @php
-                            $colors = ['admin'=>'#D10024','penjual'=>'#2196f3','pembeli'=>'#27ae60'];
-                            $uc = $colors[$u->role] ?? '#999';
-                        @endphp
-                        <tr style="border-bottom:1px solid #f7f7f9{{ $loop->last ? ';border-bottom:none' : '' }}">
-                            <td style="padding:12px 20px;color:#ccc;font-weight:700;font-size:12px">{{ $i + 1 }}</td>
-                            <td style="padding:12px 20px">
-                                <div class="admin-user-row" style="padding:0;border:none">
-                                    <div class="admin-user-avatar" style="background:{{ $uc }};width:36px;height:36px;font-size:14px">
-                                        @if($u->photo)
-                                            <img src="{{ asset('storage/'.$u->photo) }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover">
-                                        @else
-                                            {{ strtoupper(substr($u->name, 0, 1)) }}
-                                        @endif
-                                    </div>
-                                    <div class="admin-user-info">
-                                        <div class="admin-user-name">{{ $u->name }}</div>
-                                        <div class="admin-user-uname">{{ '@' . $u->username }}</div>
-                                    </div>
+            <table class="ll-tbl">
+                <colgroup>
+                    <col class="ll-col-no">
+                    <col>
+                    <col class="ll-col-role">
+                    <col class="ll-col-date">
+                    <col class="ll-col-ago">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="ll-col-no">#</th>
+                        <th>Pengguna</th>
+                        <th class="ll-col-role">Role</th>
+                        <th class="ll-col-date">Login Terakhir</th>
+                        <th class="ll-col-ago">Waktu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($recentLogins as $i => $u)
+                    @php
+                        $colors = ['admin'=>'#D10024','penjual'=>'#2196f3','pembeli'=>'#27ae60'];
+                        $uc = $colors[$u->role] ?? '#999';
+                    @endphp
+                    <tr>
+                        <td class="ll-col-no" style="color:#ccc;font-weight:700;font-size:12px">{{ $i + 1 }}</td>
+                        <td>
+                            <div class="admin-user-row" style="padding:0;border:none">
+                                <div class="admin-user-avatar" style="background:{{ $uc }};width:34px;height:34px;font-size:13px;flex-shrink:0">
+                                    @if($u->photo)
+                                        <img src="{{ asset('storage/'.$u->photo) }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+                                    @else
+                                        {{ strtoupper(substr($u->name, 0, 1)) }}
+                                    @endif
                                 </div>
-                            </td>
-                            <td style="padding:12px 20px">
-                                <span class="status-badge {{ $u->role === 'admin' ? 'status-cancel' : ($u->role === 'penjual' ? 'status-process' : 'status-success') }}">{{ ucfirst($u->role) }}</span>
-                            </td>
-                            <td style="padding:12px 20px;font-size:12px;color:#444;white-space:nowrap">
-                                {{ $u->last_login_at->format('d M Y, H:i') }}
-                            </td>
-                            <td style="padding:12px 20px;font-size:12px;color:#aaa;white-space:nowrap">
-                                {{ $u->last_login_at->diffForHumans() }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                                <div class="admin-user-info" style="min-width:0">
+                                    <div class="admin-user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $u->name }}</div>
+                                    <div class="admin-user-uname">{{ '@' . $u->username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="ll-col-role">
+                            <span class="status-badge {{ $u->role === 'admin' ? 'status-cancel' : ($u->role === 'penjual' ? 'status-process' : 'status-success') }}">{{ ucfirst($u->role) }}</span>
+                        </td>
+                        <td class="ll-col-date" style="font-size:12px;color:#444">
+                            {{ $u->last_login_at->format('d M Y, H:i') }}
+                        </td>
+                        <td class="ll-col-ago" style="font-size:12px;color:#aaa">
+                            {{ $u->last_login_at->diffForHumans() }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
             @endif
         </div>{{-- end login card --}}
 
@@ -370,7 +395,7 @@
             </div>
         </div>{{-- end visitor card --}}
 
-        </div>{{-- end 2-column grid --}}
+        </div>{{-- end ll-grid --}}
     </div>
 </section>
 
