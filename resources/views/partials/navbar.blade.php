@@ -85,7 +85,7 @@
             @endif
             @endauth
             @auth
-            @if(auth()->user()->role === 'seller')
+            @if(auth()->user()->role === 'penjual')
             <a href="{{ route('seller.dashboard') }}" class="{{ request()->routeIs('seller.*') ? 'active' : '' }}">Dashboard</a>
             @endif
             @endauth
