@@ -618,7 +618,7 @@ function uploadPhotoToServer(file, callback) {
 }
 
 function deletePhotoFromServer(callback) {
-    fetch(`/produk/${currentProductId}/photo/delete`, {
+    fetch(`/produk/${currentProductId}/photo/hapus`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -652,7 +652,7 @@ function saveProductData() {
         is_active: document.getElementById('productStatus').checked
     };
 
-    fetch(`/produk/${currentProductId}/update`, {
+    fetch(`/produk/${currentProductId}/simpan`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -693,7 +693,7 @@ function deleteProduct(productId) {
         'Tindakan ini tidak dapat dibatalkan!',
         'Apakah Anda yakin ingin menghapus produk ini?',
         function() {
-            fetch(`/produk/${productId}/delete`, {
+            fetch(`/produk/${productId}/hapus`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

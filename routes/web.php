@@ -79,12 +79,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/produk-saya', [ProductController::class, 'myProducts'])->name('products.my-products');
     Route::post('/produk', [ProductController::class, 'store'])->name('products.store');
     Route::put('/produk/{product}', [ProductController::class, 'update'])->name('products.update');
-    Route::post('/produk/{product}/update', [ProductController::class, 'update'])->name('products.update-post');
+    Route::post('/produk/{product}/simpan', [ProductController::class, 'update'])->name('products.update-post');
     Route::post('/produk/{product}/photo', [ProductController::class, 'uploadPhoto'])->name('products.upload-photo');
+    Route::post('/produk/{product}/photo/hapus', [ProductController::class, 'deletePhoto'])->name('products.delete-photo-post');
     Route::delete('/produk/{product}/photo', [ProductController::class, 'deletePhoto'])->name('products.delete-photo');
-    Route::post('/produk/{product}/photo/delete', [ProductController::class, 'deletePhoto'])->name('products.delete-photo-post');
     Route::delete('/produk/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-    Route::post('/produk/{product}/delete', [ProductController::class, 'destroy'])->name('products.destroy-post');
+    Route::post('/produk/{product}/hapus', [ProductController::class, 'destroy'])->name('products.destroy-post');
 });
 
 // Keranjang routes (buyer only, auth required)
