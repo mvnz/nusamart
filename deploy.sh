@@ -49,7 +49,9 @@ echo "      Done."
 
 # 6. Storage symlink di webroot (public_html/storage → nusamart/storage/app/public)
 echo "[6/7] Creating storage symlink at webroot..."
-ln -sfn "$APP_DIR/storage/app/public" "$PUBLIC_HTML/storage"
+# Remove existing dir/symlink first — ln -sfn won't replace a real directory
+rm -rf "$PUBLIC_HTML/storage"
+ln -s "$APP_DIR/storage/app/public" "$PUBLIC_HTML/storage"
 echo "      Done. ($PUBLIC_HTML/storage -> $APP_DIR/storage/app/public)"
 
 # 7. Clear semua cache Laravel
