@@ -11,7 +11,32 @@ class AddressController extends Controller
 {
     public function index()
     {
-        $addresses = Auth::user()->addresses()->orderByDesc('is_primary')->latest()->get();
+        $user = Auth::user();
+
+        // Auto-migrate: user lama yang belum punya UserAddress → buat dari data profil
+        if ($user->addresses()->count() === 0 && $user->alamat) {
+            UserAddress::create([
+                'user_id'        => $user->id,
+                'label'          => 'Rumah',
+                'recipient_name' => $user->name,
+                'phone'          => $user->phone ?? '',
+                'alamat'         => $user->alamat ?? '',
+                'province_code'  => $user->province_code ?? '',
+                'regency_code'   => $user->regency_code ?? '',
+                'district_code'  => $user->district_code ?? '',
+                'village_code'   => $user->village_code ?? '',
+                'propinsi'       => $user->propinsi ?? '',
+                'kota'           => $user->kota ?? '',
+                'kecamatan'      => $user->kecamatan ?? '',
+                'kelurahan'      => $user->kelurahan ?? '',
+                'rt'             => $user->rt ?? '',
+                'rw'             => $user->rw ?? '',
+                'kodepos'        => $user->kodepos ?? '',
+                'is_primary'     => true,
+            ]);
+        }
+
+        $addresses = $user->addresses()->orderByDesc('is_primary')->latest()->get();
         return view('profile-alamat', compact('addresses'));
     }
 

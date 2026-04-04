@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserAddress;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,6 +82,27 @@ class RegistrationController extends Controller
         ]);
 
         event(new Registered($user));
+
+        // Buat alamat utama otomatis dari data registrasi
+        UserAddress::create([
+            'user_id'        => $user->id,
+            'label'          => 'Rumah',
+            'recipient_name' => $user->name,
+            'phone'          => $user->phone,
+            'alamat'         => $validated['alamat'],
+            'province_code'  => $validated['province_code'],
+            'regency_code'   => $validated['regency_code'],
+            'district_code'  => $validated['district_code'],
+            'village_code'   => $validated['village_code'],
+            'propinsi'       => $validated['propinsi'],
+            'kota'           => $validated['kota'],
+            'kecamatan'      => $validated['kecamatan'],
+            'kelurahan'      => $validated['kelurahan'],
+            'rt'             => $validated['rt'],
+            'rw'             => $validated['rw'],
+            'kodepos'        => $validated['kodepos'],
+            'is_primary'     => true,
+        ]);
 
         Auth::login($user);
 
