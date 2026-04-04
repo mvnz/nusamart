@@ -2,7 +2,7 @@
 
 @section('title', 'Produk Saya - Seller Center NusaMart')
 
-@section('breadcrumb', 'Produk / <strong>Daftar Produk</strong>')
+@section('breadcrumb')Produk / <strong>Daftar Produk</strong>@endsection
 
 @section('content')
 
