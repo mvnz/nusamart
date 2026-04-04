@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\VisitorLog;
 use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
@@ -29,6 +30,23 @@ class AdminDashboardController extends Controller
             $newThisWeek = User::where('created_at', '>=', now()->startOfWeek())->count();
             $recentUsers = User::latest()->take(5)->get();
 
+            $recentLogins = User::whereNotNull('last_login_at')
+                ->orderByDesc('last_login_at')
+                ->take(10)
+                ->get();
+
+            $visitorsToday     = VisitorLog::where('visit_date', now()->toDateString())->count();
+            $visitorsThisWeek  = VisitorLog::where('visit_date', '>=', now()->startOfWeek()->toDateString())->count();
+            $visitorsThisMonth = VisitorLog::where('visit_date', '>=', now()->startOfMonth()->toDateString())->count();
+            $visitorsTotal     = VisitorLog::count();
+            $topCities = VisitorLog::whereNotNull('city')
+                ->where('city', '!=', '')
+                ->selectRaw('city, COUNT(*) as total')
+                ->groupBy('city')
+                ->orderByDesc('total')
+                ->take(8)
+                ->get();
+
             $salesDelivered  = (float) Order::where('status', 'delivered')->sum('total_amount');
             $salesProcessing = (float) Order::where('status', 'processing')->sum('total_amount');
             $salesShipped    = (float) Order::where('status', 'shipped')->sum('total_amount');
@@ -39,7 +57,8 @@ class AdminDashboardController extends Controller
             return view('dashboard', compact(
                 'totalUsers', 'totalSellers', 'totalBuyers', 'totalAdmins',
                 'totalActive', 'totalInactive', 'newThisMonth', 'newThisWeek',
-                'recentUsers',
+                'recentUsers', 'recentLogins',
+                'visitorsToday', 'visitorsThisWeek', 'visitorsThisMonth', 'visitorsTotal', 'topCities',
                 'salesDelivered', 'salesProcessing', 'salesShipped', 'salesPending', 'salesCancelled', 'totalSales'
             ));
         }

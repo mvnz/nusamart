@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Release expired order stock at most once per hour via web traffic
         $middleware->web(append: [
             \App\Http\Middleware\ReleaseExpiredOrderStock::class,
+            \App\Http\Middleware\TrackVisitor::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

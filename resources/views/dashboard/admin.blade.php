@@ -254,3 +254,123 @@
     </div>
 </section>
 
+<!-- Last Login + Pengunjung -->
+<section class="orders-section" style="padding-top:0;padding-bottom:32px">
+    <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+
+        {{-- 10 Login Terakhir --}}
+        <div class="orders-card">
+            <div class="card-header">
+                <h3><i class="fa fa-sign-in"></i> 10 Pengguna Login Terakhir</h3>
+            </div>
+            @if($recentLogins->isEmpty())
+                <div style="text-align:center;padding:40px 24px;color:#bbb;font-size:13px">
+                    <i class="fa fa-clock-o" style="font-size:28px;margin-bottom:10px;display:block"></i>
+                    Belum ada data login
+                </div>
+            @else
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                    <thead>
+                        <tr style="background:#f8f9fb">
+                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">#</th>
+                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Pengguna</th>
+                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Role</th>
+                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Login Terakhir</th>
+                            <th style="padding:10px 20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8d8d8d;text-align:left;border-bottom:1px solid #f0f0f0">Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($recentLogins as $i => $u)
+                        @php
+                            $colors = ['admin'=>'#D10024','penjual'=>'#2196f3','pembeli'=>'#27ae60'];
+                            $uc = $colors[$u->role] ?? '#999';
+                        @endphp
+                        <tr style="border-bottom:1px solid #f7f7f9{{ $loop->last ? ';border-bottom:none' : '' }}">
+                            <td style="padding:12px 20px;color:#ccc;font-weight:700;font-size:12px">{{ $i + 1 }}</td>
+                            <td style="padding:12px 20px">
+                                <div class="admin-user-row" style="padding:0;border:none">
+                                    <div class="admin-user-avatar" style="background:{{ $uc }};width:36px;height:36px;font-size:14px">
+                                        @if($u->photo)
+                                            <img src="{{ asset('storage/'.$u->photo) }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover">
+                                        @else
+                                            {{ strtoupper(substr($u->name, 0, 1)) }}
+                                        @endif
+                                    </div>
+                                    <div class="admin-user-info">
+                                        <div class="admin-user-name">{{ $u->name }}</div>
+                                        <div class="admin-user-uname">{{ '@' . $u->username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding:12px 20px">
+                                <span class="status-badge {{ $u->role === 'admin' ? 'status-cancel' : ($u->role === 'penjual' ? 'status-process' : 'status-success') }}">{{ ucfirst($u->role) }}</span>
+                            </td>
+                            <td style="padding:12px 20px;font-size:12px;color:#444;white-space:nowrap">
+                                {{ $u->last_login_at->format('d M Y, H:i') }}
+                            </td>
+                            <td style="padding:12px 20px;font-size:12px;color:#aaa;white-space:nowrap">
+                                {{ $u->last_login_at->diffForHumans() }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+        </div>{{-- end login card --}}
+
+        {{-- Statistik Pengunjung --}}
+        <div class="orders-card">
+            <div class="card-header">
+                <h3><i class="fa fa-users"></i> Statistik Pengunjung</h3>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px 20px">
+                <div style="background:#fff7f7;border-radius:10px;padding:14px 10px;text-align:center">
+                    <div style="font-size:22px;font-weight:800;color:#D10024">{{ $visitorsToday }}</div>
+                    <div style="font-size:11px;color:#888;margin-top:3px">Hari Ini</div>
+                </div>
+                <div style="background:#f0f7ff;border-radius:10px;padding:14px 10px;text-align:center">
+                    <div style="font-size:22px;font-weight:800;color:#2196f3">{{ $visitorsThisWeek }}</div>
+                    <div style="font-size:11px;color:#888;margin-top:3px">Minggu Ini</div>
+                </div>
+                <div style="background:#f0fff4;border-radius:10px;padding:14px 10px;text-align:center">
+                    <div style="font-size:22px;font-weight:800;color:#27ae60">{{ $visitorsThisMonth }}</div>
+                    <div style="font-size:11px;color:#888;margin-top:3px">Bulan Ini</div>
+                </div>
+            </div>
+
+            <div style="padding:0 20px 6px;border-top:1px solid #f5f5f5">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 8px">
+                    <span style="font-size:12px;font-weight:700;color:#555">Statistik Kota Pengunjung</span>
+                    <span style="font-size:11px;color:#aaa">Total: <b style="color:#444">{{ $visitorsTotal }}</b></span>
+                </div>
+                @if($topCities->isEmpty())
+                    <div style="text-align:center;padding:24px;color:#bbb;font-size:12px">
+                        <i class="fa fa-map-marker" style="font-size:24px;margin-bottom:8px;display:block"></i>
+                        Belum ada data kota pengunjung
+                    </div>
+                @else
+                @php $maxCity = $topCities->first()->total; @endphp
+                <div style="padding-bottom:12px">
+                    @foreach($topCities as $row)
+                    <div style="margin-bottom:8px">
+                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+                            <span style="color:#444;font-weight:600">{{ $row->city ?: 'Tidak Diketahui' }}</span>
+                            <span style="color:#888">{{ $row->total }} pengunjung</span>
+                        </div>
+                        <div style="background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden">
+                            <div style="height:6px;border-radius:4px;background:linear-gradient(90deg,#D10024,#ff6b6b);width:{{ round(($row->total / $maxCity) * 100) }}%"></div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+            </div>
+        </div>{{-- end visitor card --}}
+
+        </div>{{-- end 2-column grid --}}
+    </div>
+</section>
+
