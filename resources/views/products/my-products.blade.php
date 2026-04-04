@@ -282,7 +282,7 @@
                     <select id="newProductCategory" class="form-control" required>
                         <option value="">-- Pilih Kategori --</option>
                         @foreach($categories as $cat)
-                        <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -705,6 +705,7 @@ window.wizardState = {
         name: '',
         description: '',
         category: '',
+        category_id: '',
         price: '',
         stock: '',
         status: true,
@@ -722,6 +723,7 @@ window.openAddProductWizard = function() {
         name: '',
         description: '',
         category: '',
+        category_id: '',
         price: '',
         stock: '',
         status: true, 
@@ -774,14 +776,17 @@ window.showStep = function(step) {
 window.nextStep = function() {
     if (wizardState.step === 1) {
         const name = document.getElementById('newProductName').value.trim();
-        const category = document.getElementById('newProductCategory').value.trim();
-        if (!name || !category) {
+        const categorySelect = document.getElementById('newProductCategory');
+        const categoryId = categorySelect.value.trim();
+        const categoryName = categorySelect.options[categorySelect.selectedIndex]?.text || '';
+        if (!name || !categoryId) {
             showNotification('Nama produk dan kategori harus diisi!', 'warning');
             return;
         }
         wizardState.data.name = name;
         wizardState.data.description = document.getElementById('newProductDescription').value.trim();
-        wizardState.data.category = category;
+        wizardState.data.category_id = categoryId;
+        wizardState.data.category = categoryName;
     } else if (wizardState.step === 2) {
         // Media step - photo is optional
     } else if (wizardState.step === 3) {
@@ -854,7 +859,7 @@ window.generatePreview = function() {
 };
 
 window.publishProduct = function() {
-    if (!wizardState.data.name || !wizardState.data.category || !wizardState.data.price || !wizardState.data.stock) {
+    if (!wizardState.data.name || !wizardState.data.category_id || !wizardState.data.price || !wizardState.data.stock) {
         showNotification('Semua data belum lengkap!', 'warning');
         return;
     }
@@ -862,6 +867,7 @@ window.publishProduct = function() {
     const formData = new FormData();
     formData.append('name', wizardState.data.name);
     formData.append('description', wizardState.data.description);
+    formData.append('category_id', wizardState.data.category_id);
     formData.append('category', wizardState.data.category);
     formData.append('price', wizardState.data.price);
     formData.append('stock', wizardState.data.stock);

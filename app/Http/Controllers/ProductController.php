@@ -93,7 +93,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'category' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
@@ -102,6 +102,8 @@ class ProductController extends Controller
 
         $data = $validated;
         $data['user_id'] = $user->id;
+        // Also store the category name string for backward compatibility
+        $data['category'] = \App\Models\Category::find($validated['category_id'])?->name ?? '';
 
         // Upload foto jika ada
         if ($request->hasFile('image')) {

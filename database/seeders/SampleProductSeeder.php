@@ -290,7 +290,7 @@ class SampleProductSeeder extends Seeder
         foreach ($products as $data) {
             $cat = $categories[$data['category']];
 
-            $product = Product::firstOrCreate(
+            $product = Product::updateOrCreate(
                 ['name' => $data['name'], 'user_id' => $penjual->id],
                 [
                     'description' => $data['description'],
