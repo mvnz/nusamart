@@ -97,10 +97,6 @@
                 {!! $__env->yieldContent('breadcrumb', '<strong>Beranda</strong>') !!}
             </div>
             <div class="sc-topbar-actions">
-                <button class="sc-topbar-btn" title="Notifikasi">
-                    <i class="fa fa-bell-o"></i>
-                    <span class="sc-notif-dot"></span>
-                </button>
                 <div class="sc-topbar-dropdown" id="topbarDropdown">
                     <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="document.getElementById('topbarMenu').classList.toggle('open')">
                         <div class="sc-topbar-avatar">
