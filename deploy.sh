@@ -47,10 +47,10 @@ echo "[5/6] Running database migrations..."
 php "$APP_DIR/artisan" migrate --force
 echo "      Done."
 
-# 6. Storage symlink
-echo "[6/7] Creating storage symlink..."
-php "$APP_DIR/artisan" storage:link --force 2>/dev/null || echo "      Symlink already exists."
-echo "      Done."
+# 6. Storage symlink di webroot (public_html/storage → nusamart/storage/app/public)
+echo "[6/7] Creating storage symlink at webroot..."
+ln -sfn "$APP_DIR/storage/app/public" "$PUBLIC_HTML/storage"
+echo "      Done. ($PUBLIC_HTML/storage -> $APP_DIR/storage/app/public)"
 
 # 7. Clear semua cache Laravel
 echo "[7/7] Clearing caches..."
