@@ -594,7 +594,10 @@ function uploadPhotoToServer(file, callback) {
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Update the preview with new image URL
@@ -609,8 +612,8 @@ function uploadPhotoToServer(file, callback) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showNotification('Terjadi kesalahan saat upload foto!', 'error');
+        console.error('uploadPhoto error:', error);
+        showNotification('Error upload foto: ' + error.message, 'error');
     });
 }
 
@@ -622,7 +625,10 @@ function deletePhotoFromServer(callback) {
             'X-CSRF-TOKEN': getCsrfToken()
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             if (callback) callback();
@@ -631,8 +637,8 @@ function deletePhotoFromServer(callback) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showNotification('Terjadi kesalahan saat hapus foto!', 'error');
+        console.error('deletePhoto error:', error);
+        showNotification('Error hapus foto: ' + error.message, 'error');
     });
 }
 
@@ -655,7 +661,10 @@ function saveProductData() {
         },
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showNotification(data.message, 'success');
@@ -674,12 +683,9 @@ function saveProductData() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showNotification('Terjadi kesalahan!', 'error');
-    });
-}
-
-function deleteProduct(productId) {
+        console.error('saveProduct error:', error);
+        showNotification('Terjadi kesalahan! ' + error.message, 'error');
+    });(productId) {
     showConfirmation(
         'Tindakan ini tidak dapat dibatalkan!',
         'Apakah Anda yakin ingin menghapus produk ini?',
@@ -691,7 +697,10 @@ function deleteProduct(productId) {
                     'X-CSRF-TOKEN': getCsrfToken()
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
@@ -701,8 +710,8 @@ function deleteProduct(productId) {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showNotification('Terjadi kesalahan!', 'error');
+                console.error('deleteProduct error:', error);
+                showNotification('Terjadi kesalahan! ' + error.message, 'error');
             });
         }
     );
