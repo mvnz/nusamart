@@ -2,10 +2,23 @@
 <style>
 .nav-categories-btn{background:none!important;border:1px solid rgba(255,255,255,0.3)!important;color:#fff;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:6px;transition:all .2s}
 .nav-categories-btn:hover,.nav-categories-btn.active{background:rgba(255,255,255,0.1)!important;border-color:rgba(255,255,255,0.5)!important}
-.nav-pengaturan-btn{background:none!important;border:none!important;color:#fff!important;padding:12px 16px!important;font-size:14px!important;font-weight:600!important;cursor:pointer!important;display:flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;transition:all .2s!important;text-decoration:none!important}
-.nav-pengaturan-btn:hover,.nav-pengaturan-btn.active{background:rgba(255,255,255,0.08)!important;border-radius:6px!important;color:#fff!important}
+.nav-pengaturan-btn{background:none!important;border:none!important;color:#fff!important;padding:10px 14px!important;font-size:14px!important;font-weight:600!important;cursor:pointer!important;display:flex!important;align-items:center!important;gap:7px!important;white-space:nowrap!important;transition:all .2s!important;text-decoration:none!important;border-radius:8px!important}
+.nav-pengaturan-btn:hover,.nav-pengaturan-btn.active{background:rgba(255,255,255,0.12)!important;color:#fff!important}
+.nav-pengaturan-btn .caret-icon{transition:transform .25s ease!important;font-size:10px!important}
+.nav-pengaturan-btn.active .caret-icon{transform:rotate(180deg)!important}
 #navCategoryDropdown{display:none!important}#navCategoryDropdown.active{display:block!important}
-#navPengaturanDropdown{display:none!important}#navPengaturanDropdown.active{display:block!important}
+#navPengaturanDropdown{display:none!important;opacity:0;transform:translateY(-6px);transition:opacity .2s ease,transform .2s ease!important}#navPengaturanDropdown.active{display:block!important;opacity:1!important;transform:translateY(0)!important}
+.npd-header{padding:12px 16px 10px;border-bottom:1px solid #f3f3f6;margin-bottom:4px}
+.npd-header-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#bbb}
+.npd-item{display:flex;align-items:center;gap:12px;padding:10px 16px;color:#333;text-decoration:none;font-size:13.5px;font-weight:600;transition:background .15s,color .15s;border-radius:0;position:relative}
+.npd-item:hover{background:#fef2f2;color:#D10024}
+.npd-item.active{background:#fef2f2;color:#D10024}
+.npd-item.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:3px;background:#D10024;border-radius:0 3px 3px 0}
+.npd-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:transform .15s}
+.npd-item:hover .npd-icon{transform:scale(1.1)}
+.npd-icon.red{background:linear-gradient(135deg,#ffd6d6,#ffefef);color:#D10024}
+.npd-icon.blue{background:linear-gradient(135deg,#c9e9ff,#edf6ff);color:#1565c0}
+.npd-icon.green{background:linear-gradient(135deg,#c8f7d6,#edfff3);color:#1a9e50}
 @media(max-width:768px){.nav-mobile-login{display:flex!important;align-items:center;gap:8px;padding:12px 20px;color:#fff!important;text-decoration:none;border-top:1px solid rgba(255,255,255,.07);font-size:14px;font-weight:600}.nav-mobile-login:hover{background:rgba(255,255,255,.08)}}
 </style>
 <nav class="main-nav" id="mainNav">
@@ -43,17 +56,29 @@
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             <div class="nav-pengaturan" id="navPengaturan" style="position:relative">
                 <button class="nav-pengaturan-btn {{ request()->routeIs('admin.*') ? 'active' : '' }}" id="navPengaturanBtn">
-                    <i class="fa fa-cog"></i> Pengaturan <i class="fa fa-caret-down" style="font-size:11px"></i>
+                    <i class="fa fa-cog"></i> Pengaturan <i class="fa fa-caret-down caret-icon"></i>
                 </button>
-                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown" style="position:absolute;top:100%;left:0;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:200px;z-index:1000;padding:8px 0">
-                    <a href="{{ route('admin.categories') }}" class="{{ request()->routeIs('admin.categories*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
-                        <i class="fa fa-tags" style="color:#D10024;width:16px"></i> Kategori
+                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown" style="position:absolute;top:calc(100% + 8px);left:0;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.16);min-width:210px;z-index:1000;overflow:hidden;padding:6px 0">
+                    <a href="{{ route('admin.categories') }}" class="npd-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
+                        <div class="npd-icon red"><i class="fa fa-tags"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Kategori</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola kategori produk</div>
+                        </div>
                     </a>
-                    <a href="{{ route('admin.users') }}" class="{{ request()->routeIs('admin.users*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
-                        <i class="fa fa-users" style="color:#D10024;width:16px"></i> Pengguna
+                    <a href="{{ route('admin.users') }}" class="npd-item {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
+                        <div class="npd-icon blue"><i class="fa fa-users"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Pengguna</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola akun pengguna</div>
+                        </div>
                     </a>
-                    <a href="{{ route('admin.couriers') }}" class="{{ request()->routeIs('admin.couriers*') ? 'active' : '' }}" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:#333;text-decoration:none;font-size:14px;font-weight:500">
-                        <i class="fa fa-truck" style="color:#D10024;width:16px"></i> Kurir
+                    <a href="{{ route('admin.couriers') }}" class="npd-item {{ request()->routeIs('admin.couriers*') ? 'active' : '' }}" style="margin-bottom:6px">
+                        <div class="npd-icon green"><i class="fa fa-truck"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Kurir</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola layanan kurir</div>
+                        </div>
                     </a>
                 </div>
             </div>

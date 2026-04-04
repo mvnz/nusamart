@@ -266,13 +266,15 @@
                 <div class="um-modal-section-title"><i class="fa fa-id-card-o"></i> Informasi Akun</div>
                 <div class="um-modal-row"><span class="um-modal-label">Email</span><span class="um-modal-val" id="modalEmail"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">Telepon</span><span class="um-modal-val" id="modalPhone"></span></div>
+                <div class="um-modal-row"><span class="um-modal-label">Tanggal Lahir</span><span class="um-modal-val" id="modalTanggalLahir"></span></div>
+                <div class="um-modal-row"><span class="um-modal-label">Jenis Kelamin</span><span class="um-modal-val" id="modalJenisKelamin"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">Terdaftar</span><span class="um-modal-val" id="modalDate"></span></div>
             </div>
             <div class="um-modal-section">
                 <div class="um-modal-section-title"><i class="fa fa-map-marker"></i> Alamat</div>
                 <div class="um-modal-row"><span class="um-modal-label">Provinsi</span><span class="um-modal-val" id="modalPropinsi"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">Kota / Kab</span><span class="um-modal-val" id="modalKota"></span></div>
-                <div class="um-modal-row"><span class="um-modal-label">Kecamatan</span><span class="um-modal-label" id="modalKecamatan"></span></div>
+                <div class="um-modal-row"><span class="um-modal-label">Kecamatan</span><span class="um-modal-val" id="modalKecamatan"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">Kelurahan</span><span class="um-modal-val" id="modalKelurahan"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">RT / RW</span><span class="um-modal-val" id="modalRtRw"></span></div>
                 <div class="um-modal-row"><span class="um-modal-label">Alamat Lengkap</span><span class="um-modal-val" id="modalAlamat"></span></div>
@@ -290,6 +292,8 @@
             'username'  => $u->username,
             'email'     => $u->email,
             'phone'     => $u->phone ?? '-',
+            'tanggal_lahir' => $u->tanggal_lahir ? \Carbon\Carbon::parse($u->tanggal_lahir)->format('d M Y') : '-',
+            'jenis_kelamin' => $u->jenis_kelamin ? ucfirst($u->jenis_kelamin) : '-',
             'role'      => ucfirst($u->role),
             'is_active' => $u->is_active,
             'alamat'    => $u->alamat ?? '-',
@@ -335,9 +339,11 @@ function openUserModal(id) {
     document.getElementById('modalBadges').innerHTML =
         '<span class="um-badge ' + roleCls + '">' + u.role + '</span>' +
         '<span class="um-badge ' + (u.is_active ? 'aktif' : 'nonaktif') + '">' + (u.is_active ? 'Aktif' : 'Nonaktif') + '</span>';
-    document.getElementById('modalEmail').textContent     = u.email;
-    document.getElementById('modalPhone').textContent     = u.phone;
-    document.getElementById('modalDate').textContent      = u.date;
+    document.getElementById('modalEmail').textContent         = u.email;
+    document.getElementById('modalPhone').textContent         = u.phone;
+    document.getElementById('modalTanggalLahir').textContent  = u.tanggal_lahir;
+    document.getElementById('modalJenisKelamin').textContent  = u.jenis_kelamin;
+    document.getElementById('modalDate').textContent          = u.date;
     document.getElementById('modalPropinsi').textContent  = u.propinsi;
     document.getElementById('modalKota').textContent      = u.kota;
     document.getElementById('modalKecamatan').textContent = u.kecamatan;
