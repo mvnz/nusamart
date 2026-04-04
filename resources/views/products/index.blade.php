@@ -296,9 +296,9 @@ $bannerColor = $catBannerColors[$catIdx];
             <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
             <button type="submit"><i class="fa fa-search"></i> Cari</button>
             <select name="per_page" onchange="this.form.submit()">
-                <option value="12" {{ request('per_page', 12) == 12 ? 'selected' : '' }}>12 per halaman</option>
-                <option value="24" {{ request('per_page') == 24 ? 'selected' : '' }}>24 per halaman</option>
-                <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>48 per halaman</option>
+                <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15 per halaman</option>
+                <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30 per halaman</option>
+                <option value="60" {{ request('per_page') == 60 ? 'selected' : '' }}>60 per halaman</option>
             </select>
         </form>
     </div>

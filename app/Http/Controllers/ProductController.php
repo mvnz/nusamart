@@ -25,7 +25,8 @@ class ProductController extends Controller
             $query->where('category', $request->category);
         }
 
-        $products = $query->latest()->paginate(12);
+        $perPage = in_array((int)$request->per_page, [15, 30, 60]) ? (int)$request->per_page : 15;
+        $products = $query->latest()->paginate($perPage);
 
         return view('products.index', compact('products', 'selectedCategory'));
     }
