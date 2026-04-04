@@ -31,7 +31,7 @@ class AdminDashboardController extends Controller
             ->orderByDesc('total')
             ->paginate(20);
 
-        $visitorsToday     = VisitorLog::where('visit_date', now()->toDateString())->count();
+        $visitorsToday     = VisitorLog::whereDate('visit_date', now()->toDateString())->count();
         $visitorsThisWeek  = VisitorLog::where('visit_date', '>=', now()->startOfWeek()->toDateString())->count();
         $visitorsThisMonth = VisitorLog::where('visit_date', '>=', now()->startOfMonth()->toDateString())->count();
         $visitorsTotal     = VisitorLog::count();
@@ -66,7 +66,7 @@ class AdminDashboardController extends Controller
                 ->take(10)
                 ->get();
 
-            $visitorsToday     = VisitorLog::where('visit_date', now()->toDateString())->count();
+            $visitorsToday     = VisitorLog::whereDate('visit_date', now()->toDateString())->count();
             $visitorsThisWeek  = VisitorLog::where('visit_date', '>=', now()->startOfWeek()->toDateString())->count();
             $visitorsThisMonth = VisitorLog::where('visit_date', '>=', now()->startOfMonth()->toDateString())->count();
             $visitorsTotal     = VisitorLog::count();
