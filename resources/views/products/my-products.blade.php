@@ -662,8 +662,11 @@ function saveProductData() {
         body: JSON.stringify(data)
     })
     .then(response => {
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        return response.json();
+        const status = response.status;
+        return response.text().then(text => {
+            if (!response.ok) throw new Error('HTTP ' + status + ': ' + text.substring(0, 200));
+            return JSON.parse(text);
+        });
     })
     .then(data => {
         if (data.success) {
