@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Category::withCount('products')->orderBy('name');
+        $query = Category::withCount(['products', 'products as active_products_count' => fn($q) => $q->where('is_active', true)])->orderBy('name');
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');

@@ -208,7 +208,7 @@
                                 <button class="ck-btn edit" onclick="openEditModal({{ $category->id }}, '{{ addslashes($category->name) }}')">
                                     <i class="fa fa-pencil"></i> Edit
                                 </button>
-                                <button class="ck-btn del" onclick="openDelModal({{ $category->id }}, '{{ addslashes($category->name) }}')">
+                                <button class="ck-btn del" onclick="openDelModal({{ $category->id }}, '{{ addslashes($category->name) }}', {{ $category->active_products_count ?? 0 }})">
                                     <i class="fa fa-ban"></i>
                                 </button>
                                 @else
@@ -317,9 +317,14 @@ function openEditModal(id, name) {
     document.getElementById('editModal').classList.add('open');
 }
 
-function openDelModal(id, name) {
+function openDelModal(id, name, activeProducts) {
     document.getElementById('delName').textContent = name;
-    document.getElementById('delSub').textContent = 'Kategori akan dinonaktifkan dan tidak muncul di toko. Dapat diaktifkan kembali.';
+    var subEl = document.getElementById('delSub');
+    if (activeProducts > 0) {
+        subEl.innerHTML = '<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-top:8px;color:#92400e;"><i class="fa fa-exclamation-triangle" style="margin-right:6px;"></i><strong>' + activeProducts + ' produk aktif</strong> ada dalam kategori ini. Produk-produk tersebut tidak akan muncul di toko setelah kategori dinonaktifkan.</div><div style="margin-top:8px;color:#6b7280;font-size:13px;">Kategori dapat diaktifkan kembali kapan saja.</div>';
+    } else {
+        subEl.textContent = 'Kategori akan dinonaktifkan dan tidak muncul di toko. Dapat diaktifkan kembali.';
+    }
     document.getElementById('delConfirmBtn').disabled = false;
     document.getElementById('delConfirmBtn').style.opacity = '1';
     document.getElementById('delForm').action = '/admin/categories/' + id;
