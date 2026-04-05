@@ -108,7 +108,7 @@
 .product-card-name {
     font-size: 13px; font-weight: 600; color: #1e1f29;
     margin-bottom: 4px; line-height: 1.45;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
 .product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
