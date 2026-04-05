@@ -11,7 +11,8 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::active()->with(['seller', 'category']);
+        $query = Product::active()->with(['seller', 'category'])
+            ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))]);
         $selectedCategory = null;
 
         if ($request->filled('search')) {
@@ -36,8 +37,7 @@ class ProductController extends Controller
                 $query->orderBy('price', 'asc');
                 break;
             case 'terlaris':
-                $query->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
-                      ->orderBy('order_items_count', 'desc');
+                $query->orderBy('order_items_count', 'desc');
                 break;
             default:
                 $query->latest();

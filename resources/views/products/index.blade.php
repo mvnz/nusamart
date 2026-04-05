@@ -338,6 +338,9 @@ $bannerColor = $catBannerColors[$catIdx];
                             <i class="fa fa-check-circle" style="color:#10b981;"></i> Stok: {{ $product->stock }}
                         @endif
                     </div>
+                    <div style="font-size:12px;color:#888;margin-top:2px;">
+                        <i class="fa fa-shopping-cart" style="margin-right:3px;"></i> {{ $product->order_items_count ?? 0 }} terjual
+                    </div>
                     <a href="{{ route('products.show', $product) }}" class="btn-detail">Lihat Detail</a>
                 </div>
             </div>
