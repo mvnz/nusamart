@@ -233,7 +233,7 @@
                 <div class="admin-user-row">
                     <div class="admin-user-avatar" style="background:{{ $color }}">
                         @if($user->photo)
-                            <img src="{{ asset('storage/'.$user->photo) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+                            <img src="{{ asset('uploads/'.$user->photo) }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
                         @else
                             {{ $initials }}
                         @endif
@@ -320,7 +320,7 @@
                             <div class="admin-user-row" style="padding:0;border:none">
                                 <div class="admin-user-avatar" style="background:{{ $uc }};width:34px;height:34px;font-size:13px;flex-shrink:0">
                                     @if($u->photo)
-                                        <img src="{{ asset('storage/'.$u->photo) }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+                                        <img src="{{ asset('uploads/'.$u->photo) }}" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
                                     @else
                                         {{ strtoupper(substr($u->name, 0, 1)) }}
                                     @endif
