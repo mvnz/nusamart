@@ -1,10 +1,10 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Daftar Alamat - NusaMart')
 
 @push('styles')
 <style>
-/* ── Searchable Select ──────────────────────────────────────── */
+/* -- Searchable Select ---------------------------------------- */
 .ss{position:relative;width:100%}
 .ss-trigger{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:2px solid #e8e8e8;border-radius:10px;background:#f8f9fa;cursor:pointer;font-size:14px;color:#333;user-select:none;min-height:46px;transition:border-color .2s}
 .ss:not(.ss-disabled) .ss-trigger:hover{border-color:#D10024}
@@ -24,19 +24,19 @@
 .ss-empty-msg{padding:9px 14px;color:#999;font-size:13px;text-align:center}
 .ss.ss-disabled .ss-trigger{background:#f0f0f0;color:#aaa;cursor:not-allowed;border-color:#e8e8e8;pointer-events:none}
 select.ss-native{display:none!important}
-/* ── Address page (pa-*) ────────────────────────────────────── */
+/* -- Address page (pa-*) -------------------------------------- */
 .pa-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid #f0f2f5;}
 .pa-title{font-size:16px;font-weight:800;color:#1a1f2e;display:flex;align-items:center;gap:9px;margin:0;}
 .pa-title i{color:#D10024;}
 .pa-add-btn{display:inline-flex;align-items:center;gap:7px;background:#D10024;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .18s,transform .1s;white-space:nowrap;}
 .pa-add-btn:hover{background:#b5001f;}.pa-add-btn:active{transform:scale(.97);}
-/* ── Alerts ──────────────────────────────────────────────────── */
+/* -- Alerts ---------------------------------------------------- */
 .pa-alert{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;}
 .pa-alert.success{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;}
 .pa-alert.error  {background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;}
 .pa-alert i{margin-top:1px;flex-shrink:0;}
 .pa-alert ul{margin:4px 0 0;padding-left:18px;}
-/* ── Address list ────────────────────────────────────────────── */
+/* -- Address list ---------------------------------------------- */
 .pa-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
 .pa-card{border:1.5px solid #e9eaf0;border-radius:14px;padding:18px 20px;position:relative;background:#fff;transition:border-color .2s,box-shadow .2s;}
 .pa-card:hover{border-color:#d0d1dc;box-shadow:0 4px 16px rgba(0,0,0,.06);}
@@ -60,13 +60,13 @@ select.ss-native{display:none!important}
 .pa-btn-sep{width:1px;height:18px;background:#e5e7eb;margin:0 5px;flex-shrink:0;align-self:center;}
 .pa-check{margin-left:auto;color:#D10024;font-size:18px;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;}
 .pa-check i{font-size:16px;}
-/* ── Empty state ─────────────────────────────────────────────── */
+/* -- Empty state ----------------------------------------------- */
 .pa-empty{text-align:center;padding:52px 24px;}
 .pa-empty-icon{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffd6d6,#ffefef);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
 .pa-empty-icon i{font-size:28px;color:#D10024;}
 .pa-empty h4{font-size:15px;font-weight:700;color:#374151;margin:0 0 6px;}
 .pa-empty p{font-size:13px;color:#9ca3af;margin:0;}
-/* ── Form section ────────────────────────────────────────────── */
+/* -- Form section ---------------------------------------------- */
 .pa-form-wrap{border-radius:14px;border:2px solid #D10024;background:#fff;overflow:hidden;margin-top:4px;}
 .pa-form-head{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;background:linear-gradient(135deg,#1a1f2e 0%,#2d3347 100%);}
 .pa-form-head-title{font-size:14px;font-weight:800;color:#fff;display:flex;align-items:center;gap:9px;}
@@ -107,7 +107,7 @@ select.ss-native{display:none!important}
                 <div class="profile-avatar-card">
                     <div class="profile-avatar-wrapper">
                         @if(auth()->user()->photo)
-                            <img src="{{ asset('uploads/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
+                            <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="Foto Profil" class="profile-avatar-img">
                         @else
                             <div class="profile-avatar"><i class="fa fa-user"></i></div>
                         @endif
@@ -337,10 +337,10 @@ select.ss-native{display:none!important}
         villages:  c => '/api/wilayah/villages/' + c,
     };
 
-    // ── Province cache ───────────────────────────────────────────
+    // -- Province cache -------------------------------------------
     let provincesCache = null;
 
-    // ── Searchable Select ────────────────────────────────────────
+    // -- Searchable Select ----------------------------------------
     function makeSearchableSelect(selectId, placeholder) {
         const select = document.getElementById(selectId);
         if (!select) return null;
@@ -443,7 +443,7 @@ select.ss-native{display:none!important}
         return { refreshItems, enable() { select.disabled = false; wrapper.classList.remove('ss-disabled'); }, disable() { select.disabled = true; wrapper.classList.add('ss-disabled'); } };
     }
 
-    // ── Initialize selects ───────────────────────────────────────
+    // -- Initialize selects ---------------------------------------
     const ssProvince = makeSearchableSelect('province_code', 'Pilih Provinsi');
     const ssRegency  = makeSearchableSelect('regency_code',  'Pilih Kota/Kab');
     const ssDistrict = makeSearchableSelect('district_code', 'Pilih Kecamatan');
@@ -455,7 +455,7 @@ select.ss-native{display:none!important}
     const hidKecamatan = document.getElementById('kecamatan');
     const hidKelurahan = document.getElementById('kelurahan');
 
-    // ── Load provinces ───────────────────────────────────────────
+    // -- Load provinces -------------------------------------------
     async function loadProvinces(selectedValue) {
         if (provincesCache) {
             populateSelect('province_code', provincesCache, selectedValue);
@@ -511,7 +511,7 @@ select.ss-native{display:none!important}
         if (ssVillage) { ssVillage.enable(); ssVillage.refreshItems(); }
     }
 
-    // ── Cascade change events ────────────────────────────────────
+    // -- Cascade change events ------------------------------------
     document.getElementById('province_code').addEventListener('change', function () {
         hidPropinsi.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
         document.getElementById('regency_code').innerHTML  = '<option value="">-- Pilih Kota/Kab dulu --</option>';
@@ -546,7 +546,7 @@ select.ss-native{display:none!important}
         hidKelurahan.value = this.options[this.selectedIndex] ? this.options[this.selectedIndex].textContent : '';
     });
 
-    // ── Form open/close ──────────────────────────────────────────
+    // -- Form open/close ------------------------------------------
     window.openNewForm = function () {
         document.getElementById('addr-form-wrap').style.display = '';
         document.getElementById('addr-form-title').textContent  = 'Tambah Alamat Baru';
@@ -597,7 +597,7 @@ select.ss-native{display:none!important}
         hidKecamatan.value = addr.kecamatan ?? '';
         hidKelurahan.value = addr.kelurahan ?? '';
 
-        // Load cascade: province → regency → district → village
+        // Load cascade: province ? regency ? district ? village
         loadProvinces(addr.province_code).then(() => {
             if (!addr.province_code) return;
             return loadRegencies(addr.province_code, addr.regency_code);
@@ -616,7 +616,7 @@ select.ss-native{display:none!important}
         document.getElementById('addr-form-wrap').style.display = 'none';
     };
 
-    // ── Auto-open form on validation error ───────────────────────
+    // -- Auto-open form on validation error -----------------------
     @if($errors->any())
     (async () => {
         const pCode = '{{ old('province_code', '') }}';
@@ -633,8 +633,8 @@ select.ss-native{display:none!important}
     })();
     @endif
 
-    // ── Initial province load ─────────────────────────────────── 
-    // (only load if form is already visible — e.g. on error)
+    // -- Initial province load ----------------------------------- 
+    // (only load if form is already visible � e.g. on error)
     @if(!$errors->any())
     loadProvinces('');
     @endif
