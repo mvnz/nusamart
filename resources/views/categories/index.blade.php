@@ -92,7 +92,7 @@
 .cm-field input { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; font-family:inherit; outline:none; box-sizing:border-box; transition:border .2s; }
 .cm-field input:focus { border-color:#D10024; box-shadow:0 0 0 3px rgba(209,0,36,.08); }
 .cm-field .cm-err { font-size:11px; color:#D10024; margin-top:4px; }
-.cm-footer { display:flex; justify-content:flex-end; gap:10px; padding-top:4px; }
+.cm-footer { display:flex; justify-content:flex-end; gap:10px; padding:16px 24px 24px; }
 .btn-cm-save { padding:10px 22px; background:#D10024; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; }
 .btn-cm-save:hover { background:#a8001e; }
 .btn-cm-cancel { padding:10px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
