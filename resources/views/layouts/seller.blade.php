@@ -103,7 +103,7 @@
                     <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="document.getElementById('topbarMenu').classList.toggle('open')">
                         <div class="sc-topbar-avatar">
                             @if(auth()->user()->photo)
-                                <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="">
+                                <img src="{{ asset('uploads/' . auth()->user()->photo) }}" alt="">
                             @else
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             @endif
