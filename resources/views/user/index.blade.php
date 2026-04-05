@@ -214,7 +214,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="color:#555">{{ $user->email }}</td>
+                        <td style="color:#555;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $user->email }}">{{ $user->email }}</td>
                         <td style="color:#555">{{ $user->phone ?? '-' }}</td>
                         <td><span class="um-badge {{ $user->role }}">{{ ucfirst($user->role) }}</span></td>
                         <td><span class="um-badge {{ $user->is_active ? 'aktif' : 'nonaktif' }}">{{ $user->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
