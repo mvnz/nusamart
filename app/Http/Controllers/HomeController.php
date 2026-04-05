@@ -127,26 +127,24 @@ class HomeController extends Controller
 
         // Tab products: For User / Rekomendasi / Populer (10 each, daily-seeded)
         try {
-            $allActive = Product::with(['category', 'seller'])->where('is_active', true)->where('stock', '>', 0)->get();
+            $allActive = Product::with(['category', 'seller'])
+                ->withCount(['orderItems as order_items_count' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+                ->where('is_active', true)
+                ->where('stock', '>', 0)
+                ->get();
             $allArr = $allActive->all();
             $dayStr = date('Y-m-d');
 
             $decorateProduct = function ($p) {
-                mt_srand($p->id * 3571);
-                $sold = mt_rand(10, 600);
-                mt_srand($p->id * 1301);
-                $rating = round(mt_rand(40, 50) / 10, 1);
                 return [
-                    'id'             => $p->id,
-                    'name'           => $p->name,
-                    'price'          => (int) $p->price,
-                    'original_price' => (int) $p->price,
-                    'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $p->category?->name ?? '-',
-                    'category_id'    => $p->category_id,
-                    'seller'         => $p->seller?->name ?? 'NusaMart',
-                    'sold'           => $sold,
-                    'rating'         => $rating,
+                    'id'       => $p->id,
+                    'name'     => $p->name,
+                    'price'    => (int) $p->price,
+                    'image'    => $p->image ? asset('storage/' . $p->image) : null,
+                    'category' => $p->category?->name ?? '-',
+                    'seller'   => $p->seller?->name ?? 'NusaMart',
+                    'stock'    => $p->stock,
+                    'sold'     => $p->order_items_count ?? 0,
                 ];
             };
 
