@@ -125,7 +125,7 @@
         </div>
         <div class="ck-stat">
             <div class="ck-si grey"><i class="fa fa-ban"></i></div>
-            <div><div class="ck-sv">{{ $stats['empty'] }}</div><div class="ck-sl">Kosong</div></div>
+            <div><div class="ck-sv">{{ $stats['inactive'] }}</div><div class="ck-sl">Nonaktif</div></div>
         </div>
         <div class="ck-stat">
             <div class="ck-si blue"><i class="fa fa-box"></i></div>
