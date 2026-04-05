@@ -295,11 +295,6 @@ $bannerColor = $catBannerColors[$catIdx];
             @if(request('category_id'))<input type="hidden" name="category_id" value="{{ request('category_id') }}">@endif
             <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
             <button type="submit"><i class="fa fa-search"></i> Cari</button>
-            <select name="per_page" onchange="this.form.submit()">
-                <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15 per halaman</option>
-                <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30 per halaman</option>
-                <option value="60" {{ request('per_page') == 60 ? 'selected' : '' }}>60 per halaman</option>
-            </select>
             <select name="sort" onchange="this.form.submit()" style="min-width:155px;">
                 <option value="terbaru" {{ request('sort','terbaru') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
                 <option value="harga_tertinggi" {{ request('sort') == 'harga_tertinggi' ? 'selected' : '' }}>Harga Tertinggi</option>
