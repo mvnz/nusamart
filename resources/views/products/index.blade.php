@@ -112,7 +112,7 @@
 }
 .product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
 .product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
-.product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 10px; flex: 1; }
+.product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 2px; }
 .product-card-stock.low { color: #f59e0b; }
 .product-card-stock.out { color: #ef4444; }
 .btn-detail {
@@ -338,7 +338,7 @@ $bannerColor = $catBannerColors[$catIdx];
                             <i class="fa fa-check-circle" style="color:#10b981;"></i> Stok: {{ $product->stock }}
                         @endif
                     </div>
-                    <div style="font-size:12px;color:#888;margin-top:2px;">
+                    <div style="font-size:12px;color:#888;margin-bottom:8px;">
                         <i class="fa fa-shopping-cart" style="margin-right:3px;"></i> {{ $product->order_items_count ?? 0 }} terjual
                     </div>
                     <a href="{{ route('products.show', $product) }}" class="btn-detail">Lihat Detail</a>
