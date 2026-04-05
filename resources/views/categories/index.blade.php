@@ -97,10 +97,13 @@
 .btn-cm-save:hover { background:#a8001e; }
 .btn-cm-cancel { padding:10px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s; }
 .btn-cm-cancel:hover { background:#e5e7eb; }
-.del-modal { width:360px; }
-.del-icon { text-align:center; padding:8px 0 16px; font-size:44px; color:#D10024; }
-.del-text { text-align:center; font-size:14px; color:#333; line-height:1.6; margin-bottom:6px; }
-.del-sub  { text-align:center; font-size:12px; color:#aaa; }
+.del-modal { width:400px; }
+.del-icon { text-align:center; padding:8px 0 12px; font-size:44px; color:#D10024; }
+.del-text { text-align:center; font-size:14px; color:#333; line-height:1.6; margin-bottom:12px; }
+.del-sub  { text-align:left; font-size:12px; color:#aaa; }
+.del-warn { display:flex; gap:10px; align-items:flex-start; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 14px; color:#78350f; font-size:13px; line-height:1.5; }
+.del-warn i { color:#d97706; font-size:16px; flex-shrink:0; margin-top:1px; }
+.del-hint { margin-top:10px; text-align:center; font-size:12px; color:#aaa; }
 </style>
 
 <div class="ck-wrap">
@@ -298,6 +301,7 @@
             <div class="cm-body">
                 <div class="del-icon"><i class="fa fa-ban"></i></div>
                 <div class="del-text">Nonaktifkan kategori <strong id="delName"></strong>?</div>
+                <div id="delWarn"></div>
                 <div class="del-sub" id="delSub"></div>
             </div>
             <div class="cm-footer">
@@ -319,11 +323,14 @@ function openEditModal(id, name) {
 
 function openDelModal(id, name, activeProducts) {
     document.getElementById('delName').textContent = name;
-    var subEl = document.getElementById('delSub');
+    var warnEl = document.getElementById('delWarn');
+    var subEl  = document.getElementById('delSub');
     if (activeProducts > 0) {
-        subEl.innerHTML = '<div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-top:8px;color:#92400e;"><i class="fa fa-exclamation-triangle" style="margin-right:6px;"></i><strong>' + activeProducts + ' produk aktif</strong> ada dalam kategori ini. Produk-produk tersebut tidak akan muncul di toko setelah kategori dinonaktifkan.</div><div style="margin-top:8px;color:#6b7280;font-size:13px;">Kategori dapat diaktifkan kembali kapan saja.</div>';
+        warnEl.innerHTML = '<div class="del-warn"><i class="fa fa-exclamation-triangle"></i><div><strong>' + activeProducts + ' produk aktif</strong> ada dalam kategori ini. Produk-produk tersebut tidak akan muncul di toko setelah kategori dinonaktifkan.</div></div>';
+        subEl.innerHTML  = '<div class="del-hint">Kategori dapat diaktifkan kembali kapan saja.</div>';
     } else {
-        subEl.textContent = 'Kategori akan dinonaktifkan dan tidak muncul di toko. Dapat diaktifkan kembali.';
+        warnEl.innerHTML = '';
+        subEl.innerHTML  = '<div class="del-hint">Kategori akan dinonaktifkan dan tidak muncul di toko. Dapat diaktifkan kembali.</div>';
     }
     document.getElementById('delConfirmBtn').disabled = false;
     document.getElementById('delConfirmBtn').style.opacity = '1';
