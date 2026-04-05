@@ -15,7 +15,6 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'discount_percentage',
         'stock',
         'category',
         'image',
@@ -58,18 +57,5 @@ class Product extends Model
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
-    }
-
-    public function getDiscountedPriceAttribute(): float
-    {
-        if ($this->discount_percentage > 0) {
-            return $this->price * (1 - $this->discount_percentage / 100);
-        }
-        return (float) $this->price;
-    }
-
-    public function getFormattedDiscountedPriceAttribute(): string
-    {
-        return 'Rp ' . number_format($this->discounted_price, 0, ',', '.');
     }
 }

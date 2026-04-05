@@ -97,12 +97,6 @@
 }
 .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
 .product-card-img .no-img { font-size: 48px; color: #ddd; }
-.discount-badge {
-    position: absolute; top: 8px; left: 8px;
-    background: #D10024; color: #fff;
-    font-size: 11px; font-weight: 700; padding: 3px 7px;
-    border-radius: 4px; z-index: 1;
-}
 
 .product-card-body { padding: 12px 14px 14px; flex: 1; display: flex; flex-direction: column; }
 .product-card-category {
@@ -118,7 +112,6 @@
 }
 .product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
 .product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
-.product-card-price-original { font-size: 12px; color: #aaa; text-decoration: line-through; margin-bottom: 2px; }
 .product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 10px; flex: 1; }
 .product-card-stock.low { color: #f59e0b; }
 .product-card-stock.out { color: #ef4444; }
@@ -312,7 +305,6 @@ $bannerColor = $catBannerColors[$catIdx];
                 <option value="harga_tertinggi" {{ request('sort') == 'harga_tertinggi' ? 'selected' : '' }}>Harga Tertinggi</option>
                 <option value="harga_terendah" {{ request('sort') == 'harga_terendah' ? 'selected' : '' }}>Harga Terendah</option>
                 <option value="terlaris" {{ request('sort') == 'terlaris' ? 'selected' : '' }}>Terlaris</option>
-                <option value="diskon" {{ request('sort') == 'diskon' ? 'selected' : '' }}>Diskon Terbesar</option>
             </select>
         </form>
     </div>
@@ -334,9 +326,6 @@ $bannerColor = $catBannerColors[$catIdx];
                     @else
                         <i class="fa fa-shopping-bag no-img"></i>
                     @endif
-                    @if($product->discount_percentage > 0)
-                        <div class="discount-badge">-{{ $product->discount_percentage }}%</div>
-                    @endif
                 </div>
                 <div class="product-card-body">
                     @if($product->category)
@@ -344,12 +333,7 @@ $bannerColor = $catBannerColors[$catIdx];
                     @endif
                     <div class="product-card-name">{{ $product->name }}</div>
                     <div class="product-card-seller"><i class="fa fa-store" style="margin-right:4px;"></i>{{ $product->seller->name }}</div>
-                    @if($product->discount_percentage > 0)
-                        <div class="product-card-price-original">{{ $product->formatted_price }}</div>
-                        <div class="product-card-price">{{ $product->formatted_discounted_price }}</div>
-                    @else
-                        <div class="product-card-price">{{ $product->formatted_price }}</div>
-                    @endif
+                    <div class="product-card-price">{{ $product->formatted_price }}</div>
                     <div class="product-card-stock @if($product->stock == 0) out @elseif($product->stock <= 5) low @endif">
                         @if($product->stock == 0)
                             <i class="fa fa-times-circle"></i> Stok habis

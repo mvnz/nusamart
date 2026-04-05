@@ -38,9 +38,6 @@ class ProductController extends Controller
             case 'terlaris':
                 $query->withCount('orderItems')->orderBy('order_items_count', 'desc');
                 break;
-            case 'diskon':
-                $query->where('discount_percentage', '>', 0)->orderBy('discount_percentage', 'desc');
-                break;
             default:
                 $query->latest();
                 break;
@@ -116,7 +113,6 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
-            'discount_percentage' => 'nullable|integer|min:0|max:100',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -155,7 +151,6 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
             'price' => 'numeric|min:0',
-            'discount_percentage' => 'nullable|integer|min:0|max:100',
             'stock' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);

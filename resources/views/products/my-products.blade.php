@@ -209,7 +209,7 @@
 
                     <div class="product-actions">
                         <div class="action-group">
-                            <button class="action-btn action-btn-primary" onclick="openEditModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, {{ $product->stock }}, {{ $product->is_active ? 'true' : 'false' }}, '{{ $product->image ? asset('storage/' . $product->image) : '' }}', {{ $product->category_id ?? 'null' }}, {{ $product->discount_percentage ?? 0 }})">
+                            <button class="action-btn action-btn-primary" onclick="openEditModal({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, {{ $product->stock }}, {{ $product->is_active ? 'true' : 'false' }}, '{{ $product->image ? asset('storage/' . $product->image) : '' }}', {{ $product->category_id ?? 'null' }})">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
                             <button class="action-btn action-btn-danger" onclick="deleteProduct({{ $product->id }})">
@@ -311,10 +311,6 @@
                     <input type="number" id="newProductPrice" class="form-control" min="0" step="1000" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Diskon (%) <small style="color:#aaa;font-weight:400;">opsional, 0 = tidak ada</small></label>
-                    <input type="number" id="newProductDiscount" class="form-control" min="0" max="100" step="1" value="0" placeholder="0">
-                </div>
-                <div class="form-group">
                     <label class="form-label">Jumlah Stok *</label>
                     <input type="number" id="newProductStock" class="form-control" min="0" required>
                 </div>
@@ -392,11 +388,6 @@
             <div class="form-group">
                 <label class="form-label">Harga (Rp)</label>
                 <input type="number" id="productPrice" class="form-control" min="0" step="1000" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Diskon (%) <small style="color:#aaa;font-weight:400;">opsional, 0 = tidak ada</small></label>
-                <input type="number" id="productDiscount" class="form-control" min="0" max="100" step="1" value="0" placeholder="0">
             </div>
 
             <div class="form-group">
@@ -494,7 +485,7 @@ let currentProductId = null;
 let currentPhotoUrl = null;
 let photoHasChanged = false;
 
-function openEditModal(productId, name, price, stock, isActive, photoUrl, categoryId, discountPercentage) {
+function openEditModal(productId, name, price, stock, isActive, photoUrl, categoryId) {
     currentProductId = productId;
     currentPhotoUrl = photoUrl;
     photoHasChanged = false;
@@ -502,7 +493,6 @@ function openEditModal(productId, name, price, stock, isActive, photoUrl, catego
     document.getElementById('productName').value = name;
     document.getElementById('productCategory').value = categoryId || '';
     document.getElementById('productPrice').value = price;
-    document.getElementById('productDiscount').value = discountPercentage || 0;
     document.getElementById('productStock').value = stock;
     document.getElementById('productStatus').checked = isActive;
     
@@ -658,7 +648,6 @@ function saveProductData() {
         name: document.getElementById('productName').value,
         category_id: categoryId ? parseInt(categoryId) : null,
         price: document.getElementById('productPrice').value,
-        discount_percentage: parseInt(document.getElementById('productDiscount').value) || 0,
         stock: document.getElementById('productStock').value,
         is_active: document.getElementById('productStatus').checked
     };
@@ -841,7 +830,6 @@ window.nextStep = function() {
         }
         wizardState.data.price = parseInt(price);
         wizardState.data.stock = parseInt(stock);
-        wizardState.data.discount_percentage = parseInt(document.getElementById('newProductDiscount').value) || 0;
         wizardState.data.status = document.getElementById('newProductStatus').checked;
     }
 
@@ -915,7 +903,6 @@ window.publishProduct = function() {
     formData.append('category', wizardState.data.category);
     formData.append('price', wizardState.data.price);
     formData.append('stock', wizardState.data.stock);
-    formData.append('discount_percentage', wizardState.data.discount_percentage || 0);
     formData.append('is_active', wizardState.data.status ? 1 : 0);
     if (wizardState.data.photoFile) {
         formData.append('image', wizardState.data.photoFile, 'product.jpg');
