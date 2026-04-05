@@ -203,7 +203,7 @@
                             <div class="um-user-cell">
                                 @if($user->photo)
                                     <div class="um-avatar photo">
-                                        <img src="{{ asset('storage/'.$user->photo) }}" alt="{{ $user->name }}">
+                                        <img src="{{ asset('uploads/'.$user->photo) }}" alt="{{ $user->name }}">
                                     </div>
                                 @else
                                     <div class="um-avatar c{{ $index % 5 }}">{{ strtoupper(substr($user->name,0,1)) }}</div>
@@ -304,7 +304,7 @@
             'rt'        => $u->rt ?? '-',
             'rw'        => $u->rw ?? '-',
             'kodepos'   => $u->kodepos ?? '-',
-            'photo'     => $u->photo ? asset('storage/' . $u->photo) : null,
+            'photo'     => $u->photo ? asset('uploads/' . $u->photo) : null,
             'color'     => $i % 5,
             'date'      => $u->created_at->format('d M Y'),
         ]];
