@@ -44,15 +44,10 @@
 
                 <li class="sc-nav-item sc-nav-section">Produk</li>
                 <li class="sc-nav-item">
-                    <a href="#" class="sc-nav-link {{ request()->routeIs('products.*') ? 'active open' : '' }}" onclick="toggleSubmenu('submenuProduk', this); return false;">
+                    <a href="{{ route('products.my-products') }}" class="sc-nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
                         <i class="fa fa-cube"></i>
-                        <span>Produk</span>
-                        <i class="fa fa-chevron-right sc-nav-arrow"></i>
+                        <span>Produk Saya</span>
                     </a>
-                    <ul class="sc-submenu {{ request()->routeIs('products.*') ? 'open' : '' }}" id="submenuProduk">
-                        <li><a href="{{ route('products.my-products') }}" class="sc-nav-link {{ request()->routeIs('products.my-products') ? 'active' : '' }}"><i class="fa fa-list"></i> <span>Daftar Produk</span></a></li>
-                        <li><a href="{{ route('products.my-products') }}#tambah" class="sc-nav-link"><i class="fa fa-plus"></i> <span>Tambah Produk</span></a></li>
-                    </ul>
                 </li>
 
                 <li class="sc-nav-item sc-nav-section">Transaksi</li>
