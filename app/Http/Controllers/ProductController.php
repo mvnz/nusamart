@@ -36,7 +36,8 @@ class ProductController extends Controller
                 $query->orderBy('price', 'asc');
                 break;
             case 'terlaris':
-                $query->withCount('orderItems')->orderBy('order_items_count', 'desc');
+                $query->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+                      ->orderBy('order_items_count', 'desc');
                 break;
             default:
                 $query->latest();
