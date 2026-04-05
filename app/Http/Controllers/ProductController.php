@@ -26,7 +26,27 @@ class ProductController extends Controller
         }
 
         $perPage = in_array((int)$request->per_page, [15, 30, 60]) ? (int)$request->per_page : 15;
-        $products = $query->latest()->paginate($perPage);
+
+        $sort = $request->get('sort', 'terbaru');
+        switch ($sort) {
+            case 'harga_tertinggi':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'harga_terendah':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'terlaris':
+                $query->withCount('orderItems')->orderBy('order_items_count', 'desc');
+                break;
+            case 'diskon':
+                $query->where('discount_percentage', '>', 0)->orderBy('discount_percentage', 'desc');
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+
+        $products = $query->paginate($perPage);
 
         return view('products.index', compact('products', 'selectedCategory'));
     }
@@ -96,6 +116,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'discount_percentage' => 'nullable|integer|min:0|max:100',
             'stock' => 'required|integer|min:0',
             'is_active' => 'boolean',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -134,6 +155,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
             'price' => 'numeric|min:0',
+            'discount_percentage' => 'nullable|integer|min:0|max:100',
             'stock' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
