@@ -172,6 +172,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::patch('/promos/{promo}/nonaktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'deactivate'])->name('admin.promos.deactivate');
     Route::patch('/promos/{promo}/aktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'activate'])->name('admin.promos.activate');
     Route::delete('/promos/{promo}', [\App\Http\Controllers\Admin\AdminPromoController::class, 'destroy'])->name('admin.promos.destroy');
+
+    // Promo slots (jadwal periodik)
+    Route::get('/promo-slots', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'index'])->name('admin.promo-slots');
+    Route::post('/promo-slots', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'store'])->name('admin.promo-slots.store');
+    Route::put('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'update'])->name('admin.promo-slots.update');
+    Route::delete('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'destroy'])->name('admin.promo-slots.destroy');
+    Route::patch('/promo-slots/{promoSlot}/toggle', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'toggleActive'])->name('admin.promo-slots.toggle');
 });
 
 // Info pages
