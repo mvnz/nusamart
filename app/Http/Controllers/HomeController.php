@@ -92,7 +92,7 @@ class HomeController extends Controller
             ['name' => 'Kerajinan Desa Sari',    'category' => 'Kerajinan Tangan',   'products' => 15, 'rating' => 4.6, 'image' => 'https://ui-avatars.com/api/?name=Kerajinan&background=e67e22&color=fff&size=80'],
         ];
 
-        // Flash Sale: produk dengan promo aktif dari penjual, fallback ke acak harian
+        // Flash Sale: produk dengan promo aktif dari penjual
         $flashSaleDeadline = null;
         try {
             $activePromos = \App\Models\Promo::with(['product' => fn($q) => $q->with('category')])
@@ -123,34 +123,7 @@ class HomeController extends Controller
                 })->values()->all();
                 $flashSaleDeadline = $activePromos->min('end_date')?->toIso8601String();
             } else {
-                // Fallback: produk acak harian
-                $seed = crc32(date('Y-m-d'));
-                $allProducts = Product::with('category')->where('is_active', true)->where('stock', '>', 0)->get();
-                $prodArr = $allProducts->all();
-                mt_srand($seed);
-                for ($i = count($prodArr) - 1; $i > 0; $i--) {
-                    $j = mt_rand(0, $i);
-                    [$prodArr[$i], $prodArr[$j]] = [$prodArr[$j], $prodArr[$i]];
-                }
-                $flashSaleProducts = collect(array_slice($prodArr, 0, 6))->map(function ($p) {
-                    mt_srand($p->id * 7919);
-                    $pct = mt_rand(20, 45) / 100;
-                    $originalPrice = (int) round($p->price * (1 + $pct) / 1000) * 1000;
-                    mt_srand($p->id * 3571);
-                    $sold = mt_rand(20, 300);
-                    $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
-                    return [
-                        'id'             => $p->id,
-                        'name'           => $p->name,
-                        'price'          => (int) $p->price,
-                        'original_price' => $originalPrice,
-                        'disc'           => round($pct * 100 / (1 + $pct)),
-                        'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                        'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
-                        'sold'           => $sold,
-                        'quota'          => 0,
-                    ];
-                })->values()->all();
+                $flashSaleProducts = [];
             }
         } catch (\Exception $e) {
             $flashSaleProducts = [];
