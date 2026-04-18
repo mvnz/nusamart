@@ -112,13 +112,14 @@ class HomeController extends Controller
                 $originalPrice = (int) round($p->price * (1 + $pct) / 1000) * 1000;
                 // Simulated sold count seeded by product id
                 $sold = mt_rand(20, 400);
+                $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
                 return [
                     'id'             => $p->id,
                     'name'           => $p->name,
                     'price'          => (int) $p->price,
                     'original_price' => $originalPrice,
                     'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $p->category?->name ?? null,
+                    'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
                     'sold'           => $sold,
                 ];
             })->values()->all();
@@ -137,15 +138,17 @@ class HomeController extends Controller
                 $sold = mt_rand(10, 600);
                 mt_srand($p->id * 1301);
                 $rating = round(mt_rand(40, 50) / 10, 1);
+                $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
                 return [
                     'id'             => $p->id,
                     'name'           => $p->name,
                     'price'          => (int) $p->price,
                     'original_price' => (int) $p->price,
                     'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $p->category?->name ?? null,
+                    'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
                     'category_id'    => $p->category_id,
                     'seller'         => $p->seller?->name ?? 'NusaMart',
+                    'stock'          => $p->stock,
                     'sold'           => $sold,
                     'rating'         => $rating,
                 ];
