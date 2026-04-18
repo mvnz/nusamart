@@ -48,7 +48,15 @@ class AdminPromoController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        return view('admin.promos.index', compact('promos', 'sellers'));
+        $stats = [
+            'total'     => Promo::count(),
+            'active'    => Promo::where('is_active', true)->where('start_date', '<=', now())->where('end_date', '>=', now())->count(),
+            'scheduled' => Promo::where('is_active', true)->where('start_date', '>', now())->count(),
+            'expired'   => Promo::where('end_date', '<', now())->count(),
+            'inactive'  => Promo::where('is_active', false)->count(),
+        ];
+
+        return view('admin.promos.index', compact('promos', 'sellers', 'stats'));
     }
 
     /**

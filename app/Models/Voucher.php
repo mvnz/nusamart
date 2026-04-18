@@ -50,6 +50,11 @@ class Voucher extends Model
         return $this->end_date && $this->end_date->lt(now());
     }
 
+    public function isQuotaFull(): bool
+    {
+        return $this->quota > 0 && $this->used_count >= $this->quota;
+    }
+
     public function isScheduled(): bool
     {
         return $this->start_date && $this->start_date->gt(now());

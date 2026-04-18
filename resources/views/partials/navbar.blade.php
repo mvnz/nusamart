@@ -19,6 +19,21 @@
 .npd-icon.red{background:linear-gradient(135deg,#ffd6d6,#ffefef);color:#D10024}
 .npd-icon.blue{background:linear-gradient(135deg,#c9e9ff,#edf6ff);color:#1565c0}
 .npd-icon.green{background:linear-gradient(135deg,#c8f7d6,#edfff3);color:#1a9e50}
+
+/* Promo flyout */
+.npd-flyout-parent{position:relative}
+.npd-flyout-trigger{display:flex;align-items:center;gap:12px;padding:10px 16px;color:#333;text-decoration:none;font-size:13.5px;font-weight:600;transition:background .15s,color .15s;cursor:pointer;border-radius:0;user-select:none;justify-content:space-between}
+.npd-flyout-trigger:hover,.npd-flyout-trigger.active{background:#fef2f2;color:#D10024}
+.npd-flyout-trigger .npd-flyout-arrow{font-size:10px;color:#bbb;transition:color .15s,transform .2s;flex-shrink:0}
+.npd-flyout-trigger:hover .npd-flyout-arrow,.npd-flyout-trigger.active .npd-flyout-arrow{color:#D10024}
+.npd-flyout-inner{display:flex;align-items:center;gap:12px}
+.npd-flyout-menu{display:none;position:absolute;top:0;left:calc(100% + 6px);background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.16);min-width:230px;z-index:1001;padding:6px 0;animation:npdFlyIn .15s ease}
+@keyframes npdFlyIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.npd-flyout-parent.open > .npd-flyout-menu{display:block}
+/* Clip first/last items in dropdown */
+.nav-pengaturan-dropdown > .npd-item:first-child,.nav-pengaturan-dropdown > div:first-child .npd-flyout-trigger{border-radius:10px 10px 0 0}
+.nav-pengaturan-dropdown > .npd-item:last-child,.nav-pengaturan-dropdown > div:last-child .npd-flyout-trigger{border-radius:0 0 10px 10px}
+
 @media(max-width:768px){.nav-mobile-login{display:flex!important;align-items:center;gap:8px;padding:12px 20px;color:#fff!important;text-decoration:none;border-top:1px solid rgba(255,255,255,.07);font-size:14px;font-weight:600}.nav-mobile-login:hover{background:rgba(255,255,255,.08)}}
 </style>
 <nav class="main-nav" id="mainNav">
@@ -58,7 +73,7 @@
                 <button class="nav-pengaturan-btn {{ request()->routeIs('admin.*') ? 'active' : '' }}" id="navPengaturanBtn">
                     <i class="fa fa-cog"></i> Pengaturan <i class="fa fa-caret-down caret-icon"></i>
                 </button>
-                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown" style="position:absolute;top:calc(100% + 8px);left:0;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.16);min-width:210px;z-index:1000;overflow:hidden;padding:6px 0">
+                <div class="nav-pengaturan-dropdown" id="navPengaturanDropdown" style="position:absolute;top:calc(100% + 8px);left:0;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.16);min-width:210px;z-index:1000;overflow:visible;padding:6px 0">
                     <a href="{{ route('admin.categories') }}" class="npd-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
                         <div class="npd-icon red"><i class="fa fa-tags"></i></div>
                         <div>
@@ -80,28 +95,42 @@
                             <div style="font-size:11px;color:#aaa;font-weight:500">Kelola layanan kurir</div>
                         </div>
                     </a>
-                    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#c0c0c0;padding:10px 6px 4px;user-select:none;">Promo</div>
-                    <a href="{{ route('admin.promos') }}" class="npd-item {{ request()->routeIs('admin.promos') || request()->routeIs('admin.promos.show') || request()->routeIs('admin.promos.deactivate') || request()->routeIs('admin.promos.activate') ? 'active' : '' }}">
-                        <div class="npd-icon" style="background:#fff0e6;color:#e67e22;"><i class="fa fa-tag"></i></div>
-                        <div>
-                            <div style="font-size:13.5px;font-weight:700">Monitoring Promo</div>
-                            <div style="font-size:11px;color:#aaa;font-weight:500">Monitor promo penjual</div>
+                    <div class="npd-flyout-parent" id="promoFlyout">
+                        <div class="npd-flyout-trigger {{ request()->routeIs('admin.promos*') || request()->routeIs('admin.promo-slots*') || request()->routeIs('admin.vouchers*') ? 'active' : '' }}"
+                             onclick="togglePromoFlyout(event)">
+                            <div class="npd-flyout-inner">
+                                <div class="npd-icon" style="background:#fff0e6;color:#e67e22;"><i class="fa fa-bullhorn"></i></div>
+                                <div>
+                                    <div style="font-size:13.5px;font-weight:700">Promo</div>
+                                    <div style="font-size:11px;color:#aaa;font-weight:500">Monitoring, jadwal & voucher</div>
+                                </div>
+                            </div>
+                            <i class="fa fa-chevron-right npd-flyout-arrow"></i>
                         </div>
-                    </a>
-                    <a href="{{ route('admin.promo-slots') }}" class="npd-item {{ request()->routeIs('admin.promo-slots*') ? 'active' : '' }}">
-                        <div class="npd-icon" style="background:#f0f9ff;color:#0369a1;"><i class="fa fa-clock-o"></i></div>
-                        <div>
-                            <div style="font-size:13.5px;font-weight:700">Jadwal Promo</div>
-                            <div style="font-size:11px;color:#aaa;font-weight:500">Atur periode waktu promo</div>
+                        <div class="npd-flyout-menu">
+                            <a href="{{ route('admin.promos') }}" class="npd-item {{ request()->routeIs('admin.promos') || request()->routeIs('admin.promos.show') || request()->routeIs('admin.promos.deactivate') || request()->routeIs('admin.promos.activate') ? 'active' : '' }}">
+                                <div class="npd-icon" style="background:#fff0e6;color:#e67e22;"><i class="fa fa-tag"></i></div>
+                                <div>
+                                    <div style="font-size:13.5px;font-weight:700">Monitoring Promo</div>
+                                    <div style="font-size:11px;color:#aaa;font-weight:500">Monitor promo penjual</div>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.promo-slots') }}" class="npd-item {{ request()->routeIs('admin.promo-slots*') ? 'active' : '' }}">
+                                <div class="npd-icon" style="background:#f0f9ff;color:#0369a1;"><i class="fa fa-clock-o"></i></div>
+                                <div>
+                                    <div style="font-size:13.5px;font-weight:700">Jadwal Promo</div>
+                                    <div style="font-size:11px;color:#aaa;font-weight:500">Atur periode waktu promo</div>
+                                </div>
+                            </a>
+                            <a href="{{ route('admin.vouchers') }}" class="npd-item {{ request()->routeIs('admin.vouchers*') ? 'active' : '' }}">
+                                <div class="npd-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="fa fa-ticket"></i></div>
+                                <div>
+                                    <div style="font-size:13.5px;font-weight:700">Voucher</div>
+                                    <div style="font-size:11px;color:#aaa;font-weight:500">Kelola kode diskon voucher</div>
+                                </div>
+                            </a>
                         </div>
-                    </a>
-                    <a href="{{ route('admin.vouchers') }}" class="npd-item {{ request()->routeIs('admin.vouchers*') ? 'active' : '' }}" style="margin-bottom:6px">
-                        <div class="npd-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="fa fa-ticket"></i></div>
-                        <div>
-                            <div style="font-size:13.5px;font-weight:700">Voucher</div>
-                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola kode diskon voucher</div>
-                        </div>
-                    </a>
+                    </div>
                 </div>
             </div>
             @endif
@@ -111,6 +140,7 @@
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') || request()->routeIs('seller.*') ? 'active' : '' }}">Dashboard</a>
             @endif
             @endauth
+            <a href="{{ route('page.vouchers') }}" class="{{ request()->routeIs('page.vouchers') ? 'active' : '' }}">Voucher</a>
             <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
 
             {{-- Link Masuk hanya tampil di mobile (top-bar tersembunyi) --}}
@@ -171,7 +201,16 @@
         if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.classList.remove('active');
             btn.classList.remove('active');
+            // also close promo flyout
+            var pf = document.getElementById('promoFlyout');
+            if (pf) pf.classList.remove('open');
         }
     });
 })();
+
+function togglePromoFlyout(e) {
+    e.stopPropagation();
+    var pf = document.getElementById('promoFlyout');
+    if (pf) pf.classList.toggle('open');
+}
 </script>

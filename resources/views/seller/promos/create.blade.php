@@ -291,35 +291,87 @@
 
                 <div class="form-group">
                     <label class="form-label">Periode Promo</label>
-                    <div class="date-row">
-                        <div>
-                            <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Mulai</label>
-                            <input type="datetime-local" name="start_date" id="startDate" class="form-control"
-                                   value="{{ old('start_date') }}" required>
-                            @error('start_date')
-                                <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
-                            @enderror
+
+                    {{-- Hidden actual datetime fields submitted to server --}}
+                    <input type="hidden" name="start_date" id="startDate">
+                    <input type="hidden" name="end_date"   id="endDate">
+
+                    @if($promoSlots->count() > 0)
+                        {{-- Slot picker --}}
+                        <div style="margin-bottom:10px;">
+                            <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Pilih Jadwal Promo</label>
+                            <select id="promoSlotSelect" class="form-control" onchange="updatePeriodFromSlot()" style="cursor:pointer;">
+                                <option value="">-- Pilih periode --</option>
+                                @foreach($promoSlots as $slot)
+                                    <option value="{{ $slot->id }}"
+                                            data-start="{{ substr($slot->start_time,0,5) }}"
+                                            data-end="{{ substr($slot->end_time,0,5) }}"
+                                            data-name="{{ $slot->name }}"
+                                            {{ old('promo_slot_id') == $slot->id ? 'selected' : '' }}>
+                                        {{ $slot->name }} &bull; {{ $slot->time_range }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                        {{-- Date picker --}}
                         <div>
-                            <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Berakhir</label>
-                            <input type="datetime-local" name="end_date" id="endDate" class="form-control"
-                                   value="{{ old('end_date') }}" required>
-                            @error('end_date')
-                                <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
-                            @enderror
+                            <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Tanggal</label>
+                            <input type="date" id="promoSlotDate" class="form-control"
+                                   min="{{ now()->format('Y-m-d') }}"
+                                   value="{{ old('promo_slot_date', now()->format('Y-m-d')) }}"
+                                   onchange="updatePeriodFromSlot()">
                         </div>
-                    </div>
-                    <span class="form-hint">Promo otomatis aktif saat waktu mulai tiba</span>
+                        {{-- Live preview --}}
+                        <div id="periodPreview" style="display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px;color:#166534;">
+                            <i class="fa fa-clock-o"></i> <span id="periodPreviewText"></span>
+                        </div>
+                    @else
+                        <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:8px;padding:12px 14px;font-size:13px;color:#92400e;margin-bottom:10px;">
+                            <i class="fa fa-exclamation-triangle"></i> Belum ada jadwal promo aktif. Hubungi admin untuk menambahkan jadwal.
+                        </div>
+                        {{-- Fallback to manual --}}
+                        <div class="date-row">
+                            <div>
+                                <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Mulai</label>
+                                <input type="datetime-local" id="startDateManual" class="form-control"
+                                       value="{{ old('start_date') }}" oninput="syncManualDates()">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-weight:500;font-size:12px;color:#888;">Berakhir</label>
+                                <input type="datetime-local" id="endDateManual" class="form-control"
+                                       value="{{ old('end_date') }}" oninput="syncManualDates()">
+                            </div>
+                        </div>
+                    @endif
+
+                    @error('start_date')
+                        <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
+                    @enderror
+                    @error('end_date')
+                        <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
+                    @enderror
+
+                    <span class="form-hint">Promo otomatis aktif saat periode dimulai</span>
                     <div id="step2DateError" style="color:#ef4444;font-size:12px;margin-top:6px;display:none;">
-                        <i class="fa fa-exclamation-circle"></i> Lengkapi tanggal mulai dan berakhir. Tanggal berakhir harus setelah tanggal mulai.
+                        <i class="fa fa-exclamation-circle"></i> Pilih jadwal promo dan tanggal pelaksanaan.
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom:0;">
-                    <label class="form-label">Kuota Promo</label>
-                    <input type="number" name="quota" id="quota" class="form-control" min="0"
-                           placeholder="Contoh: 50" value="{{ old('quota') }}" required
-                           oninput="checkQuotaStock()">
+                    <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                        <span>Kuota Promo</span>
+                        <span id="stockInfoBadge" style="display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;color:#166534;">
+                            stok : <span id="stockInfoCount">0</span>
+                        </span>
+                    </label>
+                    <div style="position:relative;">
+                        <input type="number" name="quota" id="quota" class="form-control" min="0"
+                               placeholder="Contoh: 50" value="{{ old('quota') }}" required
+                               oninput="checkQuotaStock()">
+                        <div id="quotaFillBtn" onclick="fillMaxQuota()" style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#D10024;cursor:pointer;background:#fff0f0;padding:3px 9px;border-radius:6px;border:1px solid #fca5a5;user-select:none;">
+                            Pakai maks
+                        </div>
+                    </div>
                     @error('quota')
                         <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
                     @enderror
@@ -503,6 +555,17 @@ function populateStep2Summary() {
     else { img.style.display = 'none'; }
     document.getElementById('sumName').textContent = selectedProductName;
     document.getElementById('sumOrigPrice').textContent = 'Harga normal: Rp ' + new Intl.NumberFormat('id-ID').format(selectedProductPrice);
+    // Show stock badge
+    var badge = document.getElementById('stockInfoBadge');
+    var fillBtn = document.getElementById('quotaFillBtn');
+    if (selectedProductStock && parseInt(selectedProductStock) > 0) {
+        document.getElementById('stockInfoCount').textContent = parseInt(selectedProductStock).toLocaleString('id-ID');
+        badge.style.display = 'inline-flex';
+        fillBtn.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+        fillBtn.style.display = 'none';
+    }
     // Reset discount inputs
     document.getElementById('prevNormal').textContent = new Intl.NumberFormat('id-ID').format(selectedProductPrice);
     updateDiscountInfo();
@@ -540,13 +603,20 @@ function checkQuotaStock() {
     var quota = parseInt(document.getElementById('quota').value) || 0;
     var stock = parseInt(selectedProductStock) || 0;
     var errEl = document.getElementById('step2QuotaStockError');
-    var spanEl = document.getElementById('quotaMax');
     // quota 0 = unlimited, skip check
     if (quota > 0 && stock > 0 && quota > stock) {
         document.getElementById('quotaStockMax').textContent = stock;
         errEl.style.display = 'block';
     } else {
         errEl.style.display = 'none';
+    }
+}
+
+function fillMaxQuota() {
+    var stock = parseInt(selectedProductStock) || 0;
+    if (stock > 0) {
+        document.getElementById('quota').value = stock;
+        checkQuotaStock();
     }
 }
 
@@ -565,7 +635,7 @@ function validateStep2() {
     }
     var start = document.getElementById('startDate').value;
     var end   = document.getElementById('endDate').value;
-    if (!start || !end || new Date(end) <= new Date(start)) {
+    if (!start || !end) {
         document.getElementById('step2DateError').style.display = 'block';
         ok = false;
     }
@@ -615,6 +685,43 @@ function populateStep3Summary() {
     document.getElementById('confQuota').textContent   = quota == 0 ? 'Tidak terbatas' : quota + ' unit';
 }
 
+// ===================== SLOT PICKER =====================
+function updatePeriodFromSlot() {
+    var sel  = document.getElementById('promoSlotSelect');
+    var dateEl = document.getElementById('promoSlotDate');
+    if (!sel || !dateEl) return;
+
+    var opt  = sel.options[sel.selectedIndex];
+    var date = dateEl.value;
+    var preview = document.getElementById('periodPreview');
+    var prevText = document.getElementById('periodPreviewText');
+
+    if (sel.value && date) {
+        var startTime = opt.dataset.start; // e.g. "10:00"
+        var endTime   = opt.dataset.end;   // e.g. "12:00"
+        var startDT = date + 'T' + startTime + ':00';
+        var endDT   = date + 'T' + endTime   + ':00';
+        document.getElementById('startDate').value = startDT;
+        document.getElementById('endDate').value   = endDT;
+        // Show preview
+        var d = new Date(date + 'T00:00:00');
+        var dateStr = d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+        prevText.textContent = opt.dataset.name + '  \u00b7  ' + dateStr + '  \u00b7  ' + startTime + ' \u2013 ' + endTime;
+        preview.style.display = 'block';
+    } else {
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value   = '';
+        if (preview) preview.style.display = 'none';
+    }
+}
+
+function syncManualDates() {
+    var s = document.getElementById('startDateManual');
+    var e = document.getElementById('endDateManual');
+    if (s) document.getElementById('startDate').value = s.value;
+    if (e) document.getElementById('endDate').value   = e.value;
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', function() {
     // Restore selection from old() on validation error redirect
@@ -624,6 +731,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (card) selectProduct(card);
     }
     goToStep(1);
+    // Init slot preview if values already set (old())
+    updatePeriodFromSlot();
 });
 </script>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Promo;
+use App\Models\PromoSlot;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -50,10 +51,12 @@ class SellerPromoController extends Controller
             ->where('is_active', true)
             ->get();
 
+        $promoSlots = PromoSlot::active()->get();
+
         // Jika dari product detail page
         $productId = $request->get('product_id');
         
-        return view('seller.promos.create', compact('products', 'productId'));
+        return view('seller.promos.create', compact('products', 'productId', 'promoSlots'));
     }
 
     /**
@@ -67,7 +70,7 @@ class SellerPromoController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'promo_price' => 'required|numeric|min:0',
-            'start_date' => 'required|date|after_or_equal:now',
+            'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'quota' => 'required|integer|min:0',
         ]);

@@ -72,7 +72,9 @@ class ProductController extends Controller
                 ->exists();
         }
 
-        return view('products.show', compact('product', 'isWishlisted'));
+        $activePromo = $product->activePromo();
+
+        return view('products.show', compact('product', 'isWishlisted', 'activePromo'));
     }
 
     /**

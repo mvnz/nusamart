@@ -190,7 +190,15 @@
                 <a href="#">{{ $product->seller->name }}</a>
             </div>
 
-            <div class="product-price">{{ $product->formatted_price }}</div>
+            @if($activePromo)
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <div class="product-price">Rp {{ number_format($activePromo->promo_price, 0, ',', '.') }}</div>
+                    <span style="background:#fff0f0;color:#D10024;font-size:13px;font-weight:800;padding:3px 10px;border-radius:8px;">-{{ $activePromo->getDiscountPercentage() }}%</span>
+                </div>
+                <div style="font-size:14px;color:#bbb;text-decoration:line-through;margin-top:2px;">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+            @else
+                <div class="product-price">{{ $product->formatted_price }}</div>
+            @endif
 
             {{-- Status Stok --}}
             @if($product->stock == 0)

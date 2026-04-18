@@ -111,6 +111,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/validate-voucher', [CheckoutController::class, 'validateVoucher'])->name('checkout.validateVoucher');
 
     // Order routes
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
@@ -203,3 +204,4 @@ Route::get('/kebijakan-privasi', [PageController::class, 'privasi'])->name('page
 Route::get('/syarat-ketentuan', [PageController::class, 'syarat'])->name('page.syarat');
 Route::get('/pengembalian', [PageController::class, 'pengembalian'])->name('page.pengembalian');
 Route::get('/bantuan', [PageController::class, 'bantuan'])->name('page.bantuan');
+Route::get('/voucher', [PageController::class, 'vouchers'])->name('page.vouchers');

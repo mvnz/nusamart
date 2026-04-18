@@ -27,6 +27,8 @@ class Order extends Model
         'courier_name',
         'notes',
         'cancelled_by',
+        'voucher_code',
+        'discount_amount',
     ];
 
     protected function casts(): array
