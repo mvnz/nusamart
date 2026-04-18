@@ -318,13 +318,17 @@
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Kuota Promo</label>
                     <input type="number" name="quota" id="quota" class="form-control" min="0"
-                           placeholder="Contoh: 50" value="{{ old('quota') }}" required>
+                           placeholder="Contoh: 50" value="{{ old('quota') }}" required
+                           oninput="checkQuotaStock()">
                     @error('quota')
                         <span style="color:#ef4444;font-size:12px;">{{ $message }}</span>
                     @enderror
-                    <span class="form-hint">Jumlah maksimal pembelian dengan harga promo. Isi <strong>0</strong> untuk tanpa batas.</span>
+                    <span class="form-hint" id="quotaStockHint">Jumlah maksimal pembelian dengan harga promo. Isi <strong>0</strong> untuk tanpa batas.</span>
                     <div id="step2QuotaError" style="color:#ef4444;font-size:12px;margin-top:6px;display:none;">
                         <i class="fa fa-exclamation-circle"></i> Kuota tidak boleh kosong (isi 0 untuk unlimited)
+                    </div>
+                    <div id="step2QuotaStockError" style="color:#ef4444;font-size:12px;margin-top:6px;display:none;">
+                        <i class="fa fa-exclamation-circle"></i> Kuota melebihi stok produk (<span id="quotaStockMax"></span> unit tersedia)
                     </div>
                 </div>
             </div>
@@ -532,6 +536,20 @@ function updateDiscountInfo() {
     }
 }
 
+function checkQuotaStock() {
+    var quota = parseInt(document.getElementById('quota').value) || 0;
+    var stock = parseInt(selectedProductStock) || 0;
+    var errEl = document.getElementById('step2QuotaStockError');
+    var spanEl = document.getElementById('quotaMax');
+    // quota 0 = unlimited, skip check
+    if (quota > 0 && stock > 0 && quota > stock) {
+        document.getElementById('quotaStockMax').textContent = stock;
+        errEl.style.display = 'block';
+    } else {
+        errEl.style.display = 'none';
+    }
+}
+
 function validateStep2() {
     var ok = true;
     var pct = parseFloat(document.getElementById('discountPercent').value) || 0;
@@ -539,6 +557,7 @@ function validateStep2() {
     document.getElementById('step2DiscountError').style.display = 'none';
     document.getElementById('step2DateError').style.display = 'none';
     document.getElementById('step2QuotaError').style.display = 'none';
+    document.getElementById('step2QuotaStockError').style.display = 'none';
 
     if (pct <= 0 || pct >= 100) {
         document.getElementById('step2DiscountError').style.display = 'block';
@@ -554,6 +573,14 @@ function validateStep2() {
     if (quota === '' || quota === null) {
         document.getElementById('step2QuotaError').style.display = 'block';
         ok = false;
+    } else {
+        var quotaNum = parseInt(quota);
+        var stock    = parseInt(selectedProductStock) || 0;
+        if (quotaNum > 0 && stock > 0 && quotaNum > stock) {
+            document.getElementById('quotaStockMax').textContent = stock;
+            document.getElementById('step2QuotaStockError').style.display = 'block';
+            ok = false;
+        }
     }
     return ok;
 }
