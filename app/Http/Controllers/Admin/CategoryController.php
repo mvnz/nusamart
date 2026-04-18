@@ -32,6 +32,7 @@ class CategoryController extends Controller
             'total'          => $all->count(),
             'with_products'  => $all->where('products_count', '>', 0)->where('is_active', true)->count(),
             'inactive'       => $all->where('is_active', false)->count(),
+            'empty'          => $all->where('products_count', 0)->where('is_active', true)->count(),
             'total_products' => $all->where('is_active', true)->sum('products_count'),
         ];
 
