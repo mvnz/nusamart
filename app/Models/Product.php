@@ -62,6 +62,52 @@ class Product extends Model
         return $this->hasMany(\App\Models\Review::class);
     }
 
+    public function promos()
+    {
+        return $this->hasMany(Promo::class);
+    }
+
+    public function activePromo()
+    {
+        return $this->promos()
+            ->where('is_active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+    }
+
+    public function hasActivePromo(): bool
+    {
+        $promo = $this->activePromo();
+        return $promo && $promo->isActive();
+    }
+
+    public function getDisplayPrice()
+    {
+        $promo = $this->activePromo();
+        if ($promo && $promo->isActive()) {
+            return $promo->promo_price;
+        }
+        return $this->price;
+    }
+
+    public function getPromoInfo(): ?array
+    {
+        $promo = $this->activePromo();
+        if (!$promo) {
+            return null;
+        }
+
+        return [
+            'id' => $promo->id,
+            'original_price' => $promo->original_price,
+            'promo_price' => $promo->promo_price,
+            'discount_percentage' => $promo->getDiscountPercentage(),
+            'end_date' => $promo->end_date,
+            'remaining_quota' => $promo->getRemainingQuota(),
+        ];
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
