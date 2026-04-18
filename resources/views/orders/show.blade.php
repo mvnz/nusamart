@@ -52,6 +52,10 @@
 .item-img { width: 52px; height: 52px; border-radius: 6px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
 .item-img img { width: 100%; height: 100%; object-fit: cover; }
 .item-name { font-size: 14px; font-weight: 600; color: #1e1f29; }
+.btn-review { display: inline-block; margin-top: 6px; padding: 4px 12px; font-size: 12px; font-weight: 600; border: 1.5px solid #D10024; color: #D10024; border-radius: 20px; text-decoration: none; transition: all .2s; }
+.btn-review:hover { background: #D10024; color: #fff; }
+.btn-review-done { border-color: #10b981; color: #10b981; }
+.btn-review-done:hover { background: #10b981; color: #fff; }
 
 .total-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
 .total-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 8px; }
@@ -248,6 +252,17 @@
                                         @endif
                                     </div>
                                     <div class="item-name">{{ $item->product_name }}</div>
+                                    @if(in_array($order->status, ['completed', 'delivered']) && $item->product)
+                                        @if(in_array($item->product_id, $reviewedProductIds))
+                                            <a href="{{ route('reviews.edit', \App\Models\Review::where('user_id', auth()->id())->where('product_id', $item->product_id)->value('id')) }}" class="btn-review btn-review-done">
+                                                <i class="fa fa-star"></i> Lihat Ulasan
+                                            </a>
+                                        @else
+                                            <a href="{{ route('reviews.create', $item->product_id) }}" class="btn-review">
+                                                <i class="fa fa-star-o"></i> Tulis Ulasan
+                                            </a>
+                                        @endif
+                                    @endif
                                 </div>
                             </td>
                             <td style="font-size:13px;color:#555;">{{ $item->formatted_price }}</td>

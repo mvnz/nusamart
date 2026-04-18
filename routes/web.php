@@ -14,6 +14,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SellerOrderController;
 
@@ -112,11 +113,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/wishlist/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 
-    // Seller Center routes
+    // Review routes
+    Route::get('/review/produk/{product:id}', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/review/produk/{product:id}', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/review/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/review/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/review/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
+
+// Public review display
+Route::get('/produk/{product:id}/reviews', [ReviewController::class, 'show'])->name('reviews.show');
     Route::get('/penjual/pesanan', [SellerOrderController::class, 'index'])->name('seller.orders');
     Route::get('/penjual/pesanan/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
     Route::patch('/penjual/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('seller.orders.status');
-});
+    Route::get('/penjual/ulasan', [SellerOrderController::class, 'reviews'])->name('seller.reviews');
+
 
 // Admin routes
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {

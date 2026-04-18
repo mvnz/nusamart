@@ -56,6 +56,11 @@
                         <i class="fa fa-shopping-bag"></i> <span>Pesanan</span>
                     </a>
                 </li>
+                <li class="sc-nav-item">
+                    <a href="{{ route('seller.reviews') }}" class="sc-nav-link {{ request()->routeIs('seller.reviews') ? 'active' : '' }}">
+                        <i class="fa fa-star"></i> <span>Ulasan</span>
+                    </a>
+                </li>
 
                 <li class="sc-nav-item sc-nav-section">Akun</li>
                 <li class="sc-nav-item">
