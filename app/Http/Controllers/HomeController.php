@@ -29,6 +29,7 @@ class HomeController extends Controller
         $statsOrderCount    = Order::count();
 
         $featuredProducts = Product::where('is_active', true)
+            ->with('category')
             ->inRandomOrder()
             ->limit(4)
             ->get();
@@ -117,7 +118,7 @@ class HomeController extends Controller
                     'price'          => (int) $p->price,
                     'original_price' => $originalPrice,
                     'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $p->category?->name ?? '-',
+                    'category'       => $p->category?->name ?? null,
                     'sold'           => $sold,
                 ];
             })->values()->all();
@@ -142,7 +143,7 @@ class HomeController extends Controller
                     'price'          => (int) $p->price,
                     'original_price' => (int) $p->price,
                     'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $p->category?->name ?? '-',
+                    'category'       => $p->category?->name ?? null,
                     'category_id'    => $p->category_id,
                     'seller'         => $p->seller?->name ?? 'NusaMart',
                     'sold'           => $sold,
