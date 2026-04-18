@@ -206,6 +206,7 @@ class HomeController extends Controller
                 ->limit(8)
                 ->get()
                 ->map(function ($promo) {
+                    $catObj = $promo->product->relationLoaded('category') ? $promo->product->getRelation('category') : null;
                     return [
                         'id'              => $promo->product->id,
                         'name'            => $promo->product->name,
@@ -213,7 +214,7 @@ class HomeController extends Controller
                         'original_price'  => (int) $promo->original_price,
                         'discount_pct'    => $promo->getDiscountPercentage(),
                         'image'           => $promo->product->image ? asset('storage/' . $promo->product->image) : null,
-                        'category'        => $promo->product->category?->name ?? '-',
+                        'category'        => $catObj?->name ?? $promo->product->getRawOriginal('category'),
                         'seller'          => $promo->seller?->name ?? 'NusaMart',
                         'quota_remaining' => $promo->quota > 0 ? $promo->quota - $promo->used_quota : null,
                         'quota_total'     => $promo->quota > 0 ? $promo->quota : null,

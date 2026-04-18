@@ -99,12 +99,12 @@ class Product extends Model
         }
 
         return [
-            'id' => $promo->id,
-            'original_price' => $promo->original_price,
-            'promo_price' => $promo->promo_price,
+            'id'                  => $promo->id,
+            'original_price'      => $promo->original_price,
+            'promo_price'         => $promo->promo_price,
             'discount_percentage' => $promo->getDiscountPercentage(),
-            'end_date' => $promo->end_date,
-            'remaining_quota' => $promo->getRemainingQuota(),
+            'end_date'            => $promo->end_date,
+            'remaining_quota'     => $promo->getRemainingQuota(),
         ];
     }
 
