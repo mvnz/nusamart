@@ -281,8 +281,6 @@
                     <div class="produk-card-body">
                         @if($product->category)
                             <div class="produk-card-cat">{{ $product->category->name }}</div>
-                        @elseif($product->category)
-                            <div class="produk-card-cat">{{ $product->category }}</div>
                         @endif
                         <div class="produk-card-name">{{ $product->name }}</div>
                         <div class="produk-card-seller"><i class="fa fa-store" style="margin-right:4px"></i>{{ $product->seller->name }}</div>

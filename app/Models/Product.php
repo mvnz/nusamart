@@ -39,6 +39,14 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function getCategoryAttribute($value)
+    {
+        if (array_key_exists('category', $this->relations)) {
+            return $this->relations['category'];
+        }
+        return $value;
+    }
+
     public function cartItems()
     {
         return $this->hasMany(Cart::class);

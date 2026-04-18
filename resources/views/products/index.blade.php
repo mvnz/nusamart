@@ -332,7 +332,7 @@ $bannerColor = $catBannerColors[$catIdx];
                 </div>
                 <div class="product-card-body">
                     @if($product->category)
-                        <div class="product-card-category">{{ $product->category }}</div>
+                        <div class="product-card-category">{{ $product->category->name }}</div>
                     @endif
                     <div class="product-card-name">{{ $product->name }}</div>
                     <div class="product-card-seller"><i class="fa fa-store" style="margin-right:4px;"></i>{{ $product->seller->name }}</div>
