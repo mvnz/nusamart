@@ -92,37 +92,66 @@ class HomeController extends Controller
             ['name' => 'Kerajinan Desa Sari',    'category' => 'Kerajinan Tangan',   'products' => 15, 'rating' => 4.6, 'image' => 'https://ui-avatars.com/api/?name=Kerajinan&background=e67e22&color=fff&size=80'],
         ];
 
-        // Daily-seeded 6 flash sale products from DB
+        // Flash Sale: produk dengan promo aktif dari penjual, fallback ke acak harian
+        $flashSaleDeadline = null;
         try {
-            $seed = crc32(date('Y-m-d'));
-            $allProducts = Product::with('category')
+            $activePromos = \App\Models\Promo::with(['product' => fn($q) => $q->with('category')])
                 ->where('is_active', true)
-                ->where('stock', '>', 0)
+                ->where('start_date', '<=', now())
+                ->where('end_date', '>=', now())
+                ->whereHas('product', fn($q) => $q->where('is_active', true)->where('stock', '>', 0))
+                ->where(fn($q) => $q->where('quota', 0)->orWhereRaw('used_quota < quota'))
+                ->orderBy('end_date', 'asc')
+                ->limit(6)
                 ->get();
-            $prodArr = $allProducts->all();
-            mt_srand($seed);
-            for ($i = count($prodArr) - 1; $i > 0; $i--) {
-                $j = mt_rand(0, $i);
-                [$prodArr[$i], $prodArr[$j]] = [$prodArr[$j], $prodArr[$i]];
+
+            if ($activePromos->isNotEmpty()) {
+                $flashSaleProducts = $activePromos->map(function ($promo) {
+                    $p = $promo->product;
+                    $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
+                    return [
+                        'id'             => $p->id,
+                        'name'           => $p->name,
+                        'price'          => (int) $promo->promo_price,
+                        'original_price' => (int) $promo->original_price,
+                        'disc'           => (int) $promo->discount_percentage,
+                        'image'          => $p->image ? asset('storage/' . $p->image) : null,
+                        'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
+                        'sold'           => (int) $promo->used_quota,
+                        'quota'          => (int) $promo->quota,
+                    ];
+                })->values()->all();
+                $flashSaleDeadline = $activePromos->min('end_date')?->toIso8601String();
+            } else {
+                // Fallback: produk acak harian
+                $seed = crc32(date('Y-m-d'));
+                $allProducts = Product::with('category')->where('is_active', true)->where('stock', '>', 0)->get();
+                $prodArr = $allProducts->all();
+                mt_srand($seed);
+                for ($i = count($prodArr) - 1; $i > 0; $i--) {
+                    $j = mt_rand(0, $i);
+                    [$prodArr[$i], $prodArr[$j]] = [$prodArr[$j], $prodArr[$i]];
+                }
+                $flashSaleProducts = collect(array_slice($prodArr, 0, 6))->map(function ($p) {
+                    mt_srand($p->id * 7919);
+                    $pct = mt_rand(20, 45) / 100;
+                    $originalPrice = (int) round($p->price * (1 + $pct) / 1000) * 1000;
+                    mt_srand($p->id * 3571);
+                    $sold = mt_rand(20, 300);
+                    $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
+                    return [
+                        'id'             => $p->id,
+                        'name'           => $p->name,
+                        'price'          => (int) $p->price,
+                        'original_price' => $originalPrice,
+                        'disc'           => round($pct * 100 / (1 + $pct)),
+                        'image'          => $p->image ? asset('storage/' . $p->image) : null,
+                        'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
+                        'sold'           => $sold,
+                        'quota'          => 0,
+                    ];
+                })->values()->all();
             }
-            $flashSaleProducts = collect(array_slice($prodArr, 0, 6))->map(function ($p) {
-                // Simulate a "before-sale" original price: 20–45% above actual price
-                mt_srand($p->id * 7919);
-                $pct = mt_rand(20, 45) / 100;
-                $originalPrice = (int) round($p->price * (1 + $pct) / 1000) * 1000;
-                // Simulated sold count seeded by product id
-                $sold = mt_rand(20, 400);
-                $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
-                return [
-                    'id'             => $p->id,
-                    'name'           => $p->name,
-                    'price'          => (int) $p->price,
-                    'original_price' => $originalPrice,
-                    'image'          => $p->image ? asset('storage/' . $p->image) : null,
-                    'category'       => $catObj?->name ?? $p->getRawOriginal('category'),
-                    'sold'           => $sold,
-                ];
-            })->values()->all();
         } catch (\Exception $e) {
             $flashSaleProducts = [];
         }
@@ -226,6 +255,6 @@ class HomeController extends Controller
             $promoProducts = [];
         }
 
-        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'tabProducts', 'promoProducts', 'statsProductCount', 'statsPenjualCount', 'statsOrderCount'));
+        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'flashSaleDeadline', 'tabProducts', 'promoProducts', 'statsProductCount', 'statsPenjualCount', 'statsOrderCount'));
     }
 }
