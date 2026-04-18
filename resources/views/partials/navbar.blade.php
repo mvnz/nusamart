@@ -80,18 +80,26 @@
                             <div style="font-size:11px;color:#aaa;font-weight:500">Kelola layanan kurir</div>
                         </div>
                     </a>
+                    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:#c0c0c0;padding:10px 6px 4px;user-select:none;">Promo</div>
                     <a href="{{ route('admin.promos') }}" class="npd-item {{ request()->routeIs('admin.promos') || request()->routeIs('admin.promos.show') || request()->routeIs('admin.promos.deactivate') || request()->routeIs('admin.promos.activate') ? 'active' : '' }}">
                         <div class="npd-icon" style="background:#fff0e6;color:#e67e22;"><i class="fa fa-tag"></i></div>
                         <div>
-                            <div style="font-size:13.5px;font-weight:700">Promo</div>
+                            <div style="font-size:13.5px;font-weight:700">Monitoring Promo</div>
                             <div style="font-size:11px;color:#aaa;font-weight:500">Monitor promo penjual</div>
                         </div>
                     </a>
-                    <a href="{{ route('admin.promo-slots') }}" class="npd-item {{ request()->routeIs('admin.promo-slots*') ? 'active' : '' }}" style="margin-bottom:6px">
+                    <a href="{{ route('admin.promo-slots') }}" class="npd-item {{ request()->routeIs('admin.promo-slots*') ? 'active' : '' }}">
                         <div class="npd-icon" style="background:#f0f9ff;color:#0369a1;"><i class="fa fa-clock-o"></i></div>
                         <div>
                             <div style="font-size:13.5px;font-weight:700">Jadwal Promo</div>
                             <div style="font-size:11px;color:#aaa;font-weight:500">Atur periode waktu promo</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('admin.vouchers') }}" class="npd-item {{ request()->routeIs('admin.vouchers*') ? 'active' : '' }}" style="margin-bottom:6px">
+                        <div class="npd-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="fa fa-ticket"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Voucher</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola kode diskon voucher</div>
                         </div>
                     </a>
                 </div>

@@ -179,6 +179,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::put('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'update'])->name('admin.promo-slots.update');
     Route::delete('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'destroy'])->name('admin.promo-slots.destroy');
     Route::patch('/promo-slots/{promoSlot}/toggle', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'toggleActive'])->name('admin.promo-slots.toggle');
+
+    // Vouchers
+    Route::get('/vouchers', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'index'])->name('admin.vouchers');
+    Route::post('/vouchers', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'store'])->name('admin.vouchers.store');
+    Route::put('/vouchers/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'update'])->name('admin.vouchers.update');
+    Route::delete('/vouchers/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+    Route::patch('/vouchers/{voucher}/toggle', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'toggleActive'])->name('admin.vouchers.toggle');
 });
 
 // Info pages
