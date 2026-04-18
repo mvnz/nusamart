@@ -65,7 +65,11 @@ class SellerPromoController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-        abort_if($user->role !== 'penjual', 403);
+
+        if (strtolower(trim($user->role)) !== 'penjual') {
+            \Log::warning('403 promo store: role mismatch', ['user_id' => $user->id, 'role' => $user->role]);
+            abort(403);
+        }
 
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
@@ -77,7 +81,11 @@ class SellerPromoController extends Controller
 
         // Verifikasi bahwa product milik user
         $product = Product::findOrFail($validated['product_id']);
-        abort_if($product->user_id !== $user->id, 403);
+
+        if ((int)$product->user_id !== (int)$user->id) {
+            \Log::warning('403 promo store: product not owned', ['user_id' => $user->id, 'product_user_id' => $product->user_id, 'product_id' => $product->id]);
+            abort(403);
+        }
 
         // Validasi harga promo
         if ($validated['promo_price'] >= $product->price) {
