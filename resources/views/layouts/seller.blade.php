@@ -49,13 +49,6 @@
                         <span>Produk Saya</span>
                     </a>
                 </li>
-                <li class="sc-nav-item">
-                    <a href="{{ route('seller.promos.index') }}" class="sc-nav-link {{ request()->routeIs('seller.promos*') ? 'active' : '' }}">
-                        <i class="fa fa-tag"></i>
-                        <span>Promo Produk</span>
-                    </a>
-                </li>
-
                 <li class="sc-nav-item sc-nav-section">Promosi</li>
                 <li class="sc-nav-item">
                     <a href="{{ route('seller.promos.index') }}" class="sc-nav-link {{ request()->routeIs('seller.promos*') ? 'active' : '' }}">
