@@ -191,6 +191,36 @@ class HomeController extends Controller
             $promoBanners = [];
         }
 
-        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'tabProducts', 'statsProductCount', 'statsPenjualCount', 'statsOrderCount'));
+        // Products with active promos
+        try {
+            $promoProducts = \App\Models\Promo::where('is_active', true)
+                ->where('start_date', '<=', now())
+                ->where('end_date', '>=', now())
+                ->with(['product' => fn($q) => $q->with('seller', 'category'), 'seller'])
+                ->where(fn($q) => $q->where('quota', 0)->orWhereRaw('used_quota < quota'))
+                ->orderBy('created_at', 'desc')
+                ->limit(8)
+                ->get()
+                ->map(function ($promo) {
+                    return [
+                        'id'              => $promo->product->id,
+                        'name'            => $promo->product->name,
+                        'price'           => (int) $promo->promo_price,
+                        'original_price'  => (int) $promo->original_price,
+                        'discount_pct'    => $promo->getDiscountPercentage(),
+                        'image'           => $promo->product->image ? asset('storage/' . $promo->product->image) : null,
+                        'category'        => $promo->product->category?->name ?? '-',
+                        'seller'          => $promo->seller?->name ?? 'NusaMart',
+                        'quota_remaining' => $promo->quota > 0 ? $promo->quota - $promo->used_quota : null,
+                        'quota_total'     => $promo->quota > 0 ? $promo->quota : null,
+                    ];
+                })
+                ->values()
+                ->all();
+        } catch (\Exception $e) {
+            $promoProducts = [];
+        }
+
+        return view('home', compact('categories', 'featuredProducts', 'newProducts', 'sellers', 'promoBanners', 'flashSaleProducts', 'tabProducts', 'promoProducts', 'statsProductCount', 'statsPenjualCount', 'statsOrderCount'));
     }
 }

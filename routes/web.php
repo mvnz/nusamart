@@ -86,6 +86,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/produk/{product}/photo', [ProductController::class, 'deletePhoto'])->name('products.delete-photo');
     Route::delete('/produk/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::post('/produk/{product}/hapus', [ProductController::class, 'destroy'])->name('products.destroy-post');
+
+    // Seller Promo Management routes
+    Route::get('/promo', [\App\Http\Controllers\SellerPromoController::class, 'index'])->name('seller.promos.index');
+    Route::get('/promo/buat', [\App\Http\Controllers\SellerPromoController::class, 'create'])->name('seller.promos.create');
+    Route::post('/promo', [\App\Http\Controllers\SellerPromoController::class, 'store'])->name('seller.promos.store');
+    Route::get('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'show'])->name('seller.promos.show');
+    Route::get('/promo/{promo}/edit', [\App\Http\Controllers\SellerPromoController::class, 'edit'])->name('seller.promos.edit');
+    Route::put('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'update'])->name('seller.promos.update');
+    Route::patch('/promo/{promo}/nonaktif', [\App\Http\Controllers\SellerPromoController::class, 'deactivate'])->name('seller.promos.deactivate');
+    Route::patch('/promo/{promo}/aktif', [\App\Http\Controllers\SellerPromoController::class, 'activate'])->name('seller.promos.activate');
+    Route::delete('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'destroy'])->name('seller.promos.destroy');
 });
 
 // Keranjang routes (buyer only, auth required)
@@ -153,6 +164,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::post('/couriers/{courier}/services', [\App\Http\Controllers\Admin\CourierController::class, 'storeService'])->name('admin.couriers.services.store');
     Route::delete('/courier-services/{service}', [\App\Http\Controllers\Admin\CourierController::class, 'destroyService'])->name('admin.couriers.services.destroy');
     Route::patch('/courier-services/{service}/toggle', [\App\Http\Controllers\Admin\CourierController::class, 'toggleService'])->name('admin.couriers.services.toggle');
+
+    // Promo monitoring & management
+    Route::get('/promos', [\App\Http\Controllers\Admin\AdminPromoController::class, 'index'])->name('admin.promos');
+    Route::get('/promos/{promo}', [\App\Http\Controllers\Admin\AdminPromoController::class, 'show'])->name('admin.promos.show');
+    Route::patch('/promos/{promo}/nonaktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'deactivate'])->name('admin.promos.deactivate');
+    Route::patch('/promos/{promo}/aktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'activate'])->name('admin.promos.activate');
+    Route::delete('/promos/{promo}', [\App\Http\Controllers\Admin\AdminPromoController::class, 'destroy'])->name('admin.promos.destroy');
 });
 
 // Info pages
