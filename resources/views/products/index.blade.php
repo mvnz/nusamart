@@ -83,6 +83,7 @@
     transition: transform .2s, box-shadow .2s;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.11); }
 
@@ -112,6 +113,12 @@
 }
 .product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
 .product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
+.product-card-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-bottom: 4px; min-height: 18px; }
+.product-card-rating .pcr-star { color: #f59e0b; font-size: 13px; }
+.product-card-rating .pcr-val { font-weight: 700; color: #1e1f29; }
+.product-card-rating .pcr-count { color: #aaa; }
+.product-card-rating .pcr-sep { color: #ccc; }
+.product-card-rating .pcr-sold { color: #888; font-size: 11px; }
 .product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 2px; }
 .product-card-stock.low { color: #f59e0b; }
 .product-card-stock.out { color: #ef4444; }
@@ -121,6 +128,7 @@
     color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600;
     transition: background .2s; letter-spacing: .3px;
 }
+.btn-detail::after { content: ''; position: absolute; inset: 0; z-index: 1; }
 .btn-detail:hover { background: linear-gradient(135deg,#D10024,#a8001e); color: #fff; }
 
 /* ===== EMPTY STATE ===== */
@@ -329,6 +337,16 @@ $bannerColor = $catBannerColors[$catIdx];
                     <div class="product-card-name">{{ $product->name }}</div>
                     <div class="product-card-seller"><i class="fa fa-store" style="margin-right:4px;"></i>{{ $product->seller->name }}</div>
                     <div class="product-card-price">{{ $product->formatted_price }}</div>
+                    <div class="product-card-rating">
+                        @if($product->reviews_count > 0)
+                        <span class="pcr-star">&#9733;</span>
+                        <span class="pcr-val">{{ number_format($product->reviews_avg_rating, 1) }}</span>
+                        @endif
+                        @if(($product->order_items_count ?? 0) > 0)
+                        @if($product->reviews_count > 0)<span class="pcr-sep">&middot;</span>@endif
+                        <span class="pcr-sold">{{ $product->order_items_count }} terjual</span>
+                        @endif
+                    </div>
                     <div class="product-card-stock @if($product->stock == 0) out @elseif($product->stock <= 5) low @endif">
                         @if($product->stock == 0)
                             <i class="fa fa-times-circle"></i> Stok habis
@@ -337,9 +355,6 @@ $bannerColor = $catBannerColors[$catIdx];
                         @else
                             <i class="fa fa-check-circle" style="color:#10b981;"></i> Stok: {{ $product->stock }}
                         @endif
-                    </div>
-                    <div style="font-size:12px;color:#888;margin-bottom:8px;">
-                        <i class="fa fa-shopping-cart" style="margin-right:3px;"></i> {{ $product->order_items_count ?? 0 }} terjual
                     </div>
                     <a href="{{ route('products.show', $product) }}" class="btn-detail">Lihat Detail</a>
                 </div>

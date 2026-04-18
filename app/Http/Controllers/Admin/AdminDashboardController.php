@@ -95,7 +95,10 @@ class AdminDashboardController extends Controller
             ));
         }
 
-        $productQuery = Product::active()->with(['seller', 'category']);
+        $productQuery = Product::active()->with(['seller', 'category'])
+            ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews');
         if (request()->filled('search')) {
             $productQuery->where('name', 'like', '%' . request('search') . '%');
         }
@@ -142,7 +145,7 @@ class AdminDashboardController extends Controller
         }
 
         $products = $productQuery->latest()->paginate(12);
-        $categories = Category::withCount('products')->get()->filter(fn($c) => $c->products_count > 0)->values();
+        $categories = Category::where('is_active', true)->withCount('products')->get()->filter(fn($c) => $c->products_count > 0)->values();
 
         return view('dashboard', compact('products', 'categories'));
     }

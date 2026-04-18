@@ -126,6 +126,7 @@ Route::get('/produk/{product:id}/reviews', [ReviewController::class, 'show'])->n
     Route::get('/penjual/pesanan', [SellerOrderController::class, 'index'])->name('seller.orders');
     Route::get('/penjual/pesanan/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
     Route::patch('/penjual/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('seller.orders.status');
+    Route::get('/penjual/ulasan', [SellerOrderController::class, 'reviews'])->name('seller.reviews');
 
 
 // Admin routes

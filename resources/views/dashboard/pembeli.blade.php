@@ -111,7 +111,7 @@
 .produk-card {
     background: #fff; border-radius: 12px; overflow: hidden;
     box-shadow: 0 2px 10px rgba(0,0,0,.07); transition: transform .2s, box-shadow .2s;
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; position: relative;
 }
 .produk-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
 .produk-card-img {
@@ -126,6 +126,12 @@
 .produk-card-name { font-size: 14px; font-weight: 700; color: #1e1f29; line-height: 1.4; margin-bottom: 4px; }
 .produk-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; }
 .produk-card-price { font-size: 16px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
+.produk-card-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-bottom: 4px; min-height: 18px; }
+.produk-card-rating .pcr-star { color: #f59e0b; font-size: 13px; }
+.produk-card-rating .pcr-val { font-weight: 700; color: #1e1f29; }
+.produk-card-rating .pcr-count { color: #aaa; }
+.produk-card-rating .pcr-sep { color: #ccc; }
+.produk-card-rating .pcr-sold { color: #888; font-size: 11px; }
 .produk-card-stock { font-size: 11px; margin-bottom: 10px; }
 .produk-card-stock.ok { color: #10b981; }
 .produk-card-stock.low { color: #f59e0b; }
@@ -136,6 +142,7 @@
     font-size: 13px; font-weight: 600; text-decoration: none;
     transition: background .2s; margin-top: auto;
 }
+.btn-produk-detail::after { content: ''; position: absolute; inset: 0; z-index: 1; }
 .btn-produk-detail:hover { background: #D10024; color: #fff; }
 
 .produk-empty { text-align: center; padding: 48px 20px; color: #aaa; }
@@ -280,6 +287,16 @@
                         <div class="produk-card-name">{{ $product->name }}</div>
                         <div class="produk-card-seller"><i class="fa fa-store" style="margin-right:4px"></i>{{ $product->seller->name }}</div>
                         <div class="produk-card-price">{{ $product->formatted_price }}</div>
+                        <div class="produk-card-rating">
+                            @if($product->reviews_count > 0)
+                            <span class="pcr-star">&#9733;</span>
+                            <span class="pcr-val">{{ number_format($product->reviews_avg_rating, 1) }}</span>
+                            @endif
+                            @if(($product->order_items_count ?? 0) > 0)
+                            @if($product->reviews_count > 0)<span class="pcr-sep">&middot;</span>@endif
+                            <span class="pcr-sold">{{ $product->order_items_count }} terjual</span>
+                            @endif
+                        </div>
                         <div class="produk-card-stock @if($product->stock == 0) out @elseif($product->stock <= 5) low @else ok @endif">
                             @if($product->stock == 0)
                                 <i class="fa fa-times-circle"></i> Stok habis

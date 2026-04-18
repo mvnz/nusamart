@@ -745,6 +745,7 @@ window.wizardState = {
         photoFile: null
     }
 };
+window.sellerName = '{{ auth()->user()->name }}';
 
 // Wizard Functions
 window.openAddProductWizard = function() {
@@ -867,27 +868,57 @@ window.generatePreview = function() {
     const previewContent = document.getElementById('previewContent');
     const price = parseInt(wizardState.data.price) || 0;
     const stock = parseInt(wizardState.data.stock) || 0;
+    const category = wizardState.data.category || '';
+    const name = wizardState.data.name || 'Nama Produk';
+    const description = wizardState.data.description || '';
+    const isActive = wizardState.data.status;
 
-    let html = '<div style="background: white; padding: 15px; border-radius: 8px;">';
-    html += '<div style="display: grid; grid-template-columns: 150px 1fr; gap: 15px;">';
-    
-    if (wizardState.data.photo) {
-        html += '<img src="' + wizardState.data.photo + '" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">';
-    } else {
-        html += '<div style="width: 150px; height: 150px; background: #e0e0e0; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><span style="color: #999;">No Photo</span></div>';
+    const imgHtml = wizardState.data.photo
+        ? '<img src="' + wizardState.data.photo + '" style="width:100%;height:100%;object-fit:cover;">'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><i class="fa fa-shopping-bag" style="font-size:48px;color:#ddd;"></i></div>';
+
+    const stockHtml = stock === 0
+        ? '<span style="color:#ef4444;font-size:12px;"><i class="fa fa-times-circle"></i> Stok Habis</span>'
+        : (stock <= 5
+            ? '<span style="color:#f59e0b;font-size:12px;"><i class="fa fa-exclamation-triangle"></i> Stok Terbatas &mdash; Sisa ' + stock + ' item</span>'
+            : '<span style="color:#10b981;font-size:12px;"><i class="fa fa-check-circle"></i> Stok: ' + stock + '</span>');
+
+    let html = '<div style="max-width:220px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.1);border:1px solid #f0f0f0;display:flex;flex-direction:column;">';
+
+    // Gambar
+    html += '<div style="height:170px;background:#f7f7f7;overflow:hidden;">' + imgHtml + '</div>';
+
+    // Body
+    html += '<div style="padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;">';
+
+    // Kategori badge
+    if (category) {
+        html += '<div style="font-size:10px;color:#D10024;font-weight:700;text-transform:uppercase;letter-spacing:.6px;background:rgba(209,0,36,.07);display:inline-block;padding:2px 7px;border-radius:20px;width:fit-content;margin-bottom:2px;">' + category + '</div>';
     }
 
-    html += '<div>';
-    html += '<h4 style="margin: 0 0 8px 0; color: #333;">' + (wizardState.data.name || 'N/A') + '</h4>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">' + (wizardState.data.description || 'Tidak ada deskripsi') + '</p>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">Kategori: ' + (wizardState.data.category || '-') + '</p>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #28a745;">Rp' + price.toLocaleString('id-ID') + '</p>';
-    html += '<p style="margin: 0; font-size: 13px; color: #666;">Stok: <strong>' + stock + ' unit</strong> | Status: <strong style="color: ' + (wizardState.data.status ? '#28a745' : '#dc3545') + ';">' + (wizardState.data.status ? 'Aktif' : 'Nonaktif') + '</strong></p>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
+    // Nama
+    html += '<div style="font-size:13px;font-weight:600;color:#1e1f29;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + name + '</div>';
+
+    // Seller
+    html += '<div style="font-size:11px;color:#aaa;margin-bottom:2px;"><i class="fa fa-store" style="margin-right:4px;"></i>' + (window.sellerName || 'Toko Anda') + '</div>';
+
+    // Harga
+    html += '<div style="font-size:15px;font-weight:800;color:#D10024;margin-bottom:2px;">Rp ' + price.toLocaleString('id-ID') + '</div>';
+
+    // Stok
+    html += '<div style="margin-bottom:2px;">' + stockHtml + '</div>';
+
+    // Terjual
+    html += '<div style="font-size:11px;color:#aaa;margin-bottom:8px;"><i class="fa fa-shopping-cart" style="margin-right:3px;"></i> 0 terjual</div>';
+
+    // Tombol
+    html += '<div style="display:block;text-align:center;padding:8px;background:linear-gradient(135deg,#1e1f29,#2d2e3a);color:#fff;border-radius:7px;font-size:12px;font-weight:600;letter-spacing:.3px;">Lihat Detail</div>';
+
+    html += '</div></div>';
 
     previewContent.innerHTML = html;
+    previewContent.style.background = 'transparent';
+    previewContent.style.padding = '10px 0';
 };
 
 window.publishProduct = function() {

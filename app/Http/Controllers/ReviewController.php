@@ -146,6 +146,12 @@ class ReviewController extends Controller
             return redirect()->back()->with('error', 'Anda tidak dapat mengubah review ini');
         }
 
+        // Hanya bisa diedit dalam 1 hari setelah ditulis
+        if ($review->created_at->diffInHours(now()) >= 24) {
+            return redirect()->route('products.show', $review->product_id)
+                ->with('error', 'Ulasan hanya dapat diedit dalam 24 jam setelah ditulis.');
+        }
+
         return view('reviews.edit', compact('review'));
     }
 
@@ -163,6 +169,12 @@ class ReviewController extends Controller
         // Pastikan review milik user yang login
         if ($review->user_id !== Auth::id()) {
             return redirect()->back()->with('error', 'Anda tidak dapat mengubah review ini');
+        }
+
+        // Hanya bisa diupdate dalam 1 hari setelah ditulis
+        if ($review->created_at->diffInHours(now()) >= 24) {
+            return redirect()->route('products.show', $review->product_id)
+                ->with('error', 'Ulasan hanya dapat diedit dalam 24 jam setelah ditulis.');
         }
 
         $validated = $request->validate([
