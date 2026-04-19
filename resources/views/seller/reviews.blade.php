@@ -8,6 +8,28 @@
 @section('content')
 
 <style>
+/* ─── Hero ─── */
+.sr-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px; margin-bottom:20px; color:#fff; position:relative; overflow:hidden; }
+.sr-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.sr-hero-top { display:flex; align-items:center; gap:16px; margin-bottom:20px; position:relative; z-index:1; }
+.sr-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.sr-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.sr-hero-subtitle { font-size:13px; margin:0; opacity:.7; }
+.sr-hero-body { display:flex; gap:12px; flex-wrap:wrap; position:relative; z-index:1; align-items:flex-start; }
+.sr-hero-avg { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:14px; padding:16px 22px; }
+.sr-hero-avg-num { font-size:44px; font-weight:800; line-height:1; color:#fbbf24; }
+.sr-hero-avg-stars { display:flex; gap:3px; margin:5px 0; }
+.sr-hero-avg-star { font-size:17px; color:#fbbf24; }
+.sr-hero-avg-star.empty { color:rgba(255,255,255,.3); }
+.sr-hero-avg-label { font-size:12px; opacity:.65; }
+.sr-hero-stats { display:flex; gap:8px; flex-wrap:wrap; }
+.sr-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:10px 16px; text-align:center; min-width:64px; }
+.sr-hero-stat-num { font-size:20px; font-weight:800; line-height:1; }
+.sr-hero-stat-label { font-size:11px; opacity:.7; margin-top:3px; font-weight:600; }
+.sr-hero-stat-star { color:#fbbf24; }
+@media(max-width:768px) { .sr-hero-body { flex-direction:column; } .sr-hero-avg { width:100%; box-sizing:border-box; } }
+
+/* ─── Filter ─── */
 .sr-filter { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:center; }
 .sr-dropdown { position:relative; min-width:200px; }
 .sr-dropdown-btn { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 14px; border:1.5px solid #e0e0e0; border-radius:8px; font-size:13px; background:#fff; color:#1e1f29; cursor:pointer; user-select:none; transition:border-color .15s; }
@@ -20,46 +42,74 @@
 .sr-dropdown-item:hover { background:#fff5f5; color:#D10024; }
 .sr-dropdown-item.selected { color:#D10024; font-weight:700; background:#fff5f5; }
 .sr-dropdown-item.selected::after { content:'✓'; float:right; }
+
+/* ─── Rating tabs ─── */
 .sr-rating-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
-.sr-rating-tab { padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; border:1.5px solid #ddd; background:#fff; color:#555; text-decoration:none; cursor:pointer; transition:.15s; }
+.sr-rating-tab { padding:7px 16px; border-radius:20px; font-size:13px; font-weight:600; border:1.5px solid #ddd; background:#fff; color:#555; text-decoration:none; cursor:pointer; transition:.15s; }
 .sr-rating-tab.active, .sr-rating-tab:hover { border-color:#D10024; color:#D10024; background:#fff5f5; }
-.sr-card { background:#fff; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,.07); overflow:hidden; margin-bottom:24px; }
-.sr-item { padding:16px 20px; border-bottom:1px solid #f3f3f3; }
+
+/* ─── Review card ─── */
+.sr-card { background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.06); overflow:hidden; margin-bottom:24px; }
+.sr-item { padding:18px 22px; border-bottom:1px solid #f3f3f3; transition:background .15s; }
+.sr-item:hover { background:#fafbff; }
 .sr-item:last-child { border-bottom:none; }
 .sr-item-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
 .sr-reviewer { display:flex; align-items:center; gap:10px; }
-.sr-avatar { width:36px; height:36px; border-radius:50%; background:#D10024; color:#fff; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.sr-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#D10024,#a8001e); color:#fff; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .sr-reviewer-name { font-weight:700; font-size:14px; color:#1e1f29; }
 .sr-reviewer-time { font-size:11px; color:#aaa; margin-top:2px; }
 .sr-stars { display:flex; gap:2px; }
 .sr-star { font-size:15px; color:#f59e0b; }
 .sr-star.empty { color:#ddd; }
-.sr-product-tag { font-size:12px; color:#666; background:#f5f5f5; border-radius:4px; padding:2px 8px; margin-top:4px; display:inline-block; }
-.sr-comment { font-size:14px; color:#333; margin-top:8px; line-height:1.6; }
+.sr-product-tag { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#555; background:#f5f6fa; border-radius:6px; padding:3px 10px; margin-top:6px; border:1px solid #e9eaf0; }
+.sr-comment { font-size:14px; color:#333; margin-top:8px; line-height:1.65; }
+
+/* ─── Empty / Misc ─── */
 .sr-empty { text-align:center; padding:60px 20px; color:#aaa; }
 .sr-empty i { font-size:48px; margin-bottom:16px; display:block; }
-.sr-summary { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
-.sr-sum-box { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:12px 18px; text-align:center; flex:1; min-width:80px; }
-.sr-sum-num { font-size:22px; font-weight:800; color:#D10024; }
-.sr-sum-label { font-size:11px; color:#888; margin-top:2px; }
 .sr-btn { display:inline-block; padding:7px 16px; border-radius:6px; font-size:13px; font-weight:600; background:#D10024; color:#fff; text-decoration:none; border:none; cursor:pointer; }
 .sr-btn-outline { background:#fff; color:#D10024; border:1.5px solid #D10024; }
 </style>
 
-{{-- Summary --}}
-<div class="sr-summary">
-    <div class="sr-sum-box">
-        <div class="sr-sum-num">{{ $reviews->total() }}</div>
-        <div class="sr-sum-label">Total Ulasan</div>
-    </div>
-    @foreach([5,4,3,2,1] as $star)
-    <div class="sr-sum-box">
-        <div class="sr-sum-num" style="font-size:16px;">
-            <span style="color:#f59e0b;">&#9733;</span> {{ $star }}
+{{-- Hero Banner --}}
+@php
+    $totalReviews = $reviews->total();
+    $weightedSum = 0;
+    foreach([5,4,3,2,1] as $star) { $weightedSum += $star * ($ratingCounts[$star] ?? 0); }
+    $avgRating = $totalReviews > 0 ? round($weightedSum / $totalReviews, 1) : 0;
+    $fullStars = (int) floor($avgRating);
+@endphp
+<div class="sr-hero">
+    <div class="sr-hero-top">
+        <div class="sr-hero-icon"><i class="fa fa-star"></i></div>
+        <div>
+            <h1 class="sr-hero-title">Ulasan Produk</h1>
+            <p class="sr-hero-subtitle">Pantau kepuasan pembeli terhadap produk Anda</p>
         </div>
-        <div class="sr-sum-label">{{ $ratingCounts[$star] ?? 0 }} ulasan</div>
     </div>
-    @endforeach
+    <div class="sr-hero-body">
+        @if($totalReviews > 0)
+        <div class="sr-hero-avg">
+            <div class="sr-hero-avg-num">{{ $avgRating }}</div>
+            <div>
+                <div class="sr-hero-avg-stars">
+                    @for($i = 1; $i <= 5; $i++)
+                        <span class="sr-hero-avg-star {{ $i <= $fullStars ? '' : 'empty' }}">&#9733;</span>
+                    @endfor
+                </div>
+                <div class="sr-hero-avg-label">dari {{ $totalReviews }} ulasan</div>
+            </div>
+        </div>
+        @endif
+        <div class="sr-hero-stats">
+            @foreach([5,4,3,2,1] as $star)
+            <div class="sr-hero-stat">
+                <div class="sr-hero-stat-num">{{ $ratingCounts[$star] ?? 0 }}</div>
+                <div class="sr-hero-stat-label"><span class="sr-hero-stat-star">&#9733;</span> {{ $star }}</div>
+            </div>
+            @endforeach
+        </div>
+    </div>
 </div>
 
 {{-- Filter --}}
