@@ -18,6 +18,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SellerOrderController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -91,6 +92,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/produk/{product}/photo', [ProductController::class, 'deletePhoto'])->name('products.delete-photo');
     Route::delete('/produk/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::post('/produk/{product}/hapus', [ProductController::class, 'destroy'])->name('products.destroy-post');
+
+    // Seller Promo Management routes
+    Route::get('/promo', [\App\Http\Controllers\SellerPromoController::class, 'index'])->name('seller.promos.index');
+    Route::get('/promo/buat', [\App\Http\Controllers\SellerPromoController::class, 'create'])->name('seller.promos.create');
+    Route::post('/promo', [\App\Http\Controllers\SellerPromoController::class, 'store'])->name('seller.promos.store');
+    Route::get('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'show'])->name('seller.promos.show');
+    Route::get('/promo/{promo}/edit', [\App\Http\Controllers\SellerPromoController::class, 'edit'])->name('seller.promos.edit');
+    Route::put('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'update'])->name('seller.promos.update');
+    Route::patch('/promo/{promo}/nonaktif', [\App\Http\Controllers\SellerPromoController::class, 'deactivate'])->name('seller.promos.deactivate');
+    Route::patch('/promo/{promo}/aktif', [\App\Http\Controllers\SellerPromoController::class, 'activate'])->name('seller.promos.activate');
+    Route::delete('/promo/{promo}', [\App\Http\Controllers\SellerPromoController::class, 'destroy'])->name('seller.promos.destroy');
 });
 
 // Keranjang routes (buyer only, auth required)
@@ -105,6 +117,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/validate-voucher', [CheckoutController::class, 'validateVoucher'])->name('checkout.validateVoucher');
 
     // Order routes
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
@@ -128,9 +141,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Public review display
 Route::get('/produk/{product:id}/reviews', [ReviewController::class, 'show'])->name('reviews.show');
+
+// Seller Order routes (auth required)
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/penjual/pesanan', [SellerOrderController::class, 'index'])->name('seller.orders');
     Route::get('/penjual/pesanan/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
     Route::patch('/penjual/pesanan/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('seller.orders.status');
+    Route::get('/penjual/ulasan', [SellerOrderController::class, 'reviews'])->name('seller.reviews');
+});
 
 
 // Admin routes
@@ -144,6 +162,15 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::put('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     Route::patch('/categories/{category}/toggle', [\App\Http\Controllers\Admin\CategoryController::class, 'toggleActive'])->name('admin.categories.toggle');
+
+    // Live Chat management
+    Route::get('/chats', [\App\Http\Controllers\Admin\AdminChatController::class, 'index'])->name('admin.chats');
+    Route::get('/chats/{chat}', [\App\Http\Controllers\Admin\AdminChatController::class, 'show'])->name('admin.chats.show');
+    Route::post('/chats/{chat}/reply', [\App\Http\Controllers\Admin\AdminChatController::class, 'reply'])->name('admin.chats.reply');
+    Route::patch('/chats/{chat}/close', [\App\Http\Controllers\Admin\AdminChatController::class, 'close'])->name('admin.chats.close');
+    Route::patch('/chats/{chat}/reopen', [\App\Http\Controllers\Admin\AdminChatController::class, 'reopen'])->name('admin.chats.reopen');
+    Route::get('/chats-unread', [\App\Http\Controllers\Admin\AdminChatController::class, 'unreadCount'])->name('admin.chats.unread');
+    Route::get('/chats/{chat}/poll', [\App\Http\Controllers\Admin\AdminChatController::class, 'poll'])->name('admin.chats.poll');
 
     // Visitor stats
     Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
@@ -166,6 +193,27 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::post('/couriers/{courier}/services', [\App\Http\Controllers\Admin\CourierController::class, 'storeService'])->name('admin.couriers.services.store');
     Route::delete('/courier-services/{service}', [\App\Http\Controllers\Admin\CourierController::class, 'destroyService'])->name('admin.couriers.services.destroy');
     Route::patch('/courier-services/{service}/toggle', [\App\Http\Controllers\Admin\CourierController::class, 'toggleService'])->name('admin.couriers.services.toggle');
+
+    // Promo monitoring & management
+    Route::get('/promos', [\App\Http\Controllers\Admin\AdminPromoController::class, 'index'])->name('admin.promos');
+    Route::get('/promos/{promo}', [\App\Http\Controllers\Admin\AdminPromoController::class, 'show'])->name('admin.promos.show');
+    Route::patch('/promos/{promo}/nonaktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'deactivate'])->name('admin.promos.deactivate');
+    Route::patch('/promos/{promo}/aktif', [\App\Http\Controllers\Admin\AdminPromoController::class, 'activate'])->name('admin.promos.activate');
+    Route::delete('/promos/{promo}', [\App\Http\Controllers\Admin\AdminPromoController::class, 'destroy'])->name('admin.promos.destroy');
+
+    // Promo slots (jadwal periodik)
+    Route::get('/promo-slots', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'index'])->name('admin.promo-slots');
+    Route::post('/promo-slots', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'store'])->name('admin.promo-slots.store');
+    Route::put('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'update'])->name('admin.promo-slots.update');
+    Route::delete('/promo-slots/{promoSlot}', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'destroy'])->name('admin.promo-slots.destroy');
+    Route::patch('/promo-slots/{promoSlot}/toggle', [\App\Http\Controllers\Admin\AdminPromoSlotController::class, 'toggleActive'])->name('admin.promo-slots.toggle');
+
+    // Vouchers
+    Route::get('/vouchers', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'index'])->name('admin.vouchers');
+    Route::post('/vouchers', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'store'])->name('admin.vouchers.store');
+    Route::put('/vouchers/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'update'])->name('admin.vouchers.update');
+    Route::delete('/vouchers/{voucher}', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'destroy'])->name('admin.vouchers.destroy');
+    Route::patch('/vouchers/{voucher}/toggle', [\App\Http\Controllers\Admin\AdminVoucherController::class, 'toggleActive'])->name('admin.vouchers.toggle');
 });
 
 // Info pages
@@ -183,3 +231,11 @@ Route::get('/kebijakan-privasi', [PageController::class, 'privasi'])->name('page
 Route::get('/syarat-ketentuan', [PageController::class, 'syarat'])->name('page.syarat');
 Route::get('/pengembalian', [PageController::class, 'pengembalian'])->name('page.pengembalian');
 Route::get('/bantuan', [PageController::class, 'bantuan'])->name('page.bantuan');
+Route::get('/voucher', [PageController::class, 'vouchers'])->name('page.vouchers');
+
+// Live Chat routes (user side)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
+    Route::get('/chat/{chat}/messages', [ChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/{chat}/send', [ChatController::class, 'send'])->name('chat.send');
+});

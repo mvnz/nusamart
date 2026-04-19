@@ -298,7 +298,6 @@
             </div>
         </section>
         @endif
-
         {{-- ===== TABBED PRODUCTS ===== --}}
         <section class="prod-tabs-section">
             <div class="container">

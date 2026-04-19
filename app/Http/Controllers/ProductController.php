@@ -12,7 +12,9 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::active()->with(['seller', 'category'])
-            ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))]);
+            ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews');
         $selectedCategory = null;
 
         if ($request->filled('search')) {
@@ -51,7 +53,7 @@ class ProductController extends Controller
 
     public function categories()
     {
-        $categories = Category::withCount('products')->orderBy('name')->get();
+        $categories = Category::where('is_active', true)->withCount('products')->orderBy('name')->get();
 
         // Group alphabetically
         $grouped = $categories->groupBy(fn($c) => strtoupper(substr($c->name, 0, 1)));
@@ -70,7 +72,9 @@ class ProductController extends Controller
                 ->exists();
         }
 
-        return view('products.show', compact('product', 'isWishlisted'));
+        $activePromo = $product->activePromo();
+
+        return view('products.show', compact('product', 'isWishlisted', 'activePromo'));
     }
 
     /**
@@ -96,7 +100,7 @@ class ProductController extends Controller
         }
 
         $products = $query->latest()->paginate(12);
-        $categories = \App\Models\Category::orderBy('name')->get();
+        $categories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
 
         return view('products.my-products', compact('products', 'categories'));
     }

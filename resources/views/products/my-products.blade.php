@@ -12,7 +12,18 @@
 .my-products-container { max-width:100%; }
 
 /* â”€â”€â”€ Header â”€â”€â”€ */
-.my-products-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+/* Hero section */
+.mp-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px 28px 24px; margin-bottom:22px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.mp-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.mp-hero-left { display:flex; align-items:center; gap:16px; flex:1; min-width:200px; position:relative; z-index:1; }
+.mp-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.mp-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.mp-hero-sub { font-size:13px; margin:0; opacity:.7; }
+.mp-hero-stats { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
+.mp-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 20px; text-align:center; min-width:88px; }
+.mp-hero-stat-num { font-size:26px; font-weight:800; line-height:1; }
+.mp-hero-stat-label { font-size:11px; opacity:.7; margin-top:4px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.mp-hero-actions { position:relative; z-index:1; }
 
 /* â”€â”€â”€ Filter bar card â”€â”€â”€ */
 .mp-filter-card { display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:#fff; border-radius:12px; padding:14px 18px; box-shadow:0 2px 8px rgba(0,0,0,.05); margin-bottom:18px; }
@@ -30,8 +41,10 @@
 .products-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-bottom:24px; }
 
 /* â”€â”€â”€ Product card â”€â”€â”€ */
-.product-card { background:#fff; border:none; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:box-shadow .2s, transform .15s; }
-.product-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.1); transform:translateY(-2px); }
+.product-card { background:#fff; border:none; border-radius:14px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.07); transition:box-shadow .2s, transform .15s; border-top:4px solid #e5e7eb; }
+.product-card.active-card { border-top-color:#10b981; }
+.product-card.inactive-card { border-top-color:#d1d5db; }
+.product-card:hover { box-shadow:0 8px 24px rgba(0,0,0,.12); transform:translateY(-2px); }
 .product-image-wrapper { position:relative; width:100%; height:190px; background:#f4f5f7; overflow:hidden; }
 .product-image { width:100%; height:100%; object-fit:cover; }
 .product-status-badge { position:absolute; top:10px; right:10px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#d1fae5; color:#065f46; }
@@ -56,9 +69,11 @@
 .product-card.list-view .product-info { flex:1; padding:10px 0; }
 
 /* â”€â”€â”€ Empty state â”€â”€â”€ */
-.empty-state { text-align:center; padding:60px 20px; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
-.empty-state-icon { font-size:48px; color:#e5e7eb; margin-bottom:14px; }
-.empty-state-text { color:#aaa; font-size:13px; margin:0; }
+.empty-state { text-align:center; padding:60px 20px; background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.empty-state-icon { width:80px; height:80px; background:linear-gradient(135deg,rgba(209,0,36,.1),rgba(209,0,36,.04)); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#D10024; }
+.empty-state-text { color:#aaa; font-size:13px; margin:0 0 16px; }
+.empty-state-btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; background:linear-gradient(135deg,#D10024,#a8001e); color:#fff; border:none; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(209,0,36,.25); transition:all .2s; }
+.empty-state-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(209,0,36,.35); }
 
 /* â”€â”€â”€ Modals â”€â”€â”€ */
 .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.55); animation:mpFadeIn .25s; }
@@ -144,24 +159,39 @@
 .wizard-content { display:none; }
 .wizard-content.active { display:block; }
 .wizard-buttons { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; padding-top:16px; border-top:1px solid #f0f0f0; }
-.add-product-btn { padding:10px 20px; background:#D10024; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; display:inline-flex; align-items:center; gap:8px; font-family:inherit; }
-.add-product-btn:hover { background:#a8001e; box-shadow:0 4px 12px rgba(209,0,36,.25); }
+.add-product-btn { padding:11px 22px; background:linear-gradient(135deg,#D10024,#a8001e); color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; display:inline-flex; align-items:center; gap:8px; font-family:inherit; box-shadow:0 4px 14px rgba(209,0,36,.3); }
+.add-product-btn:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(209,0,36,.4); }
 .file-input-hidden { display:none; }
 
-@media(max-width:900px) { .products-grid { grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); } }
-@media(max-width:600px) { .products-grid { grid-template-columns:1fr 1fr; gap:12px; } .my-products-header { flex-direction:column; align-items:flex-start; gap:12px; } .mp-filter-card { flex-direction:column; align-items:stretch; } .modal-content { width:95%; padding:20px; } }
+@media(max-width:900px) { .products-grid { grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); } .mp-hero { flex-direction:column; align-items:flex-start; } }
+@media(max-width:600px) { .products-grid { grid-template-columns:1fr 1fr; gap:12px; } .mp-hero { padding:20px 18px; } .mp-filter-card { flex-direction:column; align-items:stretch; } .modal-content { width:95%; padding:20px; } }
 </style>
 @endpush
 
-{{-- Page Header --}}
-<div class="my-products-header">
-    <div>
-        <h1 style="margin:0 0 3px;font-size:20px;font-weight:800;color:#1e1f29;">Produk Saya</h1>
-        <p style="margin:0;font-size:12px;color:#aaa;">Total: <strong>{{ $products->total() }}</strong> produk</p>
+{{-- Hero Banner --}}
+<div class="mp-hero">
+    <div class="mp-hero-left">
+        <div class="mp-hero-icon"><i class="fa fa-store"></i></div>
+        <div>
+            <h1 class="mp-hero-title">Produk Saya</h1>
+            <p class="mp-hero-sub">Kelola semua produk toko Anda dengan mudah</p>
+        </div>
     </div>
-    <button class="add-product-btn" onclick="openAddProductWizard()">
-        <i class="fa fa-plus"></i> Tambah Produk
-    </button>
+    <div class="mp-hero-stats">
+        <div class="mp-hero-stat">
+            <div class="mp-hero-stat-num">{{ $products->total() }}</div>
+            <div class="mp-hero-stat-label">Total Produk</div>
+        </div>
+        <div class="mp-hero-stat">
+            <div class="mp-hero-stat-num">{{ $categories->count() }}</div>
+            <div class="mp-hero-stat-label">Kategori</div>
+        </div>
+    </div>
+    <div class="mp-hero-actions">
+        <button class="add-product-btn" onclick="openAddProductWizard()">
+            <i class="fa fa-plus"></i> Tambah Produk
+        </button>
+    </div>
 </div>
 
 {{-- Filter bar --}}
@@ -186,7 +216,7 @@
     @if($products->count() > 0)
         <div class="products-grid" id="productsContainer">
             @foreach($products as $product)
-            <div class="product-card" data-product-id="{{ $product->id }}">
+            <div class="product-card {{ $product->is_active ? 'active-card' : 'inactive-card' }}" data-product-id="{{ $product->id }}">
                 <div class="product-image-wrapper">
                     @if($product->image)
                         <img src="{{ asset('storage/' . $product->image) }}?t={{ time() }}" alt="{{ $product->name }}" class="product-image">
@@ -232,6 +262,9 @@
         <div class="empty-state">
             <div class="empty-state-icon"><i class="fa fa-cube"></i></div>
             <p class="empty-state-text">Anda belum memiliki produk</p>
+            <button class="empty-state-btn" onclick="openAddProductWizard()">
+                <i class="fa fa-plus"></i> Tambah Produk Pertama
+            </button>
         </div>
     @endif
 
@@ -745,6 +778,7 @@ window.wizardState = {
         photoFile: null
     }
 };
+window.sellerName = '{{ auth()->user()->name }}';
 
 // Wizard Functions
 window.openAddProductWizard = function() {
@@ -867,27 +901,57 @@ window.generatePreview = function() {
     const previewContent = document.getElementById('previewContent');
     const price = parseInt(wizardState.data.price) || 0;
     const stock = parseInt(wizardState.data.stock) || 0;
+    const category = wizardState.data.category || '';
+    const name = wizardState.data.name || 'Nama Produk';
+    const description = wizardState.data.description || '';
+    const isActive = wizardState.data.status;
 
-    let html = '<div style="background: white; padding: 15px; border-radius: 8px;">';
-    html += '<div style="display: grid; grid-template-columns: 150px 1fr; gap: 15px;">';
-    
-    if (wizardState.data.photo) {
-        html += '<img src="' + wizardState.data.photo + '" style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">';
-    } else {
-        html += '<div style="width: 150px; height: 150px; background: #e0e0e0; border-radius: 8px; display: flex; align-items: center; justify-content: center;"><span style="color: #999;">No Photo</span></div>';
+    const imgHtml = wizardState.data.photo
+        ? '<img src="' + wizardState.data.photo + '" style="width:100%;height:100%;object-fit:cover;">'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><i class="fa fa-shopping-bag" style="font-size:48px;color:#ddd;"></i></div>';
+
+    const stockHtml = stock === 0
+        ? '<span style="color:#ef4444;font-size:12px;"><i class="fa fa-times-circle"></i> Stok Habis</span>'
+        : (stock <= 5
+            ? '<span style="color:#f59e0b;font-size:12px;"><i class="fa fa-exclamation-triangle"></i> Stok Terbatas &mdash; Sisa ' + stock + ' item</span>'
+            : '<span style="color:#10b981;font-size:12px;"><i class="fa fa-check-circle"></i> Stok: ' + stock + '</span>');
+
+    let html = '<div style="max-width:220px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.1);border:1px solid #f0f0f0;display:flex;flex-direction:column;">';
+
+    // Gambar
+    html += '<div style="height:170px;background:#f7f7f7;overflow:hidden;">' + imgHtml + '</div>';
+
+    // Body
+    html += '<div style="padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;">';
+
+    // Kategori badge
+    if (category) {
+        html += '<div style="font-size:10px;color:#D10024;font-weight:700;text-transform:uppercase;letter-spacing:.6px;background:rgba(209,0,36,.07);display:inline-block;padding:2px 7px;border-radius:20px;width:fit-content;margin-bottom:2px;">' + category + '</div>';
     }
 
-    html += '<div>';
-    html += '<h4 style="margin: 0 0 8px 0; color: #333;">' + (wizardState.data.name || 'N/A') + '</h4>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">' + (wizardState.data.description || 'Tidak ada deskripsi') + '</p>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 12px; color: #999;">Kategori: ' + (wizardState.data.category || '-') + '</p>';
-    html += '<p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #28a745;">Rp' + price.toLocaleString('id-ID') + '</p>';
-    html += '<p style="margin: 0; font-size: 13px; color: #666;">Stok: <strong>' + stock + ' unit</strong> | Status: <strong style="color: ' + (wizardState.data.status ? '#28a745' : '#dc3545') + ';">' + (wizardState.data.status ? 'Aktif' : 'Nonaktif') + '</strong></p>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
+    // Nama
+    html += '<div style="font-size:13px;font-weight:600;color:#1e1f29;line-height:1.45;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + name + '</div>';
+
+    // Seller
+    html += '<div style="font-size:11px;color:#aaa;margin-bottom:2px;"><i class="fa fa-store" style="margin-right:4px;"></i>' + (window.sellerName || 'Toko Anda') + '</div>';
+
+    // Harga
+    html += '<div style="font-size:15px;font-weight:800;color:#D10024;margin-bottom:2px;">Rp ' + price.toLocaleString('id-ID') + '</div>';
+
+    // Stok
+    html += '<div style="margin-bottom:2px;">' + stockHtml + '</div>';
+
+    // Terjual
+    html += '<div style="font-size:11px;color:#aaa;margin-bottom:8px;"><i class="fa fa-shopping-cart" style="margin-right:3px;"></i> 0 terjual</div>';
+
+    // Tombol
+    html += '<div style="display:block;text-align:center;padding:8px;background:linear-gradient(135deg,#1e1f29,#2d2e3a);color:#fff;border-radius:7px;font-size:12px;font-weight:600;letter-spacing:.3px;">Lihat Detail</div>';
+
+    html += '</div></div>';
 
     previewContent.innerHTML = html;
+    previewContent.style.background = 'transparent';
+    previewContent.style.padding = '10px 0';
 };
 
 window.publishProduct = function() {

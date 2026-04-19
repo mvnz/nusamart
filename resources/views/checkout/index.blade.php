@@ -76,6 +76,43 @@
 .va-bank-logo { width: 36px; height: 22px; border-radius: 4px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:#fff; flex-shrink:0; letter-spacing:.5px; }
 .va-bank-name { font-size: 13px; font-weight: 600; color: #1e1f29; }
 .va-bank-sub { font-size: 11px; color: #888; }
+
+/* Voucher */
+.voucher-card-inner { background:linear-gradient(135deg,#fff5f5,#fff); border:2px dashed #f5c6c6; border-radius:12px; padding:18px 20px; position:relative; overflow:hidden; }
+.voucher-card-inner::before { content:''; position:absolute; right:-24px; top:50%; transform:translateY(-50%); width:48px; height:48px; background:#f9f9fb; border-radius:50%; }
+.voucher-card-inner::after  { content:''; position:absolute; left:-24px;  top:50%; transform:translateY(-50%); width:48px; height:48px; background:#f9f9fb; border-radius:50%; }
+.voucher-icon-wrap { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#D10024,#ff6b6b); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px rgba(209,0,36,.2); }
+.voucher-icon-wrap .fa { color:#fff; font-size:17px; }
+.voucher-label { font-size:14px; font-weight:700; color:#1e1f29; }
+.voucher-sublabel { font-size:11px; color:#aaa; margin-top:1px; }
+.voucher-input-row { display:flex; gap:0; margin-top:14px; }
+.voucher-input-row input {
+    flex:1; padding:11px 16px; border:1.5px solid #e0e0e0; border-right:none;
+    border-radius:8px 0 0 8px; font-family:inherit; font-size:13px; outline:none;
+    text-transform:uppercase; letter-spacing:1.5px; font-weight:600; color:#1e1f29;
+    background:#fff; transition:border-color .2s;
+}
+.voucher-input-row input:focus { border-color:#D10024; }
+.voucher-input-row input::placeholder { letter-spacing:.5px; font-weight:400; color:#bbb; text-transform:none; }
+.btn-apply-voucher {
+    padding:11px 20px; background:#D10024; color:#fff; border:none;
+    border-radius:0 8px 8px 0; font-family:inherit; font-size:13px; font-weight:700;
+    cursor:pointer; white-space:nowrap; transition:background .2s; letter-spacing:.3px;
+}
+.btn-apply-voucher:hover { background:#a8001e; }
+.btn-apply-voucher:disabled { background:#e0e0e0; color:#aaa; cursor:default; }
+.voucher-feedback { margin-top:10px; font-size:12px; border-radius:8px; padding:10px 14px; display:none; align-items:center; gap:8px; }
+.voucher-feedback.show { display:flex; }
+.voucher-feedback.success { background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; }
+.voucher-feedback.error   { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+.voucher-feedback .fa { font-size:14px; flex-shrink:0; }
+.voucher-feedback-text { flex:1; }
+.btn-remove-voucher { background:none; border:1px solid #fca5a5; color:#D10024; cursor:pointer; font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; white-space:nowrap; transition:all .15s; }
+.btn-remove-voucher:hover { background:#D10024; color:#fff; }
+.voucher-applied-badge { display:none; align-items:center; gap:8px; margin-top:12px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:9px 14px; }
+.voucher-applied-badge.show { display:flex; }
+.voucher-applied-code { font-size:13px; font-weight:700; color:#065f46; letter-spacing:1px; }
+.voucher-applied-discount { margin-left:auto; font-size:13px; font-weight:700; color:#D10024; }
 </style>
 @endpush
 
@@ -208,6 +245,29 @@
                     </div>
                 </div>
 
+                {{-- Voucher --}}
+                <div class="card" style="padding:20px 24px;">
+                    <div class="voucher-card-inner">
+                        <div style="display:flex;align-items:center;gap:14px;position:relative;z-index:1;">
+                            <div class="voucher-icon-wrap">
+                                <i class="fa fa-ticket"></i>
+                            </div>
+                            <div>
+                                <div class="voucher-label">Punya Kode Voucher?</div>
+                                <div class="voucher-sublabel">Masukkan kode & hemat lebih banyak!</div>
+                            </div>
+                        </div>
+                        <div class="voucher-input-row" style="position:relative;z-index:1;">
+                            <input type="text" id="voucherInput" placeholder="Contoh: HEMAT20" autocomplete="off">
+                            <button type="button" class="btn-apply-voucher" id="btnApplyVoucher" onclick="applyVoucher()">
+                                <i class="fa fa-check" style="margin-right:5px;"></i>Terapkan
+                            </button>
+                        </div>
+                        <div class="voucher-feedback" id="voucherFeedback" style="position:relative;z-index:1;"></div>
+                    </div>
+                    <input type="hidden" name="voucher_code" id="voucherCodeHidden" value="{{ old('voucher_code') }}">
+                </div>
+
                 {{-- Catatan --}}
                 <div class="card">
                     <div class="card-title">
@@ -227,7 +287,7 @@
                     </div>
 
                     @foreach($itemsBySeller as $sellerId => $sellerItems)
-                    @php $sellerSubtotal = $sellerItems->sum(fn($i) => $i->quantity * $i->product->price); @endphp
+                    @php $sellerSubtotal = $sellerItems->sum(fn($i) => $i->quantity * $i->product->getDisplayPrice()); @endphp
                     <div style="margin-bottom:10px;">
                         <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed #f0f0f0;display:flex;align-items:center;gap:6px;">
                             <i class="fa fa-store" style="color:#D10024;"></i>
@@ -244,10 +304,19 @@
                             </div>
                             <div style="flex:1;">
                                 <div class="order-item-name">{{ $item->product->name }}</div>
-                                <div class="order-item-qty">{{ $item->quantity }} x {{ $item->product->formatted_price }}</div>
+                                @php $displayPrice = $item->product->getDisplayPrice(); @endphp
+                                <div class="order-item-qty">
+                                    {{ $item->quantity }} x
+                                    @if($displayPrice < $item->product->price)
+                                        <span style="color:#D10024;font-weight:700;">Rp {{ number_format($displayPrice, 0, ',', '.') }}</span>
+                                        <span style="text-decoration:line-through;color:#bbb;font-size:11px;margin-left:2px;">Rp {{ number_format($item->product->price, 0, ',', '.') }}</span>
+                                    @else
+                                        Rp {{ number_format($displayPrice, 0, ',', '.') }}
+                                    @endif
+                                </div>
                             </div>
                             <div class="order-item-price">
-                                Rp {{ number_format($item->quantity * $item->product->price, 0, ',', '.') }}
+                                Rp {{ number_format($item->quantity * $displayPrice, 0, ',', '.') }}
                             </div>
                         </div>
                         @endforeach
@@ -266,9 +335,13 @@
                             <span>Ongkos Kirim</span>
                             <span style="color:#10b981;font-weight:600;">Gratis</span>
                         </div>
+                        <div class="summary-row" id="discountRow" style="display:none;color:#10b981;font-weight:600;">
+                            <span><i class="fa fa-tag" style="margin-right:4px;"></i>Diskon Voucher</span>
+                            <span id="discountDisplay">-Rp 0</span>
+                        </div>
                         <div class="summary-row total">
                             <span>Total Pembayaran</span>
-                            <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
+                            <span id="grandTotalDisplay">Rp {{ number_format($total, 0, ',', '.') }}</span>
                         </div>
                     </div>
 
@@ -288,6 +361,77 @@
 
 @push('scripts')
 <script>
+var _baseTotal = {{ $total }};
+var _appliedDiscount = 0;
+
+function formatRp(val) {
+    return 'Rp ' + Math.round(val).toLocaleString('id-ID');
+}
+
+function applyVoucher() {
+    var code = document.getElementById('voucherInput').value.trim();
+    var fb   = document.getElementById('voucherFeedback');
+    if (!code) {
+        fb.className = 'voucher-feedback error show';
+        fb.innerHTML = '<i class="fa fa-exclamation-circle"></i><span class="voucher-feedback-text">Masukkan kode voucher terlebih dahulu.</span>';
+        return;
+    }
+    var btn = document.getElementById('btnApplyVoucher');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin" style="margin-right:5px;"></i>Memeriksa...';
+    fb.className = 'voucher-feedback';
+    fb.innerHTML = '';
+
+    fetch('{{ route('checkout.validateVoucher') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ code: code, total: _baseTotal })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-check" style="margin-right:5px;"></i>Terapkan';
+        if (data.valid) {
+            _appliedDiscount = data.discount;
+            document.getElementById('voucherCodeHidden').value = code.toUpperCase();
+            document.getElementById('discountRow').style.display = '';
+            document.getElementById('discountDisplay').textContent = '-' + data.discount_fmt;
+            document.getElementById('grandTotalDisplay').textContent = formatRp(_baseTotal - _appliedDiscount);
+            fb.className = 'voucher-feedback success show';
+            fb.innerHTML = '<i class="fa fa-check-circle"></i>' +
+                '<span class="voucher-feedback-text">' + data.message + '</span>' +
+                '<button type="button" class="btn-remove-voucher" onclick="removeVoucher()"><i class="fa fa-times" style="margin-right:3px;"></i>Hapus</button>';
+        } else {
+            _appliedDiscount = 0;
+            document.getElementById('voucherCodeHidden').value = '';
+            document.getElementById('discountRow').style.display = 'none';
+            document.getElementById('grandTotalDisplay').textContent = formatRp(_baseTotal);
+            fb.className = 'voucher-feedback error show';
+            fb.innerHTML = '<i class="fa fa-times-circle"></i><span class="voucher-feedback-text">' + data.message + '</span>';
+        }
+    })
+    .catch(function(){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-check" style="margin-right:5px;"></i>Terapkan';
+        fb.className = 'voucher-feedback error show';
+        fb.innerHTML = '<i class="fa fa-times-circle"></i><span class="voucher-feedback-text">Terjadi kesalahan. Coba lagi.</span>';
+    });
+}
+
+function removeVoucher() {
+    _appliedDiscount = 0;
+    document.getElementById('voucherInput').value = '';
+    document.getElementById('voucherCodeHidden').value = '';
+    document.getElementById('discountRow').style.display = 'none';
+    document.getElementById('grandTotalDisplay').textContent = formatRp(_baseTotal);
+    var fb = document.getElementById('voucherFeedback');
+    fb.className = 'voucher-feedback';
+    fb.innerHTML = '';
+}
+
 function switchPayment(method) {
     var transferOpt = document.getElementById('transferOption');
     var vaOpt       = document.getElementById('vaOption');

@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Voucher;
+
 class PageController extends Controller
 {
+    public function vouchers()
+    {
+        $vouchers = Voucher::active()->orderBy('end_date')->get();
+        return view('pages.vouchers', compact('vouchers'));
+    }
+
     public function tentang()
     {
         return view('pages.tentang');

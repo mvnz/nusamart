@@ -43,7 +43,12 @@ class OrderController extends Controller
 
         $order->load('items.product');
 
-        return view('orders.show', compact('order'));
+        $reviewedProductIds = \App\Models\Review::where('user_id', auth()->id())
+            ->whereIn('product_id', $order->items->pluck('product_id'))
+            ->pluck('product_id')
+            ->toArray();
+
+        return view('orders.show', compact('order', 'reviewedProductIds'));
     }
 
     public function markReceived(Order $order)

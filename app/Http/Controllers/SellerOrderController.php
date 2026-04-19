@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class SellerOrderController extends Controller
@@ -83,5 +84,31 @@ class SellerOrderController extends Controller
 
         return redirect()->route('seller.orders.show', $order)
             ->with('success', 'Status pesanan berhasil diperbarui.');
+    }
+
+    public function reviews(Request $request)
+    {
+        $productIds = Product::where('user_id', auth()->id())->pluck('id');
+
+        $query = Review::with(['user', 'product'])
+            ->whereIn('product_id', $productIds)
+            ->latest();
+
+        if ($request->filled('rating')) {
+            $query->where('rating', $request->rating);
+        }
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->product_id);
+        }
+
+        $reviews  = $query->paginate(15)->withQueryString();
+        $products = Product::where('user_id', auth()->id())->orderBy('name')->get(['id', 'name']);
+
+        $ratingCounts = Review::whereIn('product_id', $productIds)
+            ->selectRaw('rating, count(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating');
+
+        return view('seller.reviews', compact('reviews', 'products', 'ratingCounts'));
     }
 }

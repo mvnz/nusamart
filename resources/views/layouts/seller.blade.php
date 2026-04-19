@@ -49,11 +49,23 @@
                         <span>Produk Saya</span>
                     </a>
                 </li>
+                <li class="sc-nav-item sc-nav-section">Promosi</li>
+                <li class="sc-nav-item">
+                    <a href="{{ route('seller.promos.index') }}" class="sc-nav-link {{ request()->routeIs('seller.promos*') ? 'active' : '' }}">
+                        <i class="fa fa-tag"></i>
+                        <span>Promo Produk</span>
+                    </a>
+                </li>
 
                 <li class="sc-nav-item sc-nav-section">Transaksi</li>
                 <li class="sc-nav-item">
                     <a href="{{ route('seller.orders') }}" class="sc-nav-link {{ request()->routeIs('seller.orders*') ? 'active' : '' }}">
                         <i class="fa fa-shopping-bag"></i> <span>Pesanan</span>
+                    </a>
+                </li>
+                <li class="sc-nav-item">
+                    <a href="{{ route('seller.reviews') }}" class="sc-nav-link {{ request()->routeIs('seller.reviews') ? 'active' : '' }}">
+                        <i class="fa fa-star"></i> <span>Ulasan</span>
                     </a>
                 </li>
 
