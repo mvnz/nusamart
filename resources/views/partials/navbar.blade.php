@@ -73,11 +73,18 @@
                             <div style="font-size:11px;color:#aaa;font-weight:500">Kelola akun pengguna</div>
                         </div>
                     </a>
-                    <a href="{{ route('admin.couriers') }}" class="npd-item {{ request()->routeIs('admin.couriers*') ? 'active' : '' }}" style="margin-bottom:6px">
+                    <a href="{{ route('admin.couriers') }}" class="npd-item {{ request()->routeIs('admin.couriers*') ? 'active' : '' }}">
                         <div class="npd-icon green"><i class="fa fa-truck"></i></div>
                         <div>
                             <div style="font-size:13.5px;font-weight:700">Kurir</div>
                             <div style="font-size:11px;color:#aaa;font-weight:500">Kelola layanan kurir</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('admin.kuliner.index') }}" class="npd-item {{ request()->routeIs('admin.kuliner*') ? 'active' : '' }}" style="margin-bottom:6px">
+                        <div class="npd-icon" style="background:linear-gradient(135deg,#ffe4b2,#fff7e6);color:#d97706"><i class="fa fa-cutlery"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Kuliner</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Kelola warung lokal</div>
                         </div>
                     </a>
                 </div>
@@ -89,6 +96,7 @@
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') || request()->routeIs('seller.*') ? 'active' : '' }}">Dashboard</a>
             @endif
             @endauth
+            <a href="{{ route('kuliner.index') }}" class="{{ request()->routeIs('kuliner.*') ? 'active' : '' }}">Kuliner Lokal</a>
             <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
 
             {{-- Link Masuk hanya tampil di mobile (top-bar tersembunyi) --}}
