@@ -95,6 +95,14 @@
                             <div style="font-size:11px;color:#aaa;font-weight:500">Kelola layanan kurir</div>
                         </div>
                     </a>
+                    <a href="{{ route('admin.chats') }}" class="npd-item {{ request()->routeIs('admin.chats*') ? 'active' : '' }}" style="position:relative;">
+                        <div class="npd-icon" style="background:linear-gradient(135deg,#fee2e2,#fecaca);color:#D10024;"><i class="fa fa-comments"></i></div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:700">Live Chat</div>
+                            <div style="font-size:11px;color:#aaa;font-weight:500">Pesan masuk dari pengguna</div>
+                        </div>
+                        <span id="navChatBadge" style="display:none;position:absolute;top:8px;right:10px;background:#D10024;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px;"></span>
+                    </a>
                     <div class="npd-flyout-parent" id="promoFlyout">
                         <div class="npd-flyout-trigger {{ request()->routeIs('admin.promos*') || request()->routeIs('admin.promo-slots*') || request()->routeIs('admin.vouchers*') ? 'active' : '' }}"
                              onclick="togglePromoFlyout(event)">
@@ -213,4 +221,27 @@ function togglePromoFlyout(e) {
     var pf = document.getElementById('promoFlyout');
     if (pf) pf.classList.toggle('open');
 }
+
+@auth
+@if(auth()->user()->role === 'admin')
+(function() {
+    function pollAdminChatBadge() {
+        fetch('/admin/chats-unread', {headers: {'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json'}})
+            .then(function(r){ return r.ok ? r.json() : null; })
+            .then(function(data) {
+                var badge = document.getElementById('navChatBadge');
+                if (!badge || !data) return;
+                if (data.unread > 0) {
+                    badge.textContent = data.unread > 99 ? '99+' : data.unread;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }).catch(function(){});
+    }
+    pollAdminChatBadge();
+    setInterval(pollAdminChatBadge, 30000);
+})();
+@endif
+@endauth
 </script>
