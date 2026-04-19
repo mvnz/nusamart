@@ -298,30 +298,7 @@
             </div>
         </section>
         @endif
-
-
-                        <div class="promo-product-info">
-                            <div class="promo-product-name">{{ $p['name'] }}</div>
-                            <div class="promo-price-row">
-                                <span class="promo-price">Rp {{ number_format($p['price'], 0, ',', '.') }}</span>
-                                <span class="promo-original">Rp {{ number_format($p['original_price'], 0, ',', '.') }}</span>
-                            </div>
-                            @if($p['quota_total'] && $p['quota_total'] > 0)
-                            <div class="promo-quota-bar">
-                                <div class="promo-quota-fill" style="width: {{ min(100, (($p['quota_total'] - $p['quota_remaining']) / $p['quota_total']) * 100) }}%"></div>
-                            </div>
-                            <div class="promo-quota-text">Terjual {{ $p['quota_total'] - $p['quota_remaining'] }}/{{ $p['quota_total'] }}</div>
-                            @endif
-                            <div class="promo-seller">{{ $p['seller'] }}</div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-        @endif
-
-        {{-- ===== TABBED PRODUCTS ===== --}
+        {{-- ===== TABBED PRODUCTS ===== --}}
         <section class="prod-tabs-section">
             <div class="container">
                 @php
