@@ -17,6 +17,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\SellerOrderController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -157,6 +158,15 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::delete('/categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy');
     Route::patch('/categories/{category}/toggle', [\App\Http\Controllers\Admin\CategoryController::class, 'toggleActive'])->name('admin.categories.toggle');
 
+    // Live Chat management
+    Route::get('/chats', [\App\Http\Controllers\Admin\AdminChatController::class, 'index'])->name('admin.chats');
+    Route::get('/chats/{chat}', [\App\Http\Controllers\Admin\AdminChatController::class, 'show'])->name('admin.chats.show');
+    Route::post('/chats/{chat}/reply', [\App\Http\Controllers\Admin\AdminChatController::class, 'reply'])->name('admin.chats.reply');
+    Route::patch('/chats/{chat}/close', [\App\Http\Controllers\Admin\AdminChatController::class, 'close'])->name('admin.chats.close');
+    Route::patch('/chats/{chat}/reopen', [\App\Http\Controllers\Admin\AdminChatController::class, 'reopen'])->name('admin.chats.reopen');
+    Route::get('/chats-unread', [\App\Http\Controllers\Admin\AdminChatController::class, 'unreadCount'])->name('admin.chats.unread');
+    Route::get('/chats/{chat}/poll', [\App\Http\Controllers\Admin\AdminChatController::class, 'poll'])->name('admin.chats.poll');
+
     // Visitor stats
     Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
     Route::get('/logins', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'logins'])->name('admin.logins');
@@ -209,3 +219,10 @@ Route::get('/syarat-ketentuan', [PageController::class, 'syarat'])->name('page.s
 Route::get('/pengembalian', [PageController::class, 'pengembalian'])->name('page.pengembalian');
 Route::get('/bantuan', [PageController::class, 'bantuan'])->name('page.bantuan');
 Route::get('/voucher', [PageController::class, 'vouchers'])->name('page.vouchers');
+
+// Live Chat routes (user side)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
+    Route::get('/chat/{chat}/messages', [ChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/{chat}/send', [ChatController::class, 'send'])->name('chat.send');
+});
