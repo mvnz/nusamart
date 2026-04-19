@@ -131,13 +131,52 @@
 .btn-mok.danger:hover { background:#dc2626; }
 .btn-mcancel { padding:10px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
 .btn-mcancel:hover { background:#e5e7eb; }
+/* Admin Hero Banner */
+.admin-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px 28px 24px; margin-bottom:22px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.admin-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.admin-hero-left { display:flex; align-items:center; gap:16px; flex:1; min-width:200px; position:relative; z-index:1; }
+.admin-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.admin-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.admin-hero-sub { font-size:13px; margin:0; opacity:.7; }
+.admin-hero-stats { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
+.admin-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:10px 18px; text-align:center; min-width:72px; }
+.admin-hero-stat-num { font-size:24px; font-weight:800; line-height:1; }
+.admin-hero-stat-label { font-size:11px; opacity:.7; margin-top:3px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.admin-hero-action { position:relative; z-index:1; }
+.admin-hero-back { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:9px; font-size:13px; font-weight:700; text-decoration:none; transition:background .15s; }
+.admin-hero-back:hover { background:rgba(255,255,255,.2); color:#fff; }
+@media(max-width:768px) { .admin-hero { flex-direction:column; align-items:flex-start; } }
 </style>
 
 <div class="mp-wrap">
 
-    <div class="mp-page-header">
-        <h1 class="mp-page-title"><i class="fa fa-bullhorn"></i> Monitoring Promo</h1>
-        <div style="font-size:13px;color:#aaa;">Kelola dan monitor semua promo yang dibuat penjual</div>
+    {{-- Hero Banner --}}
+    <div class="admin-hero">
+        <div class="admin-hero-left">
+            <div class="admin-hero-icon"><i class="fa fa-bullhorn"></i></div>
+            <div>
+                <h1 class="admin-hero-title">Monitoring Promo</h1>
+                <p class="admin-hero-sub">Kelola dan monitor semua promo yang dibuat penjual</p>
+            </div>
+        </div>
+        <div class="admin-hero-stats">
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num">{{ $stats['total'] }}</div>
+                <div class="admin-hero-stat-label">Total</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#6ee7b7;">{{ $stats['active'] }}</div>
+                <div class="admin-hero-stat-label">Aktif</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#fde68a;">{{ $stats['scheduled'] }}</div>
+                <div class="admin-hero-stat-label">Terjadwal</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#fca5a5;">{{ $stats['inactive'] }}</div>
+                <div class="admin-hero-stat-label">Nonaktif</div>
+            </div>
+        </div>
     </div>
 
     {{-- Stats cards (clickable filter) --}}

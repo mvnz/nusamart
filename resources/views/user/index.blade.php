@@ -125,31 +125,54 @@
 .um-modal-row:last-child { border-bottom:none; }
 .um-modal-label { color:#8d8d8d; font-weight:500; flex-shrink:0; min-width:110px; }
 .um-modal-val { color:#1e1f29; font-weight:600; text-align:right; word-break:break-word; max-width:60%; }
+/* Admin Hero Banner */
+.admin-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px 28px 24px; margin-bottom:22px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.admin-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.admin-hero-left { display:flex; align-items:center; gap:16px; flex:1; min-width:200px; position:relative; z-index:1; }
+.admin-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.admin-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.admin-hero-sub { font-size:13px; margin:0; opacity:.7; }
+.admin-hero-stats { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
+.admin-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:10px 18px; text-align:center; min-width:72px; }
+.admin-hero-stat-num { font-size:24px; font-weight:800; line-height:1; }
+.admin-hero-stat-label { font-size:11px; opacity:.7; margin-top:3px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.admin-hero-action { position:relative; z-index:1; }
+.admin-hero-back { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:9px; font-size:13px; font-weight:700; text-decoration:none; transition:background .15s; }
+.admin-hero-back:hover { background:rgba(255,255,255,.2); color:#fff; }
+@media(max-width:768px) { .admin-hero { flex-direction:column; align-items:flex-start; } }
 </style>
 
 <div class="um-wrap">
 
-    <div class="um-page-header">
-        <h1 class="um-page-title"><i class="fa fa-users"></i> Manajemen Pengguna</h1>
-        <a href="{{ route('dashboard') }}" class="um-back-btn"><i class="fa fa-arrow-left"></i> Kembali</a>
-    </div>
-
-    <div class="um-stats">
-        <div class="um-stat">
-            <div class="um-stat-icon red"><i class="fa fa-users"></i></div>
-            <div><div class="um-stat-val">{{ $totalUsers }}</div><div class="um-stat-lbl">Total Pengguna</div></div>
+    {{-- Hero Banner --}}
+    <div class="admin-hero">
+        <div class="admin-hero-left">
+            <div class="admin-hero-icon"><i class="fa fa-users"></i></div>
+            <div>
+                <h1 class="admin-hero-title">Manajemen Pengguna</h1>
+                <p class="admin-hero-sub">Kelola data pengguna, pembeli, penjual, dan admin</p>
+            </div>
         </div>
-        <div class="um-stat">
-            <div class="um-stat-icon green"><i class="fa fa-shopping-bag"></i></div>
-            <div><div class="um-stat-val">{{ $totalBuyers }}</div><div class="um-stat-lbl">Pembeli</div></div>
+        <div class="admin-hero-stats">
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num">{{ $totalUsers }}</div>
+                <div class="admin-hero-stat-label">Total</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#6ee7b7;">{{ $totalBuyers }}</div>
+                <div class="admin-hero-stat-label">Pembeli</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#93c5fd;">{{ $totalSellers }}</div>
+                <div class="admin-hero-stat-label">Penjual</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#c4b5fd;">{{ $totalAdmins }}</div>
+                <div class="admin-hero-stat-label">Admin</div>
+            </div>
         </div>
-        <div class="um-stat">
-            <div class="um-stat-icon blue"><i class="fa fa-building-o"></i></div>
-            <div><div class="um-stat-val">{{ $totalSellers }}</div><div class="um-stat-lbl">Penjual</div></div>
-        </div>
-        <div class="um-stat">
-            <div class="um-stat-icon purple"><i class="fa fa-shield"></i></div>
-            <div><div class="um-stat-val">{{ $totalAdmins }}</div><div class="um-stat-lbl">Admin</div></div>
+        <div class="admin-hero-action">
+            <a href="{{ route('dashboard') }}" class="admin-hero-back"><i class="fa fa-arrow-left"></i> Kembali</a>
         </div>
     </div>
 

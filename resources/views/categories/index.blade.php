@@ -104,32 +104,54 @@
 .del-warn { display:flex; gap:10px; align-items:flex-start; background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:12px 14px; color:#78350f; font-size:13px; line-height:1.5; }
 .del-warn i { color:#d97706; font-size:16px; flex-shrink:0; margin-top:1px; }
 .del-hint { margin-top:10px; text-align:center; font-size:12px; color:#aaa; }
+/* Admin Hero Banner */
+.admin-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px 28px 24px; margin-bottom:22px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.admin-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.admin-hero-left { display:flex; align-items:center; gap:16px; flex:1; min-width:200px; position:relative; z-index:1; }
+.admin-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.admin-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.admin-hero-sub { font-size:13px; margin:0; opacity:.7; }
+.admin-hero-stats { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
+.admin-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:10px 18px; text-align:center; min-width:72px; }
+.admin-hero-stat-num { font-size:24px; font-weight:800; line-height:1; }
+.admin-hero-stat-label { font-size:11px; opacity:.7; margin-top:3px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.admin-hero-action { position:relative; z-index:1; }
+.admin-hero-back { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:9px; font-size:13px; font-weight:700; text-decoration:none; transition:background .15s; }
+.admin-hero-back:hover { background:rgba(255,255,255,.2); color:#fff; }
+@media(max-width:768px) { .admin-hero { flex-direction:column; align-items:flex-start; } }
 </style>
 
 <div class="ck-wrap">
 
-    <div class="ck-page-header">
-        <h1 class="ck-page-title"><i class="fa fa-tags"></i> Manajemen Kategori</h1>
-        <a href="{{ route('dashboard') }}" class="ck-back-btn"><i class="fa fa-arrow-left"></i> Kembali</a>
-    </div>
-
-    {{-- Stats --}}
-    <div class="ck-stats">
-        <div class="ck-stat">
-            <div class="ck-si red"><i class="fa fa-tags"></i></div>
-            <div><div class="ck-sv">{{ $stats['total'] }}</div><div class="ck-sl">Total Kategori</div></div>
+    {{-- Hero Banner --}}
+    <div class="admin-hero">
+        <div class="admin-hero-left">
+            <div class="admin-hero-icon"><i class="fa fa-tags"></i></div>
+            <div>
+                <h1 class="admin-hero-title">Manajemen Kategori</h1>
+                <p class="admin-hero-sub">Kelola kategori produk toko NusaMart</p>
+            </div>
         </div>
-        <div class="ck-stat">
-            <div class="ck-si green"><i class="fa fa-check-circle"></i></div>
-            <div><div class="ck-sv">{{ $stats['with_products'] }}</div><div class="ck-sl">Digunakan</div></div>
+        <div class="admin-hero-stats">
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num">{{ $stats['total'] }}</div>
+                <div class="admin-hero-stat-label">Total</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#6ee7b7;">{{ $stats['with_products'] }}</div>
+                <div class="admin-hero-stat-label">Digunakan</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#fca5a5;">{{ $stats['inactive'] }}</div>
+                <div class="admin-hero-stat-label">Nonaktif</div>
+            </div>
+            <div class="admin-hero-stat">
+                <div class="admin-hero-stat-num" style="color:#93c5fd;">{{ $stats['total_products'] }}</div>
+                <div class="admin-hero-stat-label">Produk</div>
+            </div>
         </div>
-        <div class="ck-stat">
-            <div class="ck-si grey"><i class="fa fa-ban"></i></div>
-            <div><div class="ck-sv">{{ $stats['inactive'] }}</div><div class="ck-sl">Nonaktif</div></div>
-        </div>
-        <div class="ck-stat">
-            <div class="ck-si blue"><i class="fa fa-box"></i></div>
-            <div><div class="ck-sv">{{ $stats['total_products'] }}</div><div class="ck-sl">Total Produk</div></div>
+        <div class="admin-hero-action">
+            <a href="{{ route('dashboard') }}" class="admin-hero-back"><i class="fa fa-arrow-left"></i> Kembali</a>
         </div>
     </div>
 
