@@ -299,32 +299,7 @@
         </section>
         @endif
 
-        {{-- ===== PROMO PRODUCTS ===== --}}
-        @if(!empty($promoProducts))
-        <section class="promo-products-section">
-            <div class="promo-products-header">
-                <div class="promo-products-title">
-                    <span class="promo-products-icon"><i class="fa fa-gift"></i></span>
-                    Produk Promo Spesial
-                </div>
-                <a href="{{ route('products.index') }}" class="promo-products-link">
-                    Lihat Semua <i class="fa fa-arrow-right"></i>
-                </a>
-            </div>
-            <div class="promo-products-scroll">
-                <div class="promo-products-row">
-                    @foreach($promoProducts as $p)
-                    <a href="{{ route('products.show', $p['id']) }}" class="promo-product-card" style="text-decoration:none;color:inherit">
-                        @if($p['image'])
-                        <div class="promo-product-img">
-                            <img src="{{ $p['image'] }}" alt="{{ $p['name'] }}">
-                            <span class="promo-discount-badge">-{{ $p['discount_pct'] }}%</span>
-                        </div>
-                        @else
-                        <div class="promo-product-img-placeholder">
-                            <i class="fa fa-image" style="font-size:40px;color:#ccc"></i>
-                        </div>
-                        @endif
+
                         <div class="promo-product-info">
                             <div class="promo-product-name">{{ $p['name'] }}</div>
                             <div class="promo-price-row">
