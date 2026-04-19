@@ -5,11 +5,65 @@
 @section('breadcrumb')Transaksi / <strong>Pesanan</strong>
 @endsection
 
+@push('styles')
+<style>
+.so-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d0a0a 100%); border-radius:18px; padding:28px 28px 24px; margin-bottom:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.so-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(209,0,36,.3) 0%,transparent 65%); pointer-events:none; }
+.so-hero-left { display:flex; align-items:center; gap:16px; flex:1; min-width:200px; position:relative; z-index:1; }
+.so-hero-icon { width:54px; height:54px; background:rgba(255,255,255,.12); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.so-hero-title { font-size:22px; font-weight:800; margin:0 0 4px; letter-spacing:-.4px; }
+.so-hero-sub { font-size:13px; margin:0; opacity:.7; }
+.so-hero-stats { display:flex; gap:10px; flex-wrap:wrap; position:relative; z-index:1; }
+.so-hero-stat { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 18px; text-align:center; min-width:76px; }
+.so-hero-stat-num { font-size:24px; font-weight:800; line-height:1; }
+.so-hero-stat-label { font-size:11px; opacity:.7; margin-top:4px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.so-hero-stat-num.pending-num { color:#fcd34d; }
+.so-hero-stat-num.processing-num { color:#6ee7b7; }
+.so-hero-stat-num.shipped-num { color:#93c5fd; }
+.so-hero-stat-num.done-num { color:#a7f3d0; }
+.alert-success { display:flex; align-items:center; gap:9px; padding:12px 16px; background:#d1fae5; border:1px solid #6ee7b7; color:#065f46; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:16px; }
+@media(max-width:768px) { .so-hero { flex-direction:column; align-items:flex-start; } .so-hero-stats { width:100%; } }
+</style>
+@endpush
+
 @section('content')
 
 @if(session('success'))
     <div class="alert-success"><i class="fa fa-check-circle"></i> {{ session('success') }}</div>
 @endif
+
+{{-- Hero Banner --}}
+<div class="so-hero">
+    <div class="so-hero-left">
+        <div class="so-hero-icon"><i class="fa fa-shopping-bag"></i></div>
+        <div>
+            <h1 class="so-hero-title">Pesanan Masuk</h1>
+            <p class="so-hero-sub">Kelola dan proses pesanan pembeli Anda</p>
+        </div>
+    </div>
+    <div class="so-hero-stats">
+        <div class="so-hero-stat">
+            <div class="so-hero-stat-num">{{ $counts['all'] }}</div>
+            <div class="so-hero-stat-label">Total</div>
+        </div>
+        <div class="so-hero-stat">
+            <div class="so-hero-stat-num pending-num">{{ $counts['pending'] }}</div>
+            <div class="so-hero-stat-label">Menunggu</div>
+        </div>
+        <div class="so-hero-stat">
+            <div class="so-hero-stat-num processing-num">{{ $counts['processing'] }}</div>
+            <div class="so-hero-stat-label">Diproses</div>
+        </div>
+        <div class="so-hero-stat">
+            <div class="so-hero-stat-num shipped-num">{{ $counts['shipped'] }}</div>
+            <div class="so-hero-stat-label">Dikirim</div>
+        </div>
+        <div class="so-hero-stat">
+            <div class="so-hero-stat-num done-num">{{ $counts['delivered'] }}</div>
+            <div class="so-hero-stat-label">Selesai</div>
+        </div>
+    </div>
+</div>
 
 {{-- Filter --}}
 <form method="GET" action="{{ route('seller.orders') }}" class="so-filter">
