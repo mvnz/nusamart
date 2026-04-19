@@ -21,11 +21,16 @@ class Promo extends Model
     ];
 
     protected $casts = [
+        'user_id' => 'integer',
+        'product_id' => 'integer',
         'original_price' => 'decimal:2',
         'promo_price' => 'decimal:2',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
         'is_active' => 'boolean',
+        'quota' => 'integer',
+        'used_quota' => 'integer',
+        'discount_percentage' => 'integer',
     ];
 
     /**
