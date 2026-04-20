@@ -78,6 +78,100 @@ $catColors = [
     '#d35400','#2980b9','#8e44ad','#229954','#f1c40f',
     '#c0392b','#1a5276','#6c3483','#1e8449','#b7950b',
 ];
+// Keyword → FA icon map (keyword dicek terhadap nama kategori lowercase)
+$catIcons = [
+    // Fashion & Pakaian
+    'fashion'       => 'fa-shopping-bag',
+    'pakaian'       => 'fa-shopping-bag',
+    'baju'          => 'fa-shopping-bag',
+    'busana'        => 'fa-shopping-bag',
+    'wanita'        => 'fa-female',
+    'pria'          => 'fa-male',
+    'bayi'          => 'fa-child',
+    'anak'          => 'fa-child',
+    'tekstil'       => 'fa-cut',
+    // Elektronik & Teknologi
+    'elektronik'    => 'fa-laptop',
+    'gadget'        => 'fa-mobile',
+    'handphone'     => 'fa-mobile',
+    'komputer'      => 'fa-desktop',
+    'kamera'        => 'fa-camera',
+    'televisi'      => 'fa-television',
+    'listrik'       => 'fa-bolt',
+    // Makanan & Minuman
+    'makanan'       => 'fa-cutlery',
+    'kuliner'       => 'fa-cutlery',
+    'camilan'       => 'fa-cookie',
+    'snack'         => 'fa-coffee',
+    'minuman'       => 'fa-coffee',
+    'kopi'          => 'fa-coffee',
+    'teh'           => 'fa-coffee',
+    'susu'          => 'fa-flask',
+    'bumbu'         => 'fa-leaf',
+    'rempah'        => 'fa-leaf',
+    // Kesehatan & Kecantikan
+    'kesehatan'     => 'fa-heartbeat',
+    'herbal'        => 'fa-leaf',
+    'obat'          => 'fa-medkit',
+    'vitamin'       => 'fa-plus-square',
+    'kecantikan'    => 'fa-magic',
+    'skincare'      => 'fa-magic',
+    'kosmetik'      => 'fa-magic',
+    'perawatan'     => 'fa-magic',
+    // Rumah & Dapur
+    'rumah'         => 'fa-home',
+    'dapur'         => 'fa-spoon',
+    'perabot'       => 'fa-couch',
+    'furniture'     => 'fa-couch',
+    'dekorasi'      => 'fa-paint-brush',
+    'peralatan'     => 'fa-wrench',
+    // Pertanian & Alam
+    'pertanian'     => 'fa-pagelines',
+    'tanaman'       => 'fa-tree',
+    'kebun'         => 'fa-tree',
+    'agro'          => 'fa-pagelines',
+    'peternakan'    => 'fa-paw',
+    'hewan'         => 'fa-paw',
+    // Kerajinan & Seni
+    'kerajinan'     => 'fa-paint-brush',
+    'seni'          => 'fa-paint-brush',
+    'batik'         => 'fa-th',
+    'tenun'         => 'fa-th',
+    // Olahraga
+    'olahraga'      => 'fa-futbol-o',
+    'sport'         => 'fa-bicycle',
+    'fitness'       => 'fa-bicycle',
+    // Otomotif
+    'otomotif'      => 'fa-car',
+    'motor'         => 'fa-motorcycle',
+    'mobil'         => 'fa-car',
+    // Buku & Pendidikan
+    'buku'          => 'fa-book',
+    'pendidikan'    => 'fa-graduation-cap',
+    'alat tulis'    => 'fa-pencil',
+    // Mainan & Hobi
+    'mainan'        => 'fa-gamepad',
+    'hobi'          => 'fa-puzzle-piece',
+    'koleksi'       => 'fa-star',
+    // Perlengkapan
+    'perkakas'      => 'fa-wrench',
+    'alat'          => 'fa-wrench',
+    'industri'      => 'fa-industry',
+    // Travel & Tas
+    'tas'           => 'fa-suitcase',
+    'travel'        => 'fa-plane',
+    'koper'         => 'fa-suitcase',
+    // Default
+];
+
+$getCatIcon = function($name) use ($catIcons) {
+    $lower = strtolower($name);
+    foreach ($catIcons as $keyword => $icon) {
+        if (str_contains($lower, $keyword)) return $icon;
+    }
+    return 'fa-tag';
+};
+
 $allLetters = range('A', 'Z');
 $hasLetters = $grouped->keys()->toArray();
 $totalCats = $categories->count();
@@ -141,11 +235,14 @@ $colorIdx = 0;
             </div>
             <div class="catpage-grid">
                 @foreach($cats as $cat)
-                @php $color = $catColors[$colorIdx++ % count($catColors)]; @endphp
+                @php
+                    $color = $catColors[$colorIdx++ % count($catColors)];
+                    $icon  = $getCatIcon($cat->name);
+                @endphp
                 <a href="{{ route('products.index', ['category_id' => $cat->id]) }}"
                    class="catpage-card" data-name="{{ strtolower($cat->name) }}">
                     <div class="catpage-card-icon" style="background: {{ $color }}; box-shadow: 0 6px 18px {{ $color }}55;">
-                        <i class="fa fa-tag"></i>
+                        <i class="fa {{ $icon }}"></i>
                     </div>
                     <div class="catpage-card-name">{{ $cat->name }}</div>
                     <div class="catpage-card-count"><span>{{ $cat->products_count }} produk</span></div>
