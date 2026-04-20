@@ -277,7 +277,7 @@
 
     {{-- Hero Photo --}}
     <div class="ks-hero">
-        <div class="ks-hero-inner{{ $kuliner->gambar ? '' : ' single' }}">
+        <div class="ks-hero-inner single">
             {{-- Main photo --}}
             <div class="ks-hero-main">
                 @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
@@ -288,15 +288,7 @@
                     </div>
                 @endif
             </div>
-            {{-- Thumb 1 --}}
-            @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
-            <div class="ks-hero-thumb">
-                <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}" style="filter:brightness(.75) saturate(.9)">
-            </div>
-            <div class="ks-hero-thumb">
-                <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}" style="filter:brightness(.6) saturate(.8)">
-            </div>
-            @endif
+
         </div>
 
         {{-- Status badge --}}
