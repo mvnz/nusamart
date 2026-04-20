@@ -74,7 +74,33 @@ class ProductController extends Controller
 
         $activePromo = $product->activePromo();
 
+<<<<<<< HEAD
         return view('products.show', compact('product', 'isWishlisted', 'activePromo'));
+=======
+        // Get recommended products from the same category
+        $recommendations = Product::active()
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->with(['seller', 'category'])
+            ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->latest()
+            ->limit(6)
+            ->get();
+
+        
+        $recommendedProducts = \App\Models\Product::active()
+            ->where('id', '!=', $product->id)
+            ->where('category_id', $product->category_id)
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->limit(4)
+            ->get();
+
+
+        return view('products.show', compact('product', 'isWishlisted', 'activePromo', 'recommendations', 'recommendedProducts'));
+>>>>>>> 719bb98 (feat: add product recommendation on product detail page)
     }
 
     /**
