@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KulinerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegistrationController;
@@ -75,6 +76,10 @@ Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->m
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 Route::get('/kategori', [ProductController::class, 'categories'])->name('categories.index');
 Route::get('/produk/{product}', [ProductController::class, 'show'])->name('products.show');
+
+// Kuliner routes (public)
+Route::get('/kuliner', [KulinerController::class, 'index'])->name('kuliner.index');
+Route::get('/kuliner/{id}', [KulinerController::class, 'show'])->name('kuliner.show');
 
 // Seller Product Management routes (auth required)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -170,6 +175,14 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     // Visitor stats
     Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
     Route::get('/logins', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'logins'])->name('admin.logins');
+
+    // Kuliner management
+    Route::get('/kuliner', [\App\Http\Controllers\Admin\KulinerController::class, 'index'])->name('admin.kuliner.index');
+    Route::get('/kuliner/create', [\App\Http\Controllers\Admin\KulinerController::class, 'create'])->name('admin.kuliner.create');
+    Route::post('/kuliner', [\App\Http\Controllers\Admin\KulinerController::class, 'store'])->name('admin.kuliner.store');
+    Route::get('/kuliner/{kuliner}/edit', [\App\Http\Controllers\Admin\KulinerController::class, 'edit'])->name('admin.kuliner.edit');
+    Route::put('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'update'])->name('admin.kuliner.update');
+    Route::delete('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'destroy'])->name('admin.kuliner.destroy');
 
     // Courier management
     Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');

@@ -42,5 +42,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateTestUsersSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(InaExportProductSeeder::class);
+        $this->call(KulinerSeeder::class);
     }
 }
