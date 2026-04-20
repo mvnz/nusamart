@@ -57,8 +57,9 @@ class ProductController extends Controller
 
         // Group alphabetically
         $grouped = $categories->groupBy(fn($c) => strtoupper(substr($c->name, 0, 1)));
+        $totalProducts = $categories->sum('products_count');
 
-        return view('categories.categories', compact('grouped'));
+        return view('categories.categories', compact('grouped', 'categories', 'totalProducts'));
     }
 
     public function show(Product $product)
