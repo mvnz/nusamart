@@ -334,6 +334,14 @@
                         {{ Str::limit($kuliner->alamat, 60) }}
                     </div>
 
+                    {{-- Foto --}}
+                    @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
+                    <div style="margin-top:16px;border-radius:12px;overflow:hidden;height:240px;">
+                        <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}"
+                             style="width:100%;height:100%;object-fit:cover;display:block;">
+                    </div>
+                    @endif
+
                     {{-- Highlights --}}
                     <div class="ks-highlights">
                         <div class="ks-hl">
