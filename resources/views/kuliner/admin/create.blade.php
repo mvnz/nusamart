@@ -12,6 +12,16 @@
 .kf-back-btn { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:#f4f5f7; color:#555; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; transition:background .15s; font-family:inherit; }
 .kf-back-btn:hover { background:#e5e7eb; color:#1e1f29; }
 
+/* Hero Banner */
+.admin-hero { background:linear-gradient(135deg,#0f0519 0%,#1a0a2e 55%,#2d1500 100%); border-radius:18px; padding:24px 28px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; color:#fff; position:relative; overflow:hidden; }
+.admin-hero::before { content:''; position:absolute; top:-80px; right:-80px; width:260px; height:260px; background:radial-gradient(circle,rgba(217,119,6,.35) 0%,transparent 65%); pointer-events:none; }
+.admin-hero-left { display:flex; align-items:center; gap:16px; position:relative; z-index:1; }
+.admin-hero-icon { width:50px; height:50px; background:rgba(255,255,255,.12); border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; border:1px solid rgba(255,255,255,.2); }
+.admin-hero-title { font-size:20px; font-weight:800; margin:0 0 3px; letter-spacing:-.4px; }
+.admin-hero-sub { font-size:12.5px; margin:0; opacity:.7; }
+.admin-hero-back { display:inline-flex; align-items:center; gap:7px; padding:9px 16px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:9px; font-size:13px; font-weight:700; text-decoration:none; transition:background .15s; position:relative; z-index:1; }
+.admin-hero-back:hover { background:rgba(255,255,255,.2); color:#fff; }
+
 .kf-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
 
 .kf-section-divider { padding:14px 24px 10px; background:#f8f9fb; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:#8d8d8d; }
@@ -60,9 +70,15 @@
 </style>
 
 <div class="kf-wrap">
-    <div class="kf-page-header">
-        <h1 class="kf-page-title"><i class="fa fa-plus-circle"></i> Tambah Warung Kuliner</h1>
-        <a href="{{ route('admin.kuliner.index') }}" class="kf-back-btn"><i class="fa fa-arrow-left"></i> Kembali</a>
+    <div class="admin-hero">
+        <div class="admin-hero-left">
+            <div class="admin-hero-icon"><i class="fa fa-plus"></i></div>
+            <div>
+                <h1 class="admin-hero-title">Tambah Warung Kuliner</h1>
+                <p class="admin-hero-sub">Isi informasi warung yang akan ditampilkan di NusaMart</p>
+            </div>
+        </div>
+        <a href="{{ route('admin.kuliner.index') }}" class="admin-hero-back"><i class="fa fa-arrow-left"></i> Kembali</a>
     </div>
 
     @if($errors->any())
