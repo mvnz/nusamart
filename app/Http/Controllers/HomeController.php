@@ -131,15 +131,17 @@ class HomeController extends Controller
 
         // Tab products: For User / Rekomendasi / Populer (10 each, daily-seeded)
         try {
-            $allActive = Product::with(['category', 'seller'])->where('is_active', true)->where('stock', '>', 0)->get();
+            $allActive = Product::with(['category', 'seller'])
+                ->withCount(['orderItems' => fn($q) => $q->whereHas('order', fn($o) => $o->where('status', 'delivered'))])
+                ->withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->where('is_active', true)->where('stock', '>', 0)->get();
             $allArr = $allActive->all();
             $dayStr = date('Y-m-d');
 
             $decorateProduct = function ($p) {
-                mt_srand($p->id * 3571);
-                $sold = mt_rand(10, 600);
-                mt_srand($p->id * 1301);
-                $rating = round(mt_rand(40, 50) / 10, 1);
+                $sold   = $p->order_items_count ?? 0;
+                $rating = ($p->reviews_count ?? 0) > 0 ? round($p->reviews_avg_rating, 1) : null;
                 $catObj = $p->relationLoaded('category') ? $p->getRelation('category') : null;
                 return [
                     'id'             => $p->id,
@@ -153,6 +155,7 @@ class HomeController extends Controller
                     'stock'          => $p->stock,
                     'sold'           => $sold,
                     'rating'         => $rating,
+                    'reviews_count'  => $p->reviews_count ?? 0,
                 ];
             };
 

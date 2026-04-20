@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'NusaMart – Marketplace Produk UMKM Lokal')
 
@@ -348,9 +348,12 @@
                                 <div class="ptile-footer">
                                     <span class="ptile-seller"><i class="fa fa-store"></i> {{ $p['seller'] }}</span>
                                     <span class="ptile-rating">
+                                        @if($p['rating'])
                                         <i class="fa fa-star"></i>
                                         {{ $p['rating'] }}
-                                        <span>({{ $p['sold'] }})</span>
+                                        @if($p['sold'] > 0)<span class="pcr-sep">&middot;</span>@endif
+                                        @endif
+                                        @if($p['sold'] > 0)<span>{{ $p['sold'] }} terjual</span>@endif
                                     </span>
                                 </div>
                             </div>
