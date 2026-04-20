@@ -394,6 +394,54 @@
     </div>
 </div>
 
+{{-- ========================= --}}
+{{-- REKOMENDASI PRODUK SERUPA --}}
+{{-- ========================= --}}
+@if(isset($recommendedProducts) && $recommendedProducts->count())
+<div style="margin-top:48px;">
+    <h3 style="font-size:18px;font-weight:800;margin-bottom:16px;color:#1e1f29;">
+        Produk Serupa
+    </h3>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;">
+        @foreach($recommendedProducts as $item)
+        <a href="{{ route('products.show', $item) }}" style="display:block;text-decoration:none;color:inherit;background:#fff;border-radius:14px;
+                  box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;
+                  transition:transform .15s, box-shadow .15s;"
+           onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.12)'"
+           onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 10px rgba(0,0,0,.08)'">
+
+            {{-- Gambar --}}
+            <div style="aspect-ratio:1;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">
+                @if($item->image)
+                    <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->name }}"
+                         style="width:100%;height:100%;object-fit:cover;">
+                @else
+                    <i class="fa fa-shopping-bag" style="font-size:48px;color:#ddd;"></i>
+                @endif
+            </div>
+
+            {{-- Info --}}
+            <div style="padding:14px;">
+                <div style="font-size:14px;font-weight:700;color:#1e1f29;line-height:1.4;">
+                    {{ $item->name }}
+                </div>
+
+                <div style="margin-top:6px;font-size:15px;font-weight:800;color:#D10024;">
+                    {{ $item->formatted_price }}
+                </div>
+
+                <div style="margin-top:4px;font-size:12px;color:#888;">
+                    ★ {{ number_format($item->reviews_avg_rating ?? 0, 1) }}
+                    ({{ $item->reviews_count ?? 0 }} ulasan)
+                </div>
+            </div>
+        </a>
+        @endforeach
+    </div>
+</div>
+@endif
+
 </div>{{-- /container product-detail-page --}}
 @endsection
 

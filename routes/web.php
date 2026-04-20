@@ -81,6 +81,7 @@ Route::get('/produk/{product}', [ProductController::class, 'show'])->name('produ
 Route::get('/kuliner', [KulinerController::class, 'index'])->name('kuliner.index');
 Route::get('/kuliner/{id}', [KulinerController::class, 'show'])->name('kuliner.show');
 
+
 // Seller Product Management routes (auth required)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/produk-saya', [ProductController::class, 'myProducts'])->name('products.my-products');
@@ -183,6 +184,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::get('/kuliner/{kuliner}/edit', [\App\Http\Controllers\Admin\KulinerController::class, 'edit'])->name('admin.kuliner.edit');
     Route::put('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'update'])->name('admin.kuliner.update');
     Route::delete('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'destroy'])->name('admin.kuliner.destroy');
+
 
     // Courier management
     Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');

@@ -74,7 +74,15 @@ class ProductController extends Controller
 
         $activePromo = $product->activePromo();
 
-        return view('products.show', compact('product', 'isWishlisted', 'activePromo'));
+        $recommendedProducts = Product::active()
+            ->where('id', '!=', $product->id)
+            ->where('category_id', $product->category_id)
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->limit(4)
+            ->get();
+
+        return view('products.show', compact('product', 'isWishlisted', 'activePromo', 'recommendedProducts'));
     }
 
     /**
