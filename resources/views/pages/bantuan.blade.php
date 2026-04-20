@@ -6,36 +6,51 @@
 <style>
 /* ── Hero ── */
 .hb-hero {
-    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 50%, #1a1a2e 100%);
-    padding: 52px 0 48px;
+    background: linear-gradient(135deg, #1a0533 0%, #D10024 55%, #ff6b35 100%);
+    padding: 52px 0 70px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    margin-bottom: -44px;
 }
-.hb-hero::before {
+.hb-hero::after {
     content: '';
-    position: absolute;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(209,0,36,.25) 0%, transparent 70%);
-    top: -100px; left: 50%; transform: translateX(-50%);
-    pointer-events: none;
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Ccircle cx='40' cy='40' r='30' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
 }
+.hb-blob {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    animation: hbBlobPulse 4s ease-in-out infinite;
+}
+.hb-blob.b1 { width:340px; height:340px; top:-90px; right:-70px; animation-delay:0s; }
+.hb-blob.b2 { width:220px; height:220px; bottom:-70px; left:8%;  animation-delay:1.6s; }
+.hb-blob.b3 { width:130px; height:130px; top:10px;   left:38%; animation-delay:.9s; }
+@keyframes hbBlobPulse { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.2);opacity:1} }
 .hb-hero-icon {
-    width: 72px; height: 72px; border-radius: 20px;
-    background: rgba(209,0,36,.15);
-    border: 1.5px solid rgba(209,0,36,.35);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 28px; color: #D10024;
-    position: relative; z-index: 1;
-    animation: hbPulse 2.5s infinite;
+    width: 82px; height: 82px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255,255,255,.28);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 36px; color: #fff;
+    margin-bottom: 16px;
+    position: relative; z-index: 2;
+    animation: hbIconFloat 3.2s ease-in-out infinite;
 }
-@keyframes hbPulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(209,0,36,.3); }
-    50%      { box-shadow: 0 0 0 14px rgba(209,0,36,0); }
+@keyframes hbIconFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+.hb-hero h1 { font-size: 30px; font-weight: 900; color: #fff; position: relative; z-index: 2; margin-bottom: 8px; text-shadow: 0 4px 18px rgba(0,0,0,.35); }
+.hb-hero p  { font-size: 14px; color: rgba(255,255,255,.82); position: relative; z-index: 2; margin-bottom: 22px; }
+.hb-hero-pills { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; position:relative; z-index:2; margin-bottom: 28px; }
+.hb-hero-pill {
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.28);
+    backdrop-filter: blur(6px);
+    color: #fff; font-size: 12px; font-weight: 700;
+    padding: 6px 14px; border-radius: 20px;
+    display: flex; align-items: center; gap: 6px;
 }
-.hb-hero h1 { font-size: 28px; font-weight: 800; color: #fff; position: relative; z-index: 1; margin-bottom: 8px; }
-.hb-hero p  { font-size: 14px; color: rgba(255,255,255,.6); position: relative; z-index: 1; margin-bottom: 28px; }
 
 .hb-search-wrap {
     max-width: 520px; margin: 0 auto;
@@ -62,7 +77,7 @@
 .hb-search-btn:hover { background: #a8001e; }
 
 /* Quick-stats strip */
-.hb-stats { background: #fff; border-bottom: 1px solid #f0f0f0; padding: 16px 0; }
+.hb-stats { background: #fff; padding: 16px 24px; }
 .hb-stats-inner { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; }
 .hb-stat-item {
     display: flex; align-items: center; gap: 10px;
@@ -74,8 +89,15 @@
 .hb-stat-lbl  { font-size: 11px; color: #888; }
 
 /* ── Main Layout ── */
-.hb-page { padding: 36px 0 64px; background: #f7f8fa; }
-.hb-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+.hb-page { padding: 0 0 64px; background: #f5f6fa; }
+.hb-shell {
+    background: #fff;
+    border-radius: 22px 22px 0 0;
+    position: relative; z-index: 2;
+    box-shadow: 0 -6px 24px rgba(0,0,0,.07);
+    padding: 28px 0 0;
+}
+.hb-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; padding: 0 24px 32px; }
 @media(max-width: 820px) { .hb-layout { grid-template-columns: 1fr; } }
 
 /* Sidebar nav */
@@ -195,10 +217,18 @@
 
 {{-- Hero --}}
 <div class="hb-hero">
+    <div class="hb-blob b1"></div>
+    <div class="hb-blob b2"></div>
+    <div class="hb-blob b3"></div>
     <div class="container">
         <div class="hb-hero-icon"><i class="fa fa-life-ring"></i></div>
         <h1>Pusat Bantuan NusaMart</h1>
         <p>Temukan jawaban cepat atas pertanyaan seputar belanja Anda</p>
+        <div class="hb-hero-pills">
+            <div class="hb-hero-pill"><i class="fa fa-question-circle"></i> 18 Pertanyaan</div>
+            <div class="hb-hero-pill"><i class="fa fa-headphones"></i> CS 08.00–17.00</div>
+            <div class="hb-hero-pill"><i class="fa fa-bolt"></i> Respon &lt; 24 jam</div>
+        </div>
         <div class="hb-search-wrap">
             <i class="fa fa-search hb-search-icon"></i>
             <input type="text" id="hbSearch" placeholder="Cari pertanyaan... misal: cara membayar, lacak pesanan" oninput="hbDoSearch(this.value)">
@@ -207,10 +237,14 @@
     </div>
 </div>
 
-{{-- Stats strip --}}
-<div class="hb-stats">
-    <div class="container">
-        <div class="hb-stats-inner">
+{{-- Main content --}}
+<div class="hb-page">
+  <div class="container">
+    <div class="hb-shell">
+
+      {{-- Stats strip --}}
+      <div class="hb-stats" style="border-bottom:1px solid #f0f0f0;border-radius:22px 22px 0 0;">
+          <div class="hb-stats-inner">
             <div class="hb-stat-item">
                 <div class="hb-stat-icon" style="background:#fff0f0;color:#D10024;"><i class="fa fa-question-circle"></i></div>
                 <div>
@@ -239,13 +273,9 @@
                     <div class="hb-stat-lbl">Respon email maks.</div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+          </div>
+      </div>
 
-{{-- Main content --}}
-<div class="hb-page">
-    <div class="container">
         <div class="hb-layout">
 
             {{-- Sidebar --}}
@@ -549,7 +579,8 @@
 
             </div>{{-- end FAQ content --}}
         </div>{{-- end layout --}}
-    </div>
+    </div>{{-- end .hb-shell --}}
+  </div>
 </div>
 @endsection
 
