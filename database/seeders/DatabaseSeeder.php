@@ -42,9 +42,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateTestUsersSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(InaExportProductSeeder::class);
-<<<<<<< HEAD
         $this->call(KulinerSeeder::class);
-=======
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
     }
 }

@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
-<<<<<<< HEAD
 use App\Http\Controllers\KulinerController;
-=======
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RegistrationController;
@@ -58,12 +55,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Dashboard route (protected)
-<<<<<<< HEAD
 Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-=======
-// Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
 
 // Profile routes
 Route::get('/profile', [ProfileController::class, 'show'])->middleware(['auth', 'verified'])->name('profile');
@@ -85,13 +77,11 @@ Route::get('/produk', [ProductController::class, 'index'])->name('products.index
 Route::get('/kategori', [ProductController::class, 'categories'])->name('categories.index');
 Route::get('/produk/{product}', [ProductController::class, 'show'])->name('products.show');
 
-<<<<<<< HEAD
 // Kuliner routes (public)
 Route::get('/kuliner', [KulinerController::class, 'index'])->name('kuliner.index');
 Route::get('/kuliner/{id}', [KulinerController::class, 'show'])->name('kuliner.show');
 
-=======
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
+
 // Seller Product Management routes (auth required)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/produk-saya', [ProductController::class, 'myProducts'])->name('products.my-products');
@@ -187,7 +177,6 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::get('/visitors', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'visitors'])->name('admin.visitors');
     Route::get('/logins', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'logins'])->name('admin.logins');
 
-<<<<<<< HEAD
     // Kuliner management
     Route::get('/kuliner', [\App\Http\Controllers\Admin\KulinerController::class, 'index'])->name('admin.kuliner.index');
     Route::get('/kuliner/create', [\App\Http\Controllers\Admin\KulinerController::class, 'create'])->name('admin.kuliner.create');
@@ -196,8 +185,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::put('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'update'])->name('admin.kuliner.update');
     Route::delete('/kuliner/{kuliner}', [\App\Http\Controllers\Admin\KulinerController::class, 'destroy'])->name('admin.kuliner.destroy');
 
-=======
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
+
     // Courier management
     Route::get('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'index'])->name('admin.couriers');
     Route::post('/couriers', [\App\Http\Controllers\Admin\CourierController::class, 'store'])->name('admin.couriers.store');

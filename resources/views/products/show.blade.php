@@ -394,8 +394,6 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-=======
 {{-- ========================= --}}
 {{-- REKOMENDASI PRODUK SERUPA --}}
 {{-- ========================= --}}
@@ -407,7 +405,7 @@
 
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;">
         @foreach($recommendedProducts as $item)
-        <a href="{{ route('products.show', $itemdecoration:none;color:inherit;background:#fff;border-radius:14px;
+        <a href="{{ route('products.show', $item) }}" style="display:block;text-decoration:none;color:inherit;background:#fff;border-radius:14px;
                   box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;
                   transition:transform .15s, box-shadow .15s;"
            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.12)'"
@@ -416,7 +414,7 @@
             {{-- Gambar --}}
             <div style="aspect-ratio:1;background:#f3f4f6;display:flex;align-items:center;justify-content:center;">
                 @if($item->image)
-                    <img src="{{ asset('storage/'.$item          alt="{{ $item->name }}"
+                    <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->name }}"
                          style="width:100%;height:100%;object-fit:cover;">
                 @else
                     <i class="fa fa-shopping-bag" style="font-size:48px;color:#ddd;"></i>
@@ -444,7 +442,6 @@
 </div>
 @endif
 
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
 </div>{{-- /container product-detail-page --}}
 @endsection
 
@@ -506,10 +503,4 @@ document.querySelectorAll('.rv-filter-btn').forEach(function(btn) {
     });
 });
 </script>
-<<<<<<< HEAD
 @endpush
-=======
-
-@endpush
-
->>>>>>> 719bb98 (feat: add product recommendation on product detail page)
