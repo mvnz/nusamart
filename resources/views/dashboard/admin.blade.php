@@ -1,38 +1,48 @@
 {{-- ============ ADMIN DASHBOARD ============ --}}
 <style>
 .admin-stat-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 22px 20px;
+    border-radius: 20px;
+    padding: 24px 22px;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    border: 1px solid #f0f0f0;
-    border-left: 4px solid transparent;
-    transition: transform .2s, box-shadow .2s;
+    align-items: flex-start;
+    gap: 0;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
+    border: none;
+    transition: transform .22s, box-shadow .22s;
     flex: 1;
-    min-width: 0;
+    min-width: 180px;
+    position: relative;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
 }
-.admin-stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.1); }
-.admin-stat-card.c-red    { border-left-color: #D10024; }
-.admin-stat-card.c-blue   { border-left-color: #2196f3; }
-.admin-stat-card.c-purple { border-left-color: #9b59b6; }
-.admin-stat-card.c-green  { border-left-color: #27ae60; }
-.admin-stat-card.c-orange { border-left-color: #f97316; }
+.admin-stat-card:hover { transform: translateY(-5px); box-shadow: 0 16px 36px rgba(0,0,0,.18); }
+.admin-stat-card.c-red    { background: linear-gradient(135deg,#D10024 0%,#ff6b6b 100%); }
+.admin-stat-card.c-blue   { background: linear-gradient(135deg,#1565c0 0%,#42a5f5 100%); }
+.admin-stat-card.c-purple { background: linear-gradient(135deg,#6a1b9a 0%,#ce93d8 100%); }
+.admin-stat-card.c-green  { background: linear-gradient(135deg,#1b5e20 0%,#66bb6a 100%); }
+.admin-stat-card.c-orange { background: linear-gradient(135deg,#e65100 0%,#ffb74d 100%); }
+.admin-stat-card-deco {
+    position: absolute; right: -16px; bottom: -16px;
+    font-size: 90px; opacity: .15; color: #fff; pointer-events: none;
+    line-height: 1;
+}
 .admin-stat-icon {
-    width: 56px; height: 56px; border-radius: 14px;
+    width: 46px; height: 46px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; color: #fff; flex-shrink: 0;
+    font-size: 20px; color: #fff; flex-shrink: 0;
+    background: rgba(255,255,255,.2);
+    backdrop-filter: blur(6px);
+    border: 1.5px solid rgba(255,255,255,.3);
+    margin-bottom: 16px;
 }
-.admin-stat-icon.bg-red    { background: linear-gradient(135deg,#D10024,#ff6b6b); }
-.admin-stat-icon.bg-blue   { background: linear-gradient(135deg,#2196f3,#64b5f6); }
-.admin-stat-icon.bg-green  { background: linear-gradient(135deg,#27ae60,#66bb6a); }
-.admin-stat-icon.bg-purple { background: linear-gradient(135deg,#9b59b6,#ce93d8); }
-.admin-stat-info { flex: 1; min-width: 0; }
-.admin-stat-value { font-size: 28px; font-weight: 800; color: #1e1f29; line-height: 1; }
-.admin-stat-label { font-size: 13px; font-weight: 600; color: #555; margin-top: 4px; }
-.admin-stat-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+.admin-stat-icon.bg-red, .admin-stat-icon.bg-blue,
+.admin-stat-icon.bg-green, .admin-stat-icon.bg-purple { background: rgba(255,255,255,.2); }
+.admin-stat-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.admin-stat-value { font-size: 36px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.admin-stat-label { font-size: 14px; font-weight: 700; color: rgba(255,255,255,.95); margin-top: 4px; }
+.admin-stat-sub { font-size: 11px; color: rgba(255,255,255,.7); margin-top: 2px; }
 
 .admin-donut-wrap { display: flex; align-items: center; gap: 32px; padding: 20px 24px; flex-wrap: wrap; }
 .admin-donut-svg { flex-shrink: 0; }
@@ -114,9 +124,10 @@
 
 <!-- Stat Cards -->
 <section class="container" style="padding-bottom:0">
-    <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
         <div class="admin-stat-card c-red">
-            <div class="admin-stat-icon bg-red"><i class="fa fa-users"></i></div>
+            <div class="admin-stat-deco" style="position:absolute;right:-14px;bottom:-14px;font-size:96px;opacity:.13;color:#fff;pointer-events:none"><i class="fa fa-users"></i></div>
+            <div class="admin-stat-icon"><i class="fa fa-users"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalUsers }}</div>
                 <div class="admin-stat-label">Total Pengguna</div>
@@ -124,7 +135,8 @@
             </div>
         </div>
         <div class="admin-stat-card c-blue">
-            <div class="admin-stat-icon bg-blue"><i class="fa fa-shopping-bag"></i></div>
+            <div style="position:absolute;right:-14px;bottom:-14px;font-size:96px;opacity:.13;color:#fff;pointer-events:none"><i class="fa fa-shopping-bag"></i></div>
+            <div class="admin-stat-icon"><i class="fa fa-shopping-bag"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalBuyers }}</div>
                 <div class="admin-stat-label">Pembeli</div>
@@ -132,7 +144,8 @@
             </div>
         </div>
         <div class="admin-stat-card c-purple">
-            <div class="admin-stat-icon bg-purple"><i class="fa fa-building-o"></i></div>
+            <div style="position:absolute;right:-14px;bottom:-14px;font-size:96px;opacity:.13;color:#fff;pointer-events:none"><i class="fa fa-building-o"></i></div>
+            <div class="admin-stat-icon"><i class="fa fa-building-o"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalSellers }}</div>
                 <div class="admin-stat-label">Penjual</div>
@@ -140,7 +153,8 @@
             </div>
         </div>
         <div class="admin-stat-card c-green">
-            <div class="admin-stat-icon bg-green"><i class="fa fa-shield"></i></div>
+            <div style="position:absolute;right:-14px;bottom:-14px;font-size:96px;opacity:.13;color:#fff;pointer-events:none"><i class="fa fa-shield"></i></div>
+            <div class="admin-stat-icon"><i class="fa fa-shield"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalAdmins }}</div>
                 <div class="admin-stat-label">Admin</div>

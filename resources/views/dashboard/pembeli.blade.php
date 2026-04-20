@@ -38,24 +38,29 @@
 @media(max-width:768px){ .dash-stats { grid-template-columns: repeat(2, 1fr); } }
 
 .stat-card {
-    background: #fff; border-radius: 14px; padding: 20px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.06);
-    border:1px solid #f0f0f0;
-    border-left: 4px solid transparent;
-    display: flex; flex-direction: column; gap: 8px;
-    transition: transform .2s, box-shadow .2s;
+    border-radius: 20px; padding: 22px 20px;
+    box-shadow: 0 6px 24px rgba(0,0,0,.13);
+    border: none;
+    display: flex; flex-direction: column; gap: 0;
+    transition: transform .22s, box-shadow .22s;
+    position: relative; overflow: hidden;
+    min-height: 130px; justify-content: space-between;
 }
-.stat-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
-.stat-card.c-red    { border-left-color:#D10024; }
-.stat-card.c-yellow { border-left-color:#f59e0b; }
-.stat-card.c-green  { border-left-color:#10b981; }
-.stat-card.c-purple { border-left-color:#7c3aed; }
+.stat-card:hover { transform:translateY(-5px); box-shadow:0 16px 36px rgba(0,0,0,.18); }
+.stat-card.c-red    { background: linear-gradient(135deg,#D10024 0%,#ff6b6b 100%); }
+.stat-card.c-yellow { background: linear-gradient(135deg,#b45309 0%,#fbbf24 100%); }
+.stat-card.c-green  { background: linear-gradient(135deg,#065f46 0%,#34d399 100%); }
+.stat-card.c-purple { background: linear-gradient(135deg,#4c1d95 0%,#a78bfa 100%); }
 .stat-card .stat-icon {
-    width: 44px; height: 44px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    background: rgba(255,255,255,.2); color: #fff;
+    backdrop-filter: blur(6px); border:1.5px solid rgba(255,255,255,.3);
+    margin-bottom: 14px;
 }
-.stat-card .stat-num { font-size: 28px; font-weight: 800; color: #1e1f29; }
-.stat-card .stat-label { font-size: 12px; color: #888; font-weight: 500; }
+.stat-card .stat-num { font-size: 34px; font-weight: 900; color: #fff; line-height:1; text-shadow:0 2px 8px rgba(0,0,0,.2); }
+.stat-card .stat-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); margin-top: 4px; }
+.stat-card .stat-deco { position:absolute;right:-12px;bottom:-12px;font-size:88px;opacity:.13;color:#fff;pointer-events:none;line-height:1; }
 
 .dash-grid { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
 @media(max-width:900px){ .dash-grid { grid-template-columns: 1fr; } }
@@ -187,22 +192,26 @@
 
     <div class="dash-stats">
         <div class="stat-card c-red">
-            <div class="stat-icon" style="background:#fff0f0;color:#D10024;"><i class="fa fa-shopping-bag"></i></div>
+            <div class="stat-deco"><i class="fa fa-shopping-bag"></i></div>
+            <div class="stat-icon"><i class="fa fa-shopping-bag"></i></div>
             <div class="stat-num">{{ $totalOrders }}</div>
             <div class="stat-label">Total Pembelian</div>
         </div>
         <div class="stat-card c-yellow">
-            <div class="stat-icon" style="background:#fef3c7;color:#f59e0b;"><i class="fa fa-clock-o"></i></div>
+            <div class="stat-deco"><i class="fa fa-clock-o"></i></div>
+            <div class="stat-icon"><i class="fa fa-clock-o"></i></div>
             <div class="stat-num">{{ $pendingOrders }}</div>
             <div class="stat-label">Menunggu Konfirmasi</div>
         </div>
         <div class="stat-card c-green">
-            <div class="stat-icon" style="background:#d1fae5;color:#10b981;"><i class="fa fa-check-circle"></i></div>
+            <div class="stat-deco"><i class="fa fa-check-circle"></i></div>
+            <div class="stat-icon"><i class="fa fa-check-circle"></i></div>
             <div class="stat-num">{{ $completedOrders }}</div>
             <div class="stat-label">Pesanan Selesai</div>
         </div>
         <div class="stat-card c-purple">
-            <div class="stat-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fa fa-shopping-cart"></i></div>
+            <div class="stat-deco"><i class="fa fa-shopping-cart"></i></div>
+            <div class="stat-icon"><i class="fa fa-shopping-cart"></i></div>
             <div class="stat-num">{{ $cartCount }}</div>
             <div class="stat-label">Item di Keranjang</div>
         </div>
