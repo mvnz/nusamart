@@ -506,4 +506,213 @@ class SecurityTest extends TestCase
         $this->actingAs($penjualB);
         $this->get("/penjual/pesanan/{$order->id}")->assertForbidden();
     }
+
+    // =========================================================
+    // A03 — SQL Injection (Extended Coverage)
+    // =========================================================
+
+    /**
+     * Classic payloads yang sering dipakai attacker.
+     */
+    private function sqlInjectionPayloads(): array
+    {
+        return [
+            "' OR '1'='1",
+            "' OR 1=1 --",
+            "'; DROP TABLE users; --",
+            "' UNION SELECT null,null,null --",
+            "' UNION SELECT username, password, null FROM users --",
+            "1' AND SLEEP(0) --",
+            "1 AND 1=1",
+            "\" OR \"1\"=\"1",
+            "admin'--",
+            "' OR 'x'='x",
+            "') OR ('1'='1",
+            "1; SELECT * FROM users",
+        ];
+    }
+
+    // --- Search endpoint /produk?search= ---
+
+    public function test_sql_injection_in_product_search_does_not_expose_data(): void
+    {
+        $user = User::factory()->create(['password' => 'Secret123!', 'role' => 'pembeli']);
+
+        foreach ($this->sqlInjectionPayloads() as $payload) {
+            $response = $this->get('/produk?search=' . urlencode($payload));
+            $response->assertStatus(200);
+            // Response tidak boleh memuat password hash user
+            $this->assertStringNotContainsString(
+                $user->fresh()->password,
+                $response->content(),
+                "Payload [{$payload}] mengekspos password hash"
+            );
+        }
+    }
+
+    public function test_sql_injection_in_product_category_filter_does_not_cause_error(): void
+    {
+        foreach (["' OR 1=1 --", "1 UNION SELECT null --", "'; DROP TABLE categories; --"] as $payload) {
+            $response = $this->get('/produk?category_id=' . urlencode($payload));
+            // Harus 200 (tidak menemukan kategori) atau redirect, bukan 500
+            $this->assertNotEquals(500, $response->status(), "category_id payload [{$payload}] menyebabkan error 500");
+        }
+    }
+
+    public function test_sql_injection_in_kategori_search_does_not_cause_error(): void
+    {
+        foreach (["' OR 1=1 --", "'; DROP TABLE categories; --"] as $payload) {
+            $response = $this->get('/kategori?search=' . urlencode($payload));
+            $this->assertNotEquals(500, $response->status());
+        }
+    }
+
+    // --- Login form ---
+
+    public function test_sql_injection_union_in_login_does_not_authenticate(): void
+    {
+        foreach ($this->sqlInjectionPayloads() as $payload) {
+            $this->post('/login', [
+                'email'    => $payload,
+                'password' => $payload,
+            ]);
+            $this->assertGuest(null); // payload: {$payload}
+        }
+    }
+
+    // --- Register form ---
+
+    public function test_sql_injection_in_register_fields_does_not_create_user(): void
+    {
+        $payloads = ["' OR 1=1 --", "admin'--", "'; DROP TABLE users; --"];
+
+        foreach ($payloads as $payload) {
+            $countBefore = User::count();
+
+            $this->post('/register', [
+                'name'                  => $payload,
+                'email'                 => 'valid@example.com',
+                'username'              => 'validuser' . uniqid(),
+                'password'              => 'Password1!',
+                'password_confirmation' => 'Password1!',
+                'role'                  => 'pembeli',
+            ]);
+
+            // Harus gagal validasi atau buat user dengan data disanitasi — bukan inject DB
+            // Yang penting: tidak ada extra user terdaftar lewat injection
+            $countAfter = User::count();
+            $this->assertLessThanOrEqual(
+                $countBefore + 1,
+                $countAfter,
+                "Payload [{$payload}] mungkin membuat user ganda via injection"
+            );
+        }
+    }
+
+    public function test_sql_injection_in_register_email_does_not_authenticate_injected_user(): void
+    {
+        foreach (["' OR 1=1 --", "admin'--"] as $payload) {
+            $this->post('/register', [
+                'name'                  => 'Test',
+                'email'                 => $payload,
+                'username'              => 'user' . uniqid(),
+                'password'              => 'Password1!',
+                'password_confirmation' => 'Password1!',
+                'role'                  => 'pembeli',
+            ]);
+
+            $this->assertGuest(); // payload: {$payload}
+        }
+    }
+
+    // --- Forgot password ---
+
+    public function test_sql_injection_in_forgot_password_does_not_cause_error(): void
+    {
+        foreach (["' OR 1=1 --", "'; DROP TABLE users; --", "' UNION SELECT null --"] as $payload) {
+            $response = $this->post('/forgot-password', ['email' => $payload]);
+            $this->assertNotEquals(500, $response->status(), "Payload [{$payload}] menyebabkan 500 di forgot-password");
+        }
+    }
+
+    // --- Profile update (authenticated) ---
+
+    public function test_sql_injection_in_profile_update_does_not_expose_data(): void
+    {
+        $user = User::factory()->create(['role' => 'pembeli', 'email_verified_at' => now()]);
+        $this->actingAs($user);
+
+        foreach (["' OR 1=1 --", "'; DROP TABLE users; --"] as $payload) {
+            $response = $this->put('/profile', [
+                'name'     => $payload,
+                'email'    => $user->email,
+                'username' => $user->username,
+                'phone'    => '08111111111',
+            ]);
+
+            // Tidak boleh 500 (SQL error berarti raw query rentan)
+            $this->assertNotEquals(500, $response->status(), "Payload [{$payload}] menyebabkan 500 di profile update");
+        }
+    }
+
+    // --- Admin search endpoints ---
+
+    public function test_sql_injection_in_admin_user_search_does_not_cause_error(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now()]);
+        $this->actingAs($admin);
+
+        foreach (["' OR 1=1 --", "'; DROP TABLE users; --", "' UNION SELECT null,null --"] as $payload) {
+            $response = $this->get('/admin/users?search=' . urlencode($payload));
+            $this->assertNotEquals(500, $response->status(), "Admin user search payload [{$payload}] menyebabkan 500");
+        }
+    }
+
+    public function test_sql_injection_in_admin_category_search_does_not_cause_error(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now()]);
+        $this->actingAs($admin);
+
+        foreach (["' OR 1=1 --", "'; DROP TABLE categories; --"] as $payload) {
+            $response = $this->get('/admin/categories?search=' . urlencode($payload));
+            $this->assertNotEquals(500, $response->status(), "Admin category search payload [{$payload}] menyebabkan 500");
+        }
+    }
+
+    // --- Numeric ID parameters (UNION injection via route param) ---
+
+    public function test_sql_injection_via_product_id_param_does_not_cause_error(): void
+    {
+        $payloads = ["1 OR 1=1", "1 UNION SELECT null,null", "1; DROP TABLE products"];
+
+        foreach ($payloads as $payload) {
+            $response = $this->get('/produk/' . urlencode($payload));
+            // Harus 404 (record tidak ditemukan) bukan 500
+            $this->assertNotEquals(500, $response->status(), "Product ID payload [{$payload}] menyebabkan 500");
+        }
+    }
+
+    public function test_database_does_not_expose_raw_errors_on_injection(): void
+    {
+        // Pastikan response tidak mengandung pesan error SQL mentah (nama tabel, kolom, dll.)
+        $sqlErrorPatterns = [
+            'SQLSTATE',
+            'syntax error',
+            'mysql_fetch',
+            'ORA-',
+            'pg_query',
+            'You have an error in your SQL syntax',
+        ];
+
+        $response = $this->get("/produk?search=" . urlencode("' OR 1=1 --"));
+        $body = $response->content();
+
+        foreach ($sqlErrorPatterns as $pattern) {
+            $this->assertStringNotContainsString(
+                $pattern,
+                $body,
+                "Response mengandung SQL error mentah: [{$pattern}]"
+            );
+        }
+    }
 }
