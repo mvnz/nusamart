@@ -4,159 +4,321 @@
 
 @section('content')
 <style>
-.lc-wrap { max-width: 1000px; margin: 0 auto; }
-
-/* Page header */
-.lc-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
-.lc-title { font-size:21px; font-weight:800; color:#1e1f29; display:flex; align-items:center; gap:10px; margin:0; }
-.lc-title i { color:#D10024; }
-
-/* Stats bar */
-.lc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
-@media(max-width:600px){ .lc-stats { grid-template-columns:1fr; } }
-.lc-stat { background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.06); padding:18px 20px; display:flex; align-items:center; gap:14px; }
-.lc-si { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-.lc-si.red  { background:linear-gradient(135deg,#fee2e2,#fecaca); color:#D10024; }
-.lc-si.green{ background:linear-gradient(135deg,#c8f7d6,#edfff3); color:#059669; }
-.lc-si.grey { background:linear-gradient(135deg,#e5e7eb,#f3f4f6); color:#6b7280; }
-.lc-sv { font-size:24px; font-weight:800; color:#1e1f29; line-height:1; }
-.lc-sl { font-size:12px; color:#888; margin-top:2px; }
-
-/* Card + Table */
-.lc-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
-.lc-toolbar { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid #f0f0f0; flex-wrap:wrap; }
-.lc-filter-btn { padding:7px 16px; border:1.5px solid #e5e7eb; border-radius:20px; background:#fff; font-size:12px; font-weight:700; color:#666; cursor:pointer; font-family:inherit; transition:all .18s; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
-.lc-filter-btn:hover { border-color:#D10024; color:#D10024; }
-.lc-filter-btn.active { background:#D10024; border-color:#D10024; color:#fff; }
-
-/* Chat list */
-.lc-list { display:flex; flex-direction:column; }
-.lc-row {
-    display:flex; align-items:center; gap:14px;
-    padding:14px 20px;
-    border-bottom:1px solid #f7f7f9;
-    text-decoration:none; color:inherit;
-    transition:background .14s;
+/* ── HERO ── */
+.lci-hero {
+    background: linear-gradient(135deg, #0f0519 0%, #1a0a2e 40%, #D10024 100%);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
 }
-.lc-row:hover { background:#fafbfc; }
-.lc-row:last-child { border-bottom:none; }
-
-.lc-avatar {
-    width:44px; height:44px; border-radius:50%; flex-shrink:0;
-    background: linear-gradient(135deg,#D10024,#ff6b35);
-    display:flex; align-items:center; justify-content:center;
-    font-size:17px; font-weight:800; color:#fff;
-    text-transform:uppercase;
+.lci-hero::before {
+    content: '';
+    position: absolute; top: -70px; right: -50px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: rgba(255,255,255,.05); pointer-events: none;
 }
-.lc-info { flex:1; min-width:0; }
-.lc-user-name { font-size:13.5px; font-weight:700; color:#1e1f29; display:flex; align-items:center; gap:7px; }
-.lc-last-msg { font-size:12px; color:#999; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:380px; }
-.lc-last-msg.unread { color:#555; font-weight:600; }
+.lci-hero::after {
+    content: '';
+    position: absolute; bottom: -50px; left: 30%;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,.03); pointer-events: none;
+}
+.lci-hero-icon {
+    width: 58px; height: 58px; border-radius: 18px;
+    background: rgba(255,255,255,.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: #fff; flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    backdrop-filter: blur(6px);
+}
+.lci-hero-text h1 {
+    margin: 0 0 4px; font-size: 22px; font-weight: 800; color: #fff;
+}
+.lci-hero-text p { margin: 0; font-size: 13px; color: rgba(255,255,255,.6); }
+.lci-hero-stats { display: flex; gap: 10px; flex-shrink: 0; }
+.lci-hs {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px; padding: 14px 18px;
+    text-align: center; min-width: 80px;
+    backdrop-filter: blur(4px);
+    transition: background .2s;
+}
+.lci-hs:hover { background: rgba(255,255,255,.17); }
+.lci-hs-num { font-size: 24px; font-weight: 800; color: #fff; line-height: 1; }
+.lci-hs-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,.5); margin-top: 4px; }
 
-.lc-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0; }
-.lc-time { font-size:11px; color:#bbb; white-space:nowrap; }
-.lc-badge { padding:3px 9px; border-radius:12px; font-size:11px; font-weight:800; white-space:nowrap; }
-.lc-badge.unread { background:linear-gradient(135deg,#D10024,#ff4d4d); color:#fff; }
-.lc-badge.open   { background:#d1fae5; color:#065f46; }
-.lc-badge.closed { background:#f3f4f6; color:#9ca3af; }
+/* ── FILTER BAR ── */
+.lci-filter {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    padding: 13px 18px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.lci-filter-lbl { font-size: 12px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; margin-right: 4px; }
+.lci-tab {
+    padding: 7px 18px; border: 1.5px solid #e5e7eb;
+    border-radius: 99px; background: #fff;
+    font-size: 12px; font-weight: 700; color: #6b7280;
+    cursor: pointer; text-decoration: none;
+    transition: all .18s; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 5px;
+}
+.lci-tab:hover { border-color: #D10024; color: #D10024; }
+.lci-tab.active { background: #D10024; border-color: #D10024; color: #fff; }
+.lci-refresh {
+    margin-left: auto;
+    padding: 7px 14px; border: 1.5px solid #e5e7eb;
+    border-radius: 8px; background: #fff;
+    font-size: 12px; font-weight: 700; color: #9ca3af;
+    cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: all .18s; font-family: inherit;
+}
+.lci-refresh:hover { border-color: #D10024; color: #D10024; }
+
+/* ── LIST CARD ── */
+.lci-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.07);
+    overflow: hidden;
+}
+.lci-card-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.lci-card-title { font-size: 14px; font-weight: 800; color: #1e1f29; }
+.lci-card-count { font-size: 12px; color: #9ca3af; }
+
+/* ── ROW ── */
+.lci-list { display: flex; flex-direction: column; }
+.lci-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 22px;
+    border-bottom: 1px solid #f7f8fa;
+    text-decoration: none; color: inherit;
+    transition: background .12s;
+    position: relative;
+}
+.lci-row::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: transparent;
+    transition: background .18s;
+    border-radius: 0 3px 3px 0;
+}
+.lci-row:hover { background: #fef7f7; }
+.lci-row:hover::before { background: #D10024; }
+.lci-row:last-child { border-bottom: none; }
+.lci-row.has-unread { background: #fffbfb; }
+.lci-row.has-unread::before { background: #D10024; }
+
+/* Avatar */
+.lci-av {
+    width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800; color: #fff;
+    text-transform: uppercase;
+    position: relative;
+}
+.lci-av-online {
+    position: absolute; bottom: 1px; right: 1px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #22c55e; border: 2px solid #fff;
+}
+
+/* Info */
+.lci-info { flex: 1; min-width: 0; }
+.lci-name {
+    font-size: 14px; font-weight: 700; color: #1e1f29;
+    display: flex; align-items: center; gap: 7px;
+    margin-bottom: 3px;
+}
+.lci-preview {
+    font-size: 12px; color: #9ca3af;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 400px;
+}
+.lci-preview.bold { color: #374151; font-weight: 700; }
+
+/* Status pills */
+.lci-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 9px; border-radius: 99px;
+    font-size: 10.5px; font-weight: 800;
+}
+.lci-pill.open   { background: #dcfce7; color: #15803d; }
+.lci-pill.closed { background: #f3f4f6; color: #9ca3af; }
+
+/* Right */
+.lci-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.lci-time { font-size: 11px; color: #c4c4c4; }
+.lci-unread-badge {
+    background: linear-gradient(135deg, #D10024, #ff4d4d);
+    color: #fff; padding: 2px 8px; border-radius: 99px;
+    font-size: 11px; font-weight: 800;
+    box-shadow: 0 2px 8px rgba(209,0,36,.3);
+    animation: lciBadgePop .3s ease;
+}
+@keyframes lciBadgePop {
+    0%   { transform: scale(.5); opacity: 0; }
+    70%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
 
 /* Empty */
-.lc-empty { text-align:center; padding:60px 20px; }
-.lc-empty i { font-size:48px; color:#e0e0e0; display:block; margin-bottom:14px; }
-.lc-empty p { font-size:14px; color:#999; }
+.lci-empty {
+    text-align: center; padding: 72px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.lci-empty-icon {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: linear-gradient(135deg, #fff0f0, #ffe4e6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; color: #D10024;
+}
+.lci-empty h3 { margin: 0; font-size: 17px; font-weight: 800; color: #1e1f29; }
+.lci-empty p  { margin: 0; font-size: 13px; color: #9ca3af; }
 
 /* Pagination */
-.lc-paging { padding:14px 20px; border-top:1px solid #f0f0f0; display:flex; justify-content:flex-end; }
+.lci-paging { padding: 16px 22px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; }
+
+@media(max-width:640px) {
+    .lci-hero { flex-direction: column; align-items: flex-start; }
+    .lci-hero-stats { flex-wrap: wrap; }
+    .lci-filter { flex-wrap: wrap; }
+    .lci-preview { max-width: 200px; }
+}
 </style>
 
-<div class="lc-wrap">
-    <div class="lc-header">
-        <h1 class="lc-title"><i class="fa fa-comments"></i> Live Chat Support</h1>
-    </div>
+@php
+    $totalOpen   = \App\Models\Chat::where('status','open')->count();
+    $totalClosed = \App\Models\Chat::where('status','closed')->count();
+    $avatarColors = ['#D10024','#7c3aed','#0369a1','#059669','#d97706','#db2777','#0891b2','#65a30d'];
+@endphp
 
-    {{-- Stats --}}
-    @php
-        $totalOpen   = \App\Models\Chat::where('status','open')->count();
-        $totalClosed = \App\Models\Chat::where('status','closed')->count();
-    @endphp
-    <div class="lc-stats">
-        <div class="lc-stat">
-            <div class="lc-si red"><i class="fa fa-comments"></i></div>
-            <div>
-                <div class="lc-sv">{{ $totalUnread }}</div>
-                <div class="lc-sl">Pesan Belum Dibaca</div>
-            </div>
-        </div>
-        <div class="lc-stat">
-            <div class="lc-si green"><i class="fa fa-comment"></i></div>
-            <div>
-                <div class="lc-sv">{{ $totalOpen }}</div>
-                <div class="lc-sl">Chat Aktif</div>
-            </div>
-        </div>
-        <div class="lc-stat">
-            <div class="lc-si grey"><i class="fa fa-check-circle"></i></div>
-            <div>
-                <div class="lc-sv">{{ $totalClosed }}</div>
-                <div class="lc-sl">Chat Selesai</div>
-            </div>
+<div style="max-width:960px;margin:0 auto;">
+
+{{-- HERO --}}
+<div class="lci-hero">
+    <div style="display:flex;align-items:center;gap:18px;flex:1;min-width:0;">
+        <div class="lci-hero-icon"><i class="fa fa-comments"></i></div>
+        <div class="lci-hero-text">
+            <h1>Live Chat Support</h1>
+            <p>Kelola semua percakapan pengguna secara real-time</p>
         </div>
     </div>
-
-    {{-- List --}}
-    <div class="lc-card">
-        <div class="lc-toolbar">
-            <a href="{{ route('admin.chats') }}" class="lc-filter-btn {{ !request('status') ? 'active' : '' }}">
-                Semua
-            </a>
-            <a href="{{ route('admin.chats', ['status'=>'open']) }}" class="lc-filter-btn {{ request('status')==='open' ? 'active' : '' }}">
-                <i class="fa fa-circle" style="font-size:8px;color:#4ade80;"></i> Open
-            </a>
-            <a href="{{ route('admin.chats', ['status'=>'closed']) }}" class="lc-filter-btn {{ request('status')==='closed' ? 'active' : '' }}">
-                Selesai
-            </a>
+    <div class="lci-hero-stats">
+        <div class="lci-hs">
+            <div class="lci-hs-num" style="color:#ff6b6b;">{{ $totalUnread }}</div>
+            <div class="lci-hs-lbl">Belum Dibaca</div>
         </div>
+        <div class="lci-hs">
+            <div class="lci-hs-num" style="color:#4ade80;">{{ $totalOpen }}</div>
+            <div class="lci-hs-lbl">Aktif</div>
+        </div>
+        <div class="lci-hs">
+            <div class="lci-hs-num" style="color:#9ca3af;">{{ $totalClosed }}</div>
+            <div class="lci-hs-lbl">Selesai</div>
+        </div>
+    </div>
+</div>
 
-        @if($chats->isEmpty())
-            <div class="lc-empty">
-                <i class="fa fa-comment-o"></i>
-                <p>Belum ada chat masuk.</p>
-            </div>
-        @else
-            <div class="lc-list">
-                @foreach($chats as $chat)
-                @php
-                    $unread  = $chat->unreadByAdmin();
-                    $lastMsg = $chat->latestMessage;
-                @endphp
-                <a href="{{ route('admin.chats.show', $chat) }}" class="lc-row">
-                    <div class="lc-avatar">{{ strtoupper(substr($chat->user->name ?? '?', 0, 1)) }}</div>
-                    <div class="lc-info">
-                        <div class="lc-user-name">
-                            {{ $chat->user->name ?? '(Akun Dihapus)' }}
-                            <span class="lc-badge {{ $chat->status }}">{{ $chat->status === 'open' ? 'Open' : 'Selesai' }}</span>
-                        </div>
-                        <div class="lc-last-msg {{ $unread ? 'unread' : '' }}">
-                            @if($lastMsg)
-                                {{ $lastMsg->sender_type === 'admin' ? 'Anda: ' : '' }}{{ Str::limit($lastMsg->body, 60) }}
+{{-- FILTER BAR --}}
+<div class="lci-filter">
+    <span class="lci-filter-lbl"><i class="fa fa-filter"></i> Filter</span>
+    <a href="{{ route('admin.chats') }}" class="lci-tab {{ !request('status') ? 'active' : '' }}">
+        Semua <span style="opacity:.6;">({{ $totalOpen + $totalClosed }})</span>
+    </a>
+    <a href="{{ route('admin.chats', ['status'=>'open']) }}" class="lci-tab {{ request('status')==='open' ? 'active' : '' }}">
+        <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Open
+    </a>
+    <a href="{{ route('admin.chats', ['status'=>'closed']) }}" class="lci-tab {{ request('status')==='closed' ? 'active' : '' }}">
+        <i class="fa fa-check" style="font-size:9px;"></i> Selesai
+    </a>
+    <a href="{{ route('admin.chats') }}" class="lci-refresh"><i class="fa fa-refresh"></i> Refresh</a>
+</div>
+
+{{-- CHAT LIST CARD --}}
+<div class="lci-card">
+    <div class="lci-card-header">
+        <span class="lci-card-title">
+            @if(request('status') === 'open')   Chat Aktif
+            @elseif(request('status') === 'closed') Chat Selesai
+            @else Semua Chat
+            @endif
+        </span>
+        <span class="lci-card-count">{{ $chats->total() }} percakapan</span>
+    </div>
+
+    @if($chats->isEmpty())
+        <div class="lci-empty">
+            <div class="lci-empty-icon"><i class="fa fa-comment-o"></i></div>
+            <h3>Tidak ada chat</h3>
+            <p>{{ request('status') ? 'Tidak ada chat dengan filter ini.' : 'Belum ada pengguna yang memulai chat.' }}</p>
+        </div>
+    @else
+        <div class="lci-list">
+            @foreach($chats as $idx => $chat)
+            @php
+                $unread  = $chat->unreadByAdmin();
+                $lastMsg = $chat->latestMessage;
+                $color   = $avatarColors[($chat->user_id ?? $idx) % count($avatarColors)];
+            @endphp
+            <a href="{{ route('admin.chats.show', $chat) }}" class="lci-row {{ $unread ? 'has-unread' : '' }}">
+                <div class="lci-av" style="background:{{ $color }};">
+                    {{ strtoupper(substr($chat->user->name ?? '?', 0, 1)) }}
+                    @if($chat->status === 'open')
+                        <div class="lci-av-online"></div>
+                    @endif
+                </div>
+
+                <div class="lci-info">
+                    <div class="lci-name">
+                        {{ $chat->user->name ?? '(Akun Dihapus)' }}
+                        <span class="lci-pill {{ $chat->status }}">
+                            @if($chat->status === 'open')
+                                <span style="width:5px;height:5px;border-radius:50%;background:#15803d;display:inline-block;"></span> Open
                             @else
-                                <em>Belum ada pesan</em>
+                                <i class="fa fa-check" style="font-size:8px;"></i> Selesai
                             @endif
-                        </div>
+                        </span>
                     </div>
-                    <div class="lc-right">
-                        <div class="lc-time">{{ $lastMsg ? $lastMsg->created_at->diffForHumans() : $chat->created_at->diffForHumans() }}</div>
-                        @if($unread)
-                            <div class="lc-badge unread">{{ $unread > 9 ? '9+' : $unread }}</div>
+                    <div class="lci-preview {{ $unread ? 'bold' : '' }}">
+                        @if($lastMsg)
+                            @if($lastMsg->sender_type === 'admin')<span style="color:#D10024;font-weight:700;">Anda:</span> @endif{{ Str::limit($lastMsg->body, 65) }}
+                        @else
+                            <em>Belum ada pesan</em>
                         @endif
                     </div>
-                </a>
-                @endforeach
-            </div>
-            @if($chats->hasPages())
-                <div class="lc-paging">{{ $chats->links() }}</div>
-            @endif
+                </div>
+
+                <div class="lci-right">
+                    <span class="lci-time">
+                        {{ ($lastMsg ? $lastMsg->created_at : $chat->created_at)->diffForHumans() }}
+                    </span>
+                    @if($unread)
+                        <span class="lci-unread-badge">{{ $unread > 99 ? '99+' : $unread }}</span>
+                    @endif
+                </div>
+            </a>
+            @endforeach
+        </div>
+        @if($chats->hasPages())
+            <div class="lci-paging">{{ $chats->links() }}</div>
         @endif
-    </div>
+    @endif
+</div>
+
 </div>
 @endsection
