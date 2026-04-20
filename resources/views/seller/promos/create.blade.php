@@ -8,152 +8,210 @@
 
 <style>
 /* ===================== STEP WIZARD ===================== */
-.wizard-wrap { max-width: 820px; margin: 0 auto; }
+.wizard-wrap { max-width: 840px; margin: 0 auto; }
 
+/* progress header — dark gradient matching seller promo hero */
 .step-bar {
-    display: flex; align-items: center; margin-bottom: 32px;
-    background: #fff; border-radius: 12px; padding: 20px 28px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    display: flex; align-items: center; margin-bottom: 28px;
+    background: linear-gradient(135deg,#1a0a0e 0%,#2d0a15 50%,#3d0018 100%);
+    border-radius: 16px; padding: 22px 32px;
+    box-shadow: 0 6px 24px rgba(209,0,36,.18);
+    position: relative; overflow: hidden;
+}
+.step-bar::before {
+    content:''; position:absolute; top:-40px; right:-40px;
+    width:180px; height:180px; border-radius:50%;
+    background:rgba(255,255,255,.04); pointer-events:none;
 }
 .step-item { display: flex; align-items: center; flex: 1; position: relative; }
 .step-item:not(:last-child)::after {
-    content: ''; flex: 1; height: 2px; background: #e5e7eb;
-    margin: 0 10px; transition: background .3s;
+    content: ''; flex: 1; height: 2px;
+    background: rgba(255,255,255,.15);
+    margin: 0 10px; transition: background .4s;
 }
-.step-item.done:not(:last-child)::after { background: #D10024; }
+.step-item.done:not(:last-child)::after { background: rgba(255,255,255,.7); }
 .step-circle {
-    width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e5e7eb;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.25);
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 800; background: #fff; color: #aaa;
+    font-size: 14px; font-weight: 800;
+    background: rgba(255,255,255,.08); color: rgba(255,255,255,.4);
     flex-shrink: 0; transition: all .3s; position: relative; z-index: 1;
 }
-.step-item.active .step-circle { border-color: #D10024; background: #D10024; color: #fff; }
-.step-item.done .step-circle { border-color: #D10024; background: #D10024; color: #fff; }
+.step-item.active .step-circle {
+    border-color: #fff; background: #D10024; color: #fff;
+    box-shadow: 0 0 0 4px rgba(255,255,255,.15);
+}
+.step-item.done .step-circle { border-color: #fff; background: rgba(255,255,255,.9); color: #D10024; }
 .step-item.done .step-circle::after { content: '\f00c'; font-family: FontAwesome; }
-.step-label { margin-left: 10px; }
-.step-label-title { font-size: 13px; font-weight: 700; color: #aaa; transition: color .3s; }
-.step-item.active .step-label-title,
-.step-item.done .step-label-title { color: #1e1f29; }
-.step-label-sub { font-size: 11px; color: #bbb; margin-top: 1px; }
+.step-label { margin-left: 12px; }
+.step-label-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.4); transition: color .3s; }
+.step-item.active .step-label-title { color: #fff; }
+.step-item.done  .step-label-title { color: rgba(255,255,255,.8); }
+.step-label-sub { font-size: 11px; color: rgba(255,255,255,.3); margin-top: 2px; }
+.step-item.active .step-label-sub { color: rgba(255,255,255,.55); }
 
 /* ===================== CARD ===================== */
 .wizard-card {
-    background: #fff; border-radius: 12px; padding: 32px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 16px;
+    background: #fff; border-radius: 16px; padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08); margin-bottom: 16px;
 }
-.wizard-card-title { font-size: 18px; font-weight: 800; color: #1e1f29; margin-bottom: 6px; }
-.wizard-card-subtitle { font-size: 13px; color: #aaa; margin-bottom: 24px; }
+.wizard-card-title {
+    font-size: 18px; font-weight: 800; color: #1e1f29;
+    margin-bottom: 5px; display: flex; align-items: center; gap: 10px;
+}
+.wizard-card-title-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg,#fee2e2,#fecaca);
+    display: flex; align-items: center; justify-content: center;
+    color: #D10024; font-size: 14px; flex-shrink: 0;
+}
+.wizard-card-subtitle { font-size: 13px; color: #9ca3af; margin-bottom: 26px; margin-left: 44px; }
 
 /* ===================== FORM ELEMENTS ===================== */
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 13px; }
+.form-group { margin-bottom: 22px; }
+.form-label { display: block; margin-bottom: 8px; font-weight: 700; color: #374151; font-size: 13px; }
 .form-control {
-    width: 100%; padding: 12px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px;
-    font-size: 13px; font-family: inherit; box-sizing: border-box; transition: border .2s;
+    width: 100%; padding: 12px 16px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+    font-size: 13px; font-family: inherit; box-sizing: border-box; transition: all .2s;
+    background: #fafafa; color: #1e1f29;
 }
-.form-control:focus { outline: none; border-color: #D10024; box-shadow: 0 0 0 3px rgba(209,0,36,.08); }
-.form-hint { font-size: 11px; color: #aaa; margin-top: 5px; display: block; }
+.form-control:focus {
+    outline: none; border-color: #D10024;
+    box-shadow: 0 0 0 3px rgba(209,0,36,.1);
+    background: #fff;
+}
+.form-hint { font-size: 11px; color: #9ca3af; margin-top: 6px; display: block; }
 
 /* ===================== PRODUCT GRID (step 1) ===================== */
 .product-pick-search {
-    width: 100%; padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px;
-    font-size: 13px; font-family: inherit; box-sizing: border-box; margin-bottom: 14px;
+    width: 100%; padding: 11px 16px 11px 40px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+    font-size: 13px; font-family: inherit; box-sizing: border-box; margin-bottom: 16px;
+    background: #fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 14px center;
+    transition: all .2s;
 }
-.product-pick-search:focus { outline: none; border-color: #D10024; }
+.product-pick-search:focus { outline: none; border-color: #D10024; background-color: #fff; box-shadow: 0 0 0 3px rgba(209,0,36,.1); }
 .product-grid-picker {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr));
-    gap: 12px; max-height: 420px; overflow-y: auto; padding: 4px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+    gap: 14px; max-height: 460px; overflow-y: auto; padding: 4px 2px;
 }
+.product-grid-picker::-webkit-scrollbar { width: 6px; }
+.product-grid-picker::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 99px; }
+.product-grid-picker::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
 .product-pick-card {
-    border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; cursor: pointer;
-    transition: all .2s; background: #fff; position: relative;
+    border: 2px solid #e5e7eb; border-radius: 14px; overflow: hidden; cursor: pointer;
+    transition: all .22s; background: #fff; position: relative;
 }
-.product-pick-card:hover { border-color: #D10024; box-shadow: 0 4px 12px rgba(209,0,36,.12); transform: translateY(-2px); }
-.product-pick-card.selected { border-color: #D10024; box-shadow: 0 0 0 3px rgba(209,0,36,.15); }
+.product-pick-card:hover {
+    border-color: #D10024;
+    box-shadow: 0 6px 18px rgba(209,0,36,.14);
+    transform: translateY(-3px);
+}
+.product-pick-card.selected {
+    border-color: #D10024;
+    box-shadow: 0 0 0 4px rgba(209,0,36,.18);
+    transform: translateY(-2px);
+}
 .product-pick-card.selected::after {
     content: '\f00c'; font-family: FontAwesome;
-    position: absolute; top: 8px; right: 8px;
-    background: #D10024; color: #fff; width: 22px; height: 22px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-size: 11px;
+    position: absolute; top: 9px; right: 9px;
+    background: #D10024; color: #fff; width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; box-shadow: 0 2px 8px rgba(209,0,36,.4);
 }
-.product-pick-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+.product-pick-img { width: 100%; height: 120px; object-fit: cover; display: block; }
 .product-pick-img-placeholder {
-    width: 100%; height: 110px; background: #f6f6f6;
-    display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 28px;
+    width: 100%; height: 120px;
+    background: linear-gradient(135deg,#f9fafb,#f3f4f6);
+    display: flex; align-items: center; justify-content: center; color: #d1d5db; font-size: 32px;
 }
-.product-pick-body { padding: 10px; }
+.product-pick-body { padding: 11px 12px; }
 .product-pick-name {
-    font-size: 12px; font-weight: 700; color: #1e1f29; line-height: 1.3; margin-bottom: 4px;
+    font-size: 12px; font-weight: 700; color: #1e1f29; line-height: 1.35; margin-bottom: 5px;
     overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
 .product-pick-price { font-size: 12px; font-weight: 800; color: #D10024; }
-.product-pick-stock { font-size: 10px; color: #aaa; margin-top: 2px; }
-.no-product-msg { text-align: center; padding: 32px; color: #aaa; font-size: 13px; display: none; }
-.empty-products { text-align: center; padding: 48px 24px; color: #aaa; }
-.empty-products i { font-size: 48px; margin-bottom: 12px; display: block; }
+.product-pick-stock {
+    font-size: 10px; color: #9ca3af; margin-top: 3px;
+    display: inline-flex; align-items: center; gap: 3px;
+}
+.no-product-msg { text-align: center; padding: 40px; color: #9ca3af; font-size: 13px; display: none; }
+.empty-products { text-align: center; padding: 56px 24px; color: #9ca3af; }
+.empty-products i { font-size: 52px; margin-bottom: 14px; display: block; color: #e5e7eb; }
 
 /* ===================== STEP 2: DISCOUNT ===================== */
 .price-preview {
-    background: #fff8f8; border: 1.5px solid #fbd5d5; border-radius: 10px;
-    padding: 16px 20px; margin-top: 12px; display: none;
+    background: linear-gradient(135deg,#fff8f8,#fff0f0);
+    border: 1.5px solid #fecdd3; border-radius: 12px;
+    padding: 18px 20px; margin-top: 14px; display: none;
 }
-.price-preview-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
-.price-preview-row:not(:last-child) { border-bottom: 1px solid #fbd5d5; }
-.price-preview-label { color: #888; }
+.price-preview-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; }
+.price-preview-row:not(:last-child) { border-bottom: 1px solid #fecdd3; }
+.price-preview-label { color: #9ca3af; }
 .price-preview-value { font-weight: 700; color: #1e1f29; }
 .price-preview-value.red { color: #D10024; }
 .price-preview-value.green { color: #16a34a; }
-.discount-hint { background: #fff0f0; border-left: 3px solid #D10024; padding: 10px 14px; border-radius: 4px; font-size: 12px; color: #D10024; margin-top: 12px; display: none; }
+.discount-hint {
+    background: #fff0f0; border-left: 3px solid #D10024; padding: 11px 14px;
+    border-radius: 6px; font-size: 12px; color: #D10024; margin-top: 12px; display: none;
+}
 
 .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media(max-width: 600px) { .date-row { grid-template-columns: 1fr; } }
 
 /* ===================== STEP 3: KONFIRMASI ===================== */
 .confirm-card {
-    background: #f8f9fb; border-radius: 10px; overflow: hidden; margin-bottom: 20px;
+    background: #f8f9fb; border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
 }
 .confirm-product-row {
-    display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; padding: 18px 22px;
     background: #fff; border-bottom: 1px solid #f0f0f0;
 }
-.confirm-product-img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; background: #f6f6f6; flex-shrink: 0; }
+.confirm-product-img { width: 76px; height: 76px; object-fit: cover; border-radius: 12px; background: #f6f6f6; flex-shrink: 0; }
 .confirm-product-name { font-size: 15px; font-weight: 800; color: #1e1f29; margin-bottom: 4px; }
-.confirm-product-stock { font-size: 12px; color: #aaa; }
+.confirm-product-stock { font-size: 12px; color: #9ca3af; }
 .confirm-rows { padding: 4px 0; }
-.confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+.confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 22px; font-size: 13px; border-bottom: 1px solid #f3f4f6; }
 .confirm-row:last-child { border-bottom: none; }
-.confirm-row-label { color: #888; display: flex; align-items: center; gap: 8px; }
+.confirm-row-label { color: #9ca3af; display: flex; align-items: center; gap: 9px; }
 .confirm-row-label i { width: 16px; text-align: center; }
 .confirm-row-value { font-weight: 700; color: #1e1f29; }
 .confirm-row-value.badge-discount {
-    background: #D10024; color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 12px;
+    background: linear-gradient(135deg,#D10024,#ff4d6d); color: #fff;
+    padding: 3px 12px; border-radius: 20px; font-size: 12px;
 }
 .confirm-row-value.badge-saving {
-    background: #dcfce7; color: #16a34a; padding: 3px 10px; border-radius: 20px; font-size: 12px;
+    background: #dcfce7; color: #16a34a; padding: 3px 12px; border-radius: 20px; font-size: 12px;
 }
 .confirm-notice {
-    background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;
-    padding: 14px 16px; font-size: 12px; color: #c2410c; display: flex; gap: 10px; align-items: flex-start;
+    background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px;
+    padding: 14px 18px; font-size: 12px; color: #b45309; display: flex; gap: 10px; align-items: flex-start;
 }
 
 /* ===================== NAVIGATION BUTTONS ===================== */
 .wizard-nav {
     display: flex; gap: 12px; justify-content: space-between; align-items: center;
-    background: #fff; border-radius: 12px; padding: 20px 28px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    background: #fff; border-radius: 16px; padding: 20px 28px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
 }
-.btn { padding: 11px 24px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
-.btn-primary { background: #D10024; color: #fff; }
-.btn-primary:hover { background: #a8001e; }
-.btn-secondary { background: #f4f5f7; color: #555; border: 1.5px solid #e5e7eb; }
-.btn-secondary:hover { background: #e5e7eb; }
-.btn-ghost { background: none; color: #aaa; border: none; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 4px; }
-.btn-ghost:hover { color: #555; }
-.btn-success { background: #16a34a; color: #fff; }
-.btn-success:hover { background: #15803d; }
+.btn {
+    padding: 12px 26px; border: none; border-radius: 10px;
+    font-size: 13px; font-weight: 800; cursor: pointer;
+    transition: all .22s; display: inline-flex; align-items: center; gap: 8px;
+    text-decoration: none; font-family: inherit;
+}
+.btn-primary { background: linear-gradient(135deg,#D10024,#ff4d6d); color: #fff; box-shadow: 0 4px 14px rgba(209,0,36,.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(209,0,36,.4); }
+.btn-secondary { background: #f9fafb; color: #555; border: 1.5px solid #e5e7eb; }
+.btn-secondary:hover { background: #f3f4f6; border-color: #d1d5db; }
+.btn-ghost { background: none; color: #9ca3af; border: none; font-size: 13px; font-weight: 700; cursor: pointer; padding: 8px 4px; font-family: inherit; }
+.btn-ghost:hover { color: #374151; }
+.btn-success { background: linear-gradient(135deg,#16a34a,#22c55e); color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,.3); }
+.btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(22,163,74,.4); }
 
-.alert { padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; }
-.alert-error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+.alert { padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; }
+.alert-error { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
 </style>
 
 <div class="wizard-wrap">
@@ -203,7 +261,7 @@
         {{-- ============================= STEP 1 ============================= --}}
         <div id="step1" class="wizard-step">
             <div class="wizard-card">
-                <div class="wizard-card-title">Pilih Produk</div>
+                <div class="wizard-card-title"><div class="wizard-card-title-icon"><i class="fa fa-th-large"></i></div> Pilih Produk</div>
                 <div class="wizard-card-subtitle">Pilih satu produk yang ingin kamu berikan promo harga</div>
 
                 @if($products->isEmpty())
@@ -259,7 +317,7 @@
             </div>
 
             <div class="wizard-card">
-                <div class="wizard-card-title">Atur Promo</div>
+                <div class="wizard-card-title"><div class="wizard-card-title-icon"><i class="fa fa-percent"></i></div> Atur Promo</div>
                 <div class="wizard-card-subtitle">Tentukan besaran diskon, periode, dan kuota pembelian</div>
 
                 <div class="form-group">
@@ -389,7 +447,7 @@
         {{-- ============================= STEP 3 ============================= --}}
         <div id="step3" class="wizard-step" style="display:none;">
             <div class="wizard-card">
-                <div class="wizard-card-title">Konfirmasi Promo</div>
+                <div class="wizard-card-title"><div class="wizard-card-title-icon"><i class="fa fa-check"></i></div> Konfirmasi Promo</div>
                 <div class="wizard-card-subtitle">Periksa kembali detail promo sebelum disimpan</div>
 
                 <div class="confirm-card">
