@@ -460,6 +460,21 @@ ul { list-style: none; }
 .sb-cat-item:hover { background: #fff0f2; color: #D10024; }
 .sb-cat-item.active { background: #fff0f2; color: #D10024; font-weight: 700; }
 .sb-cat-item.active i { color: #D10024; }
+.sb-cat-more {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 16px;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    border-top: 1px solid #f5e6e8;
+    margin-top: 4px;
+    transition: color .15s, background .15s;
+}
+.sb-cat-more i { color: #ccc; font-size: 13px; }
+.sb-cat-more:hover { color: #D10024; background: #fff0f2; }
+.sb-cat-more:hover i { color: #D10024; }
 
 .search-bar input {
     flex: 1;

@@ -26,26 +26,35 @@
             </a>
         </div>
         @if(!auth()->check() || auth()->user()->role !== 'admin')
+        @php
+            $selCat = $navCategories->firstWhere('id', request('category_id'));
+            $selCatLabel = $selCat ? $selCat->name : 'Semua Kategori';
+            $visibleCats = $navCategories->take(5);
+            $hasMore = $navCategories->count() > 5;
+        @endphp
         <div class="search-bar">
             <form action="{{ route('products.index') }}" method="GET" style="display:contents;" id="headerSearchForm">
                 <input type="hidden" name="category_id" id="headerCatInput" value="{{ request('category_id') }}">
                 <div class="sb-cat-wrap" id="sbCatWrap">
                     <button type="button" class="sb-cat-btn" id="sbCatBtn" onclick="toggleSbCat(event)">
                         <i class="fa fa-th-large sb-cat-icon"></i>
-                        <span id="sbCatLabel">@php
-                            $selCat = $navCategories->firstWhere('id', request('category_id'));
-                        @endphp{{ $selCat ? $selCat->name : 'Semua Kategori' }}</span>
+                        <span id="sbCatLabel">{{ $selCatLabel }}</span>
                         <i class="fa fa-chevron-down sb-cat-arrow" id="sbCatArrow"></i>
                     </button>
                     <div class="sb-cat-menu" id="sbCatMenu">
                         <div class="sb-cat-item {{ !request('category_id') ? 'active' : '' }}" onclick="selectSbCat('', 'Semua Kategori')">
                             <i class="fa fa-th-large"></i> Semua Kategori
                         </div>
-                        @foreach($navCategories as $cat)
+                        @foreach($visibleCats as $cat)
                         <div class="sb-cat-item {{ request('category_id') == $cat->id ? 'active' : '' }}" onclick="selectSbCat('{{ $cat->id }}', '{{ addslashes($cat->name) }}')">
                             <i class="fa fa-tag"></i> {{ $cat->name }}
                         </div>
                         @endforeach
+                        @if($hasMore)
+                        <div class="sb-cat-more" onclick="window.location='{{ route('categories.index') }}'">
+                            <i class="fa fa-ellipsis-h"></i> Lihat semua kategori
+                        </div>
+                        @endif
                     </div>
                 </div>
                 <input type="text" name="search" placeholder="Cari produk, kategori..." value="{{ request('search') }}">
