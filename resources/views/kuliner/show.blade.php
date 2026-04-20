@@ -384,14 +384,15 @@
                 {{-- Lokasi --}}
                 <div class="ks-card ks-anchor" id="ks-lokasi">
                     <div class="ks-sec-title"><i class="fa fa-map-o" style="color:#D10024"></i> Lokasi</div>
-                    @if($kuliner->link_maps)
                     <div class="ks-map-frame">
-                        <div class="ks-map-placeholder">
-                            <i class="fa fa-map-marker"></i>
-                            <p>{{ $kuliner->nama }}</p>
-                        </div>
+                        <iframe
+                            src="https://maps.google.com/maps?q={{ urlencode($kuliner->alamat) }}&output=embed&hl=id&z=16"
+                            width="100%" height="100%"
+                            style="border:0; display:block;"
+                            allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
-                    @endif
                     <div class="ks-addr-block">
                         <i class="fa fa-map-marker"></i>
                         <span>{{ $kuliner->alamat }}</span>
