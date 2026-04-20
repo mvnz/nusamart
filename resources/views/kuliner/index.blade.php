@@ -208,10 +208,19 @@
 
 @section('content')
 @php
-    $total     = $kuliners->count();
-    $buka      = $kuliners->where('status','buka')->count();
-    $tutup     = $kuliners->where('status','tutup')->count();
-    $kats      = $kuliners->pluck('kategori')->unique()->sort()->values();
+    $nowWib = \Carbon\Carbon::now('Asia/Jakarta');
+    $kulinersWithStatus = $kuliners->map(function($k) use ($nowWib) {
+        $jamBuka  = \Carbon\Carbon::createFromFormat('H:i', $k->jam_buka,  'Asia/Jakarta');
+        $jamTutup = \Carbon\Carbon::createFromFormat('H:i', $k->jam_tutup, 'Asia/Jakarta');
+        $k->is_open_now = $jamTutup->gt($jamBuka)
+            ? $nowWib->between($jamBuka, $jamTutup)
+            : ($nowWib->gte($jamBuka) || $nowWib->lte($jamTutup));
+        return $k;
+    });
+    $total = $kulinersWithStatus->count();
+    $buka  = $kulinersWithStatus->where('is_open_now', true)->count();
+    $tutup = $kulinersWithStatus->where('is_open_now', false)->count();
+    $kats  = $kulinersWithStatus->pluck('kategori')->unique()->sort()->values();
 @endphp
 
 {{-- ═══ HERO BANNER ═══ --}}
@@ -266,10 +275,10 @@
           </div>
           @else
           <div class="kl-grid" id="klGrid">
-              @foreach($kuliners as $kuliner)
+              @foreach($kulinersWithStatus as $kuliner)
               <a href="{{ route('kuliner.show', $kuliner->id) }}"
                  class="kl-card"
-                 data-status="{{ $kuliner->status }}"
+                 data-status="{{ $kuliner->is_open_now ? 'buka' : 'tutup' }}"
                  data-kat="{{ $kuliner->kategori }}">
                   {{-- Background --}}
                   <div class="kl-card-bg">
@@ -280,9 +289,9 @@
                       @endif
                   </div>
                   <div class="kl-card-overlay"></div>
-                  <div class="kl-card-status {{ $kuliner->status === 'buka' ? 'kl-s-buka' : 'kl-s-tutup' }}">
+                  <div class="kl-card-status {{ $kuliner->is_open_now ? 'kl-s-buka' : 'kl-s-tutup' }}">
                       <i class="fa fa-circle" style="font-size:7px"></i>
-                      {{ ucfirst($kuliner->status) }}
+                      {{ $kuliner->is_open_now ? 'Buka' : 'Tutup' }}
                   </div>
                   <div class="kl-card-content">
                       <div class="kl-card-kat">{{ $kuliner->kategori }}</div>
