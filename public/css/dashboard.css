@@ -491,7 +491,7 @@ ul { list-style: none; }
     box-shadow: 0 0 0 3px rgba(209, 0, 36, 0.15);
 }
 
-.search-bar button {
+.search-bar button[type="submit"] {
     padding: 0 24px;
     background: linear-gradient(135deg, #D10024, #ff4757);
     border: 2px solid #D10024;
@@ -502,7 +502,7 @@ ul { list-style: none; }
     transition: all 0.3s;
 }
 
-.search-bar button:hover {
+.search-bar button[type="submit"]:hover {
     background: linear-gradient(135deg, #a8001d, #D10024);
     box-shadow: 0 4px 15px rgba(209, 0, 36, 0.35);
 }
