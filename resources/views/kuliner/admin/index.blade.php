@@ -1,284 +1,149 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'Kelola Kuliner - NusaMart Admin')
+@section('title', 'Kelola Kuliner - Admin Panel')
 
 @section('content')
 <style>
-/* ===== BASE ===== */
-.kl-wrap { max-width: 1240px; margin: 0 auto; padding: 4px 0 52px; }
+.kl-wrap { max-width:1100px; margin:0 auto; padding:4px 0 48px; }
 
-/* ===== HERO BANNER ===== */
-.kl-hero {
-    background: linear-gradient(135deg, #78350f 0%, #b45309 40%, #d97706 70%, #f59e0b 100%);
-    border-radius: 20px; padding: 32px 36px; margin-bottom: 26px;
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
-    position: relative; overflow: hidden;
-}
-.kl-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-.kl-hero-left { position: relative; z-index: 1; }
-.kl-hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.18); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; letter-spacing: .3px; }
-.kl-hero-title { font-size: 26px; font-weight: 900; color: #fff; margin: 0 0 6px; letter-spacing: -.3px; }
-.kl-hero-sub { font-size: 13px; color: rgba(255,255,255,.8); margin: 0; }
-.kl-hero-right { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.kl-hero-addbtn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 22px; background: #fff; color: #b45309;
-    border: none; border-radius: 12px; font-size: 13px; font-weight: 800;
-    cursor: pointer; font-family: inherit; transition: all .2s; text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
-}
-.kl-hero-addbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); color: #92400e; }
-.kl-hero-viewbtn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 18px; background: rgba(255,255,255,.15); color: #fff;
-    border: 1.5px solid rgba(255,255,255,.4); border-radius: 12px; font-size: 13px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: all .2s; text-decoration: none;
-}
-.kl-hero-viewbtn:hover { background: rgba(255,255,255,.25); color: #fff; }
+/* Page header */
+.kl-page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:26px; flex-wrap:wrap; gap:12px; }
+.kl-page-title  { font-size:21px; font-weight:800; color:#1e1f29; display:flex; align-items:center; gap:10px; margin:0; }
+.kl-page-title i { color:#d97706; font-size:20px; }
 
-/* ===== STATS ===== */
-.kl-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
-@media(max-width: 900px) { .kl-stats { grid-template-columns: repeat(2, 1fr); } }
-.kl-stat {
-    background: #fff; border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
-    padding: 20px 22px; display: flex; align-items: center; gap: 16px;
-    transition: box-shadow .2s, transform .15s; border-left: 4px solid transparent;
-    position: relative; overflow: hidden;
-}
-.kl-stat::after {
-    content: ''; position: absolute; right: -10px; top: -10px;
-    width: 70px; height: 70px; border-radius: 50%; opacity: .06;
-}
-.kl-stat.s-orange { border-left-color: #f59e0b; }
-.kl-stat.s-orange::after { background: #f59e0b; }
-.kl-stat.s-green  { border-left-color: #10b981; }
-.kl-stat.s-green::after  { background: #10b981; }
-.kl-stat.s-red    { border-left-color: #ef4444; }
-.kl-stat.s-red::after    { background: #ef4444; }
-.kl-stat.s-blue   { border-left-color: #3b82f6; }
-.kl-stat.s-blue::after   { background: #3b82f6; }
-.kl-stat:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
-.kl-si { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
-.kl-si.orange { background: linear-gradient(135deg, #fde68a, #fbbf24); color: #78350f; }
-.kl-si.green  { background: linear-gradient(135deg, #6ee7b7, #34d399); color: #064e3b; }
-.kl-si.red    { background: linear-gradient(135deg, #fca5a5, #f87171); color: #7f1d1d; }
-.kl-si.blue   { background: linear-gradient(135deg, #93c5fd, #60a5fa); color: #1e3a5f; }
-.kl-sv { font-size: 30px; font-weight: 900; color: #1e1f29; line-height: 1; letter-spacing: -1px; }
-.kl-sl { font-size: 12px; color: #8d8d8d; margin-top: 3px; font-weight: 600; }
+/* Stats */
+.kl-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+@media(max-width:700px){ .kl-stats{ grid-template-columns:repeat(2,1fr); } }
+.kl-stat { background:#fff; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.06); padding:20px; display:flex; align-items:center; gap:14px; }
+.kl-si { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+.kl-si.orange { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#d97706; }
+.kl-si.green  { background:linear-gradient(135deg,#c8f7d6,#edfff3); color:#1a9e50; }
+.kl-si.red    { background:linear-gradient(135deg,#ffd6d6,#ffefef); color:#D10024; }
+.kl-si.blue   { background:linear-gradient(135deg,#c9e9ff,#edf6ff); color:#0369a1; }
+.kl-sv { font-size:26px; font-weight:800; color:#1e1f29; line-height:1; }
+.kl-sl { font-size:12px; color:#8d8d8d; margin-top:3px; font-weight:500; }
 
-/* ===== MAIN CARD ===== */
-.kl-card { background: #fff; border-radius: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.05); overflow: hidden; }
+/* Main card */
+.kl-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
 
-/* ===== TOOLBAR ===== */
-.kl-toolbar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 16px 24px; border-bottom: 1px solid #f3f4f6; flex-wrap: wrap;
-    background: #fafafa;
-}
-.kl-search {
-    display: flex; align-items: center; border: 1.5px solid #e5e7eb; border-radius: 10px;
-    overflow: hidden; transition: all .2s; background: #fff; flex: 1; min-width: 180px; max-width: 300px;
-}
-.kl-search:focus-within { border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,.1); }
-.kl-search i { padding: 0 12px; color: #c0c0c0; font-size: 13px; }
-.kl-search input { flex: 1; border: none; outline: none; padding: 10px 0; font-size: 13px; background: transparent; font-family: inherit; }
+/* Toolbar */
+.kl-toolbar { display:flex; align-items:center; gap:10px; padding:18px 22px; border-bottom:1px solid #f2f2f5; flex-wrap:wrap; }
+.kl-search { display:flex; align-items:center; border:1.5px solid #e5e7eb; border-radius:10px; overflow:hidden; transition:border .2s; background:#f9fafb; flex:1; min-width:180px; max-width:260px; }
+.kl-search:focus-within { border-color:#d97706; background:#fff; }
+.kl-search i { padding:0 11px; color:#c0c0c0; font-size:13px; }
+.kl-search input { flex:1; border:none; outline:none; padding:10px 0; font-size:13px; background:transparent; font-family:inherit; }
+.kl-filters { display:flex; gap:6px; flex-wrap:wrap; }
+.kl-fbtn { padding:7px 14px; border:1.5px solid #e5e7eb; border-radius:20px; background:#fff; font-size:12px; font-weight:700; color:#666; cursor:pointer; font-family:inherit; transition:all .2s; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.kl-fbtn:hover { border-color:#d97706; color:#d97706; }
+.kl-fbtn.active { background:#d97706; border-color:#d97706; color:#fff; }
+.kl-view-toggle { display:flex; gap:4px; }
+.kl-vtbtn { width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:1.5px solid #e5e7eb; border-radius:8px; background:#fff; color:#aaa; cursor:pointer; transition:all .18s; font-size:13px; }
+.kl-vtbtn.active { background:#1e1f29; border-color:#1e1f29; color:#fff; }
+.kl-count { font-size:12px; color:#8d8d8d; white-space:nowrap; }
+.kl-addbtn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; background:#D10024; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .18s,transform .1s; margin-left:auto; white-space:nowrap; text-decoration:none; }
+.kl-addbtn:hover { background:#a8001e; color:#fff; }
+.kl-addbtn:active { transform:scale(.97); }
 
-.kl-filters { display: flex; gap: 6px; flex-wrap: wrap; }
-.kl-fbtn {
-    padding: 7px 14px; border: 1.5px solid #e5e7eb; border-radius: 20px;
-    background: #fff; font-size: 12px; font-weight: 700; color: #666;
-    cursor: pointer; font-family: inherit; transition: all .18s; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 5px;
-}
-.kl-fbtn:hover { border-color: #d97706; color: #d97706; }
-.kl-fbtn.active { background: linear-gradient(135deg, #d97706, #b45309); border-color: #d97706; color: #fff; box-shadow: 0 2px 8px rgba(217,119,6,.3); }
+/* Alert */
+.kl-alert { display:flex; align-items:center; gap:8px; padding:12px 22px; font-size:13px; }
+.kl-alert.success { background:#d1fae5; border-bottom:1px solid #6ee7b7; color:#065f46; }
+.kl-alert.error   { background:#fee2e2; border-bottom:1px solid #fca5a5; color:#991b1b; }
 
-/* view toggle */
-.kl-view-toggle { display: flex; gap: 4px; margin-left: auto; }
-.kl-vtbtn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border: 1.5px solid #e5e7eb; border-radius: 8px; background: #fff; color: #aaa; cursor: pointer; transition: all .18s; font-size: 13px; }
-.kl-vtbtn.active { background: #1e1f29; border-color: #1e1f29; color: #fff; }
+/* Grid view */
+.kl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:18px; padding:22px; }
+@media(max-width:600px){ .kl-grid{ grid-template-columns:1fr; } }
 
-.kl-count { font-size: 12px; color: #8d8d8d; white-space: nowrap; }
+.kl-item { background:#fff; border-radius:14px; border:1.5px solid #f0f0f3; overflow:hidden; transition:box-shadow .2s,transform .18s,border-color .18s; }
+.kl-item:hover { box-shadow:0 6px 24px rgba(0,0,0,.1); transform:translateY(-2px); border-color:#fde68a; }
 
-/* ===== ALERT ===== */
-.kl-alert { display: flex; align-items: center; gap: 10px; padding: 13px 24px; font-size: 13px; }
-.kl-alert.success { background: linear-gradient(90deg, #d1fae5, #ecfdf5); border-bottom: 1px solid #a7f3d0; color: #065f46; }
-.kl-alert.error   { background: linear-gradient(90deg, #fee2e2, #fff5f5); border-bottom: 1px solid #fecaca; color: #991b1b; }
+.kl-item-img { width:100%; height:160px; background:linear-gradient(135deg,#fef3c7,#fde68a); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+.kl-item-img img { width:100%; height:100%; object-fit:cover; transition:transform .35s; }
+.kl-item:hover .kl-item-img img { transform:scale(1.05); }
+.kl-item-img .no-img { font-size:44px; color:rgba(217,119,6,.2); }
 
-/* ===== GRID VIEW ===== */
-.kl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; padding: 24px; }
-@media(max-width: 640px) { .kl-grid { grid-template-columns: 1fr; } }
+.kl-item-status { position:absolute; top:9px; right:9px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px; backdrop-filter:blur(4px); }
+.kl-item-status.buka  { background:rgba(209,250,229,.92); color:#065f46; }
+.kl-item-status.tutup { background:rgba(254,226,226,.92); color:#991b1b; }
+.kl-item-status .dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.kl-item-status.buka .dot  { background:#10b981; }
+.kl-item-status.tutup .dot { background:#ef4444; }
 
-.kl-item {
-    background: #fff; border-radius: 16px;
-    border: 1.5px solid #f0f0f3; overflow: hidden;
-    transition: box-shadow .25s, transform .2s, border-color .2s;
-    position: relative;
-}
-.kl-item:hover { box-shadow: 0 8px 32px rgba(0,0,0,.12); transform: translateY(-3px); border-color: #fde68a; }
+.kl-item-body { padding:14px 16px 10px; }
+.kl-item-kat { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:6px; margin-bottom:8px; background:#fef3c7; color:#92400e; }
+.kl-item-name { font-size:14px; font-weight:800; color:#1e1f29; margin:0 0 7px; line-height:1.3; }
+.kl-item-meta { font-size:11.5px; color:#9ca3af; display:flex; flex-direction:column; gap:4px; }
+.kl-item-meta span { display:flex; align-items:center; gap:6px; }
+.kl-item-meta i { width:13px; text-align:center; color:#d97706; }
 
-.kl-item-img {
-    width: 100%; height: 170px;
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; position: relative;
-}
-.kl-item-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-.kl-item:hover .kl-item-img img { transform: scale(1.06); }
-.kl-item-img .no-img { font-size: 52px; color: rgba(217,119,6,.25); }
-.kl-item-img-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.55));
-    opacity: 0; transition: opacity .25s;
-}
-.kl-item:hover .kl-item-img-overlay { opacity: 1; }
+.kl-item-actions { display:flex; gap:7px; padding:10px 16px; border-top:1px solid #f5f5f8; background:#fafafa; }
+.kl-act-btn { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px; padding:7px 10px; border:none; border-radius:7px; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; text-decoration:none; }
+.kl-act-edit   { background:#e3f2fd; color:#1565c0; }
+.kl-act-edit:hover   { background:#bbdefb; }
+.kl-act-delete { background:#fee2e2; color:#991b1b; }
+.kl-act-delete:hover { background:#fecaca; }
 
-.kl-item-status {
-    position: absolute; top: 10px; right: 10px;
-    padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
-    display: flex; align-items: center; gap: 4px;
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-}
-.kl-item-status.buka  { background: rgba(209,250,229,.95); color: #065f46; border: 1px solid rgba(167,243,208,.6); }
-.kl-item-status.tutup { background: rgba(254,226,226,.95); color: #991b1b; border: 1px solid rgba(254,202,202,.6); }
-.kl-item-status .dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.kl-item-status.buka  .dot { background: #10b981; }
-.kl-item-status.tutup .dot { background: #ef4444; }
+/* List view */
+.kl-list { display:none; }
+.kl-list-row { display:flex; align-items:center; gap:14px; padding:13px 22px; border-bottom:1px solid #f7f7f9; transition:background .15s; }
+.kl-list-row:last-child { border-bottom:none; }
+.kl-list-row:hover { background:#fafbfc; }
+.kl-list-thumb { width:50px; height:50px; border-radius:10px; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg,#fef3c7,#fde68a); display:flex; align-items:center; justify-content:center; }
+.kl-list-thumb img { width:100%; height:100%; object-fit:cover; }
+.kl-list-thumb i  { font-size:20px; color:rgba(217,119,6,.35); }
+.kl-list-info { flex:1; min-width:0; }
+.kl-list-name { font-size:13px; font-weight:800; color:#1e1f29; margin:0 0 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.kl-list-meta { font-size:11.5px; color:#9ca3af; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.kl-list-meta span { display:flex; align-items:center; gap:4px; }
+.kl-list-meta i { color:#d97706; }
+.kl-list-actions { display:flex; gap:6px; flex-shrink:0; }
+.kl-list-btn { display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border:none; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s; text-decoration:none; white-space:nowrap; }
+.kl-list-btn.edit { background:#e3f2fd; color:#1565c0; }
+.kl-list-btn.edit:hover { background:#bbdefb; }
+.kl-list-btn.del  { background:#fee2e2; color:#991b1b; }
+.kl-list-btn.del:hover  { background:#fecaca; }
 
-.kl-item-body { padding: 16px 18px 12px; }
-.kl-item-kat {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 10.5px; font-weight: 700; padding: 3px 10px;
-    border-radius: 6px; margin-bottom: 9px;
-}
-.kl-kat-makanan  { background: #fff7ed; color: #c2410c; }
-.kl-kat-jajanan  { background: #fdf4ff; color: #7e22ce; }
-.kl-kat-minuman  { background: #eff6ff; color: #1d4ed8; }
-.kl-kat-seafood  { background: #ecfeff; color: #0e7490; }
-.kl-kat-sarapan  { background: #fefce8; color: #854d0e; }
-.kl-kat-dessert  { background: #fdf2f8; color: #be185d; }
-.kl-kat-lainnya  { background: #f3f4f6; color: #4b5563; }
+/* Status badge (list) */
+.kl-sbadge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; flex-shrink:0; }
+.kl-sbadge.buka  { background:#d1fae5; color:#065f46; }
+.kl-sbadge.tutup { background:#fee2e2; color:#991b1b; }
+.kl-sbadge i { font-size:7px; }
 
-.kl-item-name { font-size: 15px; font-weight: 800; color: #1e1f29; margin: 0 0 8px; line-height: 1.3; }
-.kl-item-meta { font-size: 11.5px; color: #9ca3af; display: flex; flex-direction: column; gap: 5px; }
-.kl-item-meta span { display: flex; align-items: center; gap: 7px; }
-.kl-item-meta i { width: 14px; text-align: center; color: #d97706; font-size: 12px; }
-
-.kl-item-actions {
-    display: flex; gap: 8px; padding: 12px 18px;
-    border-top: 1px solid #f5f5f8;
-    background: linear-gradient(to bottom, #fdfdfd, #f9f9fb);
-}
-.kl-act-btn {
-    flex: 1; display: inline-flex; align-items: center; justify-content: center;
-    gap: 5px; padding: 8px 10px; border: none; border-radius: 9px;
-    font-size: 12px; font-weight: 700; cursor: pointer;
-    font-family: inherit; transition: all .18s; text-decoration: none;
-}
-.kl-act-edit   { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
-.kl-act-edit:hover   { background: #2563eb; color: #fff; border-color: #2563eb; }
-.kl-act-delete { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
-.kl-act-delete:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
-
-/* ===== LIST VIEW ===== */
-.kl-list { display: none; }
-.kl-list-row {
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 24px; border-bottom: 1px solid #f5f5f8;
-    transition: background .15s;
-}
-.kl-list-row:last-child { border-bottom: none; }
-.kl-list-row:hover { background: #fffbf0; }
-.kl-list-thumb {
-    width: 54px; height: 54px; border-radius: 10px; flex-shrink: 0;
-    overflow: hidden; background: linear-gradient(135deg, #fef3c7, #fde68a);
-    display: flex; align-items: center; justify-content: center;
-}
-.kl-list-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.kl-list-thumb i  { font-size: 22px; color: rgba(217,119,6,.4); }
-.kl-list-info { flex: 1; min-width: 0; }
-.kl-list-name { font-size: 13.5px; font-weight: 800; color: #1e1f29; margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.kl-list-meta { font-size: 11.5px; color: #9ca3af; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.kl-list-meta span { display: flex; align-items: center; gap: 4px; }
-.kl-list-meta i { color: #d97706; }
-.kl-list-kat { flex-shrink: 0; }
-.kl-list-status { flex-shrink: 0; }
-.kl-list-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.kl-list-btn {
-    display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px;
-    border: none; border-radius: 7px; font-size: 11.5px; font-weight: 700;
-    cursor: pointer; font-family: inherit; transition: all .18s; text-decoration: none;
-}
-.kl-list-btn.edit   { background: #eff6ff; color: #2563eb; }
-.kl-list-btn.edit:hover   { background: #2563eb; color: #fff; }
-.kl-list-btn.del    { background: #fff1f2; color: #e11d48; }
-.kl-list-btn.del:hover    { background: #e11d48; color: #fff; }
-
-/* ===== EMPTY STATE ===== */
-.kl-empty { text-align: center; padding: 72px 24px; }
-.kl-empty-icon {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: linear-gradient(135deg, #fde68a, #fbbf24);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 18px; box-shadow: 0 8px 24px rgba(251,191,36,.4);
-}
-.kl-empty-icon i { font-size: 32px; color: #78350f; }
-.kl-empty h4 { font-size: 17px; font-weight: 800; color: #374151; margin: 0 0 8px; }
-.kl-empty p  { font-size: 13px; color: #9ca3af; margin: 0 0 20px; }
+/* Empty */
+.kl-empty { text-align:center; padding:64px 24px; }
+.kl-empty-icon { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#fef3c7,#fde68a); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+.kl-empty-icon i { font-size:28px; color:#d97706; }
+.kl-empty h4 { font-size:15px; font-weight:700; color:#374151; margin:0 0 6px; }
+.kl-empty p  { font-size:13px; color:#9ca3af; margin:0 0 18px; }
 </style>
 
 <div class="kl-wrap">
-    {{-- Hero Banner --}}
-    <div class="kl-hero">
-        <div class="kl-hero-left">
-            <div class="kl-hero-badge"><i class="fa fa-cutlery"></i> Kuliner Lokal NusaMart</div>
-            <h1 class="kl-hero-title">Manajemen Warung Kuliner</h1>
-            <p class="kl-hero-sub">Kelola dan publikasikan informasi warung kuliner lokal</p>
-        </div>
-        <div class="kl-hero-right">
-            <a href="{{ route('kuliner.index') }}" target="_blank" class="kl-hero-viewbtn">
-                <i class="fa fa-eye"></i> Lihat di Situs
-            </a>
-            <a href="{{ route('admin.kuliner.create') }}" class="kl-hero-addbtn">
-                <i class="fa fa-plus"></i> Tambah Warung
-            </a>
-        </div>
+    {{-- Page header --}}
+    <div class="kl-page-header">
+        <h1 class="kl-page-title"><i class="fa fa-cutlery"></i> Manajemen Kuliner</h1>
+        <a href="{{ route('kuliner.index') }}" target="_blank"
+           style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;background:#f4f5f7;color:#555;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s">
+            <i class="fa fa-external-link"></i> Lihat di Situs
+        </a>
     </div>
 
     {{-- Stats --}}
     @php $totalKat = $kuliners->pluck('kategori')->unique()->count(); @endphp
     <div class="kl-stats">
-        <div class="kl-stat s-orange">
+        <div class="kl-stat">
             <div class="kl-si orange"><i class="fa fa-cutlery"></i></div>
-            <div>
-                <div class="kl-sv">{{ $kuliners->count() }}</div>
-                <div class="kl-sl">Total Warung</div>
-            </div>
+            <div><div class="kl-sv">{{ $kuliners->count() }}</div><div class="kl-sl">Total Warung</div></div>
         </div>
-        <div class="kl-stat s-green">
+        <div class="kl-stat">
             <div class="kl-si green"><i class="fa fa-check-circle"></i></div>
-            <div>
-                <div class="kl-sv">{{ $kuliners->where('status','buka')->count() }}</div>
-                <div class="kl-sl">Sedang Buka</div>
-            </div>
+            <div><div class="kl-sv">{{ $kuliners->where('status','buka')->count() }}</div><div class="kl-sl">Sedang Buka</div></div>
         </div>
-        <div class="kl-stat s-red">
+        <div class="kl-stat">
             <div class="kl-si red"><i class="fa fa-times-circle"></i></div>
-            <div>
-                <div class="kl-sv">{{ $kuliners->where('status','tutup')->count() }}</div>
-                <div class="kl-sl">Sedang Tutup</div>
-            </div>
+            <div><div class="kl-sv">{{ $kuliners->where('status','tutup')->count() }}</div><div class="kl-sl">Sedang Tutup</div></div>
         </div>
-        <div class="kl-stat s-blue">
+        <div class="kl-stat">
             <div class="kl-si blue"><i class="fa fa-tags"></i></div>
-            <div>
-                <div class="kl-sv">{{ $totalKat }}</div>
-                <div class="kl-sl">Kategori</div>
-            </div>
+            <div><div class="kl-sv">{{ $totalKat }}</div><div class="kl-sl">Kategori</div></div>
         </div>
     </div>
 
@@ -303,6 +168,9 @@
                 <button class="kl-vtbtn active" id="btnGrid" onclick="setView('grid')" title="Grid"><i class="fa fa-th-large"></i></button>
                 <button class="kl-vtbtn" id="btnList" onclick="setView('list')" title="List"><i class="fa fa-list"></i></button>
             </div>
+            <a href="{{ route('admin.kuliner.create') }}" class="kl-addbtn">
+                <i class="fa fa-plus"></i> Tambah Warung
+            </a>
         </div>
 
         @if(session('success'))
@@ -317,7 +185,7 @@
                 <div class="kl-empty-icon"><i class="fa fa-cutlery"></i></div>
                 <h4>Belum Ada Warung</h4>
                 <p>Mulai tambahkan warung kuliner lokal pertama.</p>
-                <a href="{{ route('admin.kuliner.create') }}" class="kl-hero-addbtn" style="display:inline-flex;text-decoration:none">
+                <a href="{{ route('admin.kuliner.create') }}" class="kl-addbtn" style="margin:0 auto;display:inline-flex">
                     <i class="fa fa-plus"></i> Tambah Warung
                 </a>
             </div>
@@ -325,17 +193,6 @@
             {{-- Grid View --}}
             <div class="kl-grid" id="klGrid">
                 @foreach($kuliners as $kuliner)
-                @php
-                    $katClass = match(strtolower($kuliner->kategori)) {
-                        'makanan berat' => 'kl-kat-makanan',
-                        'jajanan'       => 'kl-kat-jajanan',
-                        'minuman'       => 'kl-kat-minuman',
-                        'seafood'       => 'kl-kat-seafood',
-                        'sarapan'       => 'kl-kat-sarapan',
-                        'dessert'       => 'kl-kat-dessert',
-                        default         => 'kl-kat-lainnya',
-                    };
-                @endphp
                 <div class="kl-item"
                      data-search="{{ strtolower($kuliner->nama.' '.$kuliner->kategori.' '.$kuliner->alamat) }}"
                      data-status="{{ $kuliner->status }}">
@@ -345,22 +202,16 @@
                         @else
                             <i class="fa fa-cutlery no-img"></i>
                         @endif
-                        <div class="kl-item-img-overlay"></div>
                         <span class="kl-item-status {{ $kuliner->status }}">
                             <span class="dot"></span> {{ ucfirst($kuliner->status) }}
                         </span>
                     </div>
                     <div class="kl-item-body">
-                        <div class="kl-item-kat {{ $katClass }}">
-                            <i class="fa fa-tag"></i> {{ $kuliner->kategori }}
-                        </div>
+                        <div class="kl-item-kat"><i class="fa fa-tag"></i> {{ $kuliner->kategori }}</div>
                         <div class="kl-item-name">{{ $kuliner->nama }}</div>
                         <div class="kl-item-meta">
-                            <span><i class="fa fa-map-marker"></i> {{ Str::limit($kuliner->alamat, 50) }}</span>
+                            <span><i class="fa fa-map-marker"></i> {{ Str::limit($kuliner->alamat, 48) }}</span>
                             <span><i class="fa fa-clock-o"></i> {{ $kuliner->jam_buka }} – {{ $kuliner->jam_tutup }}</span>
-                            @if($kuliner->kontak_wa)
-                            <span><i class="fa fa-whatsapp"></i> +{{ $kuliner->kontak_wa }}</span>
-                            @endif
                         </div>
                     </div>
                     <div class="kl-item-actions">
@@ -383,17 +234,6 @@
             {{-- List View --}}
             <div class="kl-list" id="klList">
                 @foreach($kuliners as $kuliner)
-                @php
-                    $katClass2 = match(strtolower($kuliner->kategori)) {
-                        'makanan berat' => 'kl-kat-makanan',
-                        'jajanan'       => 'kl-kat-jajanan',
-                        'minuman'       => 'kl-kat-minuman',
-                        'seafood'       => 'kl-kat-seafood',
-                        'sarapan'       => 'kl-kat-sarapan',
-                        'dessert'       => 'kl-kat-dessert',
-                        default         => 'kl-kat-lainnya',
-                    };
-                @endphp
                 <div class="kl-list-row"
                      data-search="{{ strtolower($kuliner->nama.' '.$kuliner->kategori.' '.$kuliner->alamat) }}"
                      data-status="{{ $kuliner->status }}">
@@ -407,18 +247,14 @@
                     <div class="kl-list-info">
                         <div class="kl-list-name">{{ $kuliner->nama }}</div>
                         <div class="kl-list-meta">
-                            <span><i class="fa fa-map-marker"></i> {{ Str::limit($kuliner->alamat, 40) }}</span>
+                            <span><i class="fa fa-tag"></i> {{ $kuliner->kategori }}</span>
+                            <span><i class="fa fa-map-marker"></i> {{ Str::limit($kuliner->alamat, 38) }}</span>
                             <span><i class="fa fa-clock-o"></i> {{ $kuliner->jam_buka }} – {{ $kuliner->jam_tutup }}</span>
                         </div>
                     </div>
-                    <div class="kl-list-kat">
-                        <span class="kl-item-kat {{ $katClass2 }}" style="margin:0"><i class="fa fa-tag"></i> {{ $kuliner->kategori }}</span>
-                    </div>
-                    <div class="kl-list-status">
-                        <span class="kl-item-status {{ $kuliner->status }}" style="position:static">
-                            <span class="dot"></span> {{ ucfirst($kuliner->status) }}
-                        </span>
-                    </div>
+                    <span class="kl-sbadge {{ $kuliner->status }}">
+                        <i class="fa fa-circle"></i> {{ ucfirst($kuliner->status) }}
+                    </span>
                     <div class="kl-list-actions">
                         <a href="{{ route('admin.kuliner.edit', $kuliner->id) }}" class="kl-list-btn edit">
                             <i class="fa fa-pencil"></i> Edit
@@ -426,16 +262,14 @@
                         <form action="{{ route('admin.kuliner.destroy', $kuliner->id) }}" method="POST"
                               onsubmit="return confirm('Hapus warung {{ addslashes($kuliner->nama) }}?')">
                             @csrf @method('DELETE')
-                            <button type="submit" class="kl-list-btn del">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <button type="submit" class="kl-list-btn del"><i class="fa fa-trash"></i></button>
                         </form>
                     </div>
                 </div>
                 @endforeach
             </div>
 
-            <div id="klEmpty" style="display:none" class="kl-empty">
+            <div id="klEmpty2" style="display:none" class="kl-empty">
                 <div class="kl-empty-icon"><i class="fa fa-search"></i></div>
                 <h4>Tidak Ditemukan</h4>
                 <p>Coba kata kunci atau filter lain.</p>
@@ -446,7 +280,7 @@
 
 <script>
 var activeFilter = 'all';
-var activeView = 'grid';
+var activeView   = 'grid';
 
 function setFilter(btn, filter) {
     activeFilter = filter;
@@ -465,23 +299,20 @@ function setView(view) {
 }
 
 function filterKuliner() {
-    var q = document.getElementById('klSearch').value.toLowerCase().trim();
-    var container = activeView === 'grid' ? '#klGrid' : '#klList';
-    var selector  = activeView === 'grid' ? '.kl-item' : '.kl-list-row';
-    var items = document.querySelectorAll(container + ' ' + selector);
+    var q   = document.getElementById('klSearch').value.toLowerCase().trim();
+    var sel = activeView === 'grid' ? '#klGrid .kl-item' : '#klList .kl-list-row';
+    var items = document.querySelectorAll(sel);
     var count = 0;
-
     items.forEach(function(item) {
         var ms = !q || item.dataset.search.includes(q);
         var mf = activeFilter === 'all' || item.dataset.status === activeFilter;
         item.style.display = (ms && mf) ? '' : 'none';
         if (ms && mf) count++;
     });
-
     var el = document.getElementById('klCount');
     el.textContent = (q || activeFilter !== 'all') ? count + ' dari ' + items.length + ' warung' : '';
-    var emptyEl = document.getElementById('klEmpty');
-    if (emptyEl) emptyEl.style.display = (count === 0 && items.length > 0) ? '' : 'none';
+    var emp = document.getElementById('klEmpty2');
+    if (emp) emp.style.display = (count === 0 && items.length > 0) ? '' : 'none';
 }
 </script>
 @endsection
