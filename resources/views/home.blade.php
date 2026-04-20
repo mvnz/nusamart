@@ -345,17 +345,13 @@
                                     <span class="ptile-pct">{{ $disc }}%</span>
                                     @endif
                                 </div>
-                                <div class="ptile-footer">
-                                    <span class="ptile-seller"><i class="fa fa-store"></i> {{ $p['seller'] }}</span>
-                                    <span class="ptile-rating">
-                                        @if($p['rating'])
-                                        <i class="fa fa-star"></i>
-                                        {{ $p['rating'] }}
-                                        @if($p['sold'] > 0)<span class="pcr-sep">&middot;</span>@endif
-                                        @endif
-                                        @if($p['sold'] > 0)<span>{{ $p['sold'] }} terjual</span>@endif
-                                    </span>
+                                <div class="ptile-seller">{{ $p['seller'] }}</div>
+                                @if($p['rating'] || $p['sold'] > 0)
+                                <div class="ptile-rating">
+                                    @if($p['rating'])<i class="fa fa-star"></i> {{ $p['rating'] }}@if($p['sold'] > 0)<span class="pcr-sep">&middot;</span>@endif@endif
+                                    @if($p['sold'] > 0)<span>{{ $p['sold'] }} terjual</span>@endif
                                 </div>
+                                @endif
                             </div>
                         </a>
                         @endforeach
