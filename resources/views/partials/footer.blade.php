@@ -13,9 +13,19 @@
 .footer-contact .fa { color: #D10024; width: 16px; text-align: center; }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; }
 .footer-bottom p { font-size: 12px; color: #8d8d8d; }
-.payment-icons { display: flex; gap: 8px; }
-.payment-icons span { background: rgba(255,255,255,.08); padding: 4px 10px; border-radius: 6px; font-size: 14px; color: #b9babc; font-weight: 600; transition: all 0.3s; }
-.payment-icons span:hover { background: rgba(209,0,36,.15); color: #fff; }
+.payment-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.payment-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666; font-weight: 600; }
+.payment-icons { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.pay-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 7px; font-size: 12px; font-weight: 700; letter-spacing: .3px; border: 1px solid transparent; transition: transform 0.2s, box-shadow 0.2s; cursor: default; }
+.pay-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.35); }
+.pay-badge .fa { font-size: 15px; }
+.pay-visa    { background: #fff; color: #1a1f71; border-color: rgba(255,255,255,.15); }
+.pay-mc      { background: #fff; color: #252525; border-color: rgba(255,255,255,.15); }
+.pay-mc .fa  { background: linear-gradient(to right, #eb001b 40%, #f79e1b 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.pay-bca     { background: #005baa; color: #fff; }
+.pay-bni     { background: #f15a24; color: #fff; }
+.pay-mandiri { background: #003087; color: #F7A800; }
+.pay-gopay   { background: #00aed6; color: #fff; }
 @media (max-width: 992px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 576px) { .footer-grid { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; gap: 10px; text-align: center; } }
 </style>
@@ -61,13 +71,16 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 NusaMart. All rights reserved.</p>
-            <div class="payment-icons">
-                <span><i class="fa fa-cc-visa"></i></span>
-                <span><i class="fa fa-cc-mastercard"></i></span>
-                <span><i class="fa fa-credit-card"></i> BCA</span>
-                <span><i class="fa fa-credit-card"></i> BNI</span>
-                <span><i class="fa fa-credit-card"></i> Mandiri</span>
-                <span><i class="fa fa-money"></i> GoPay</span>
+            <div class="payment-wrap">
+                <span class="payment-label">Metode Pembayaran</span>
+                <div class="payment-icons">
+                    <span class="pay-badge pay-visa"><i class="fa fa-cc-visa"></i> VISA</span>
+                    <span class="pay-badge pay-mc"><i class="fa fa-cc-mastercard"></i> Mastercard</span>
+                    <span class="pay-badge pay-bca"><i class="fa fa-university"></i> BCA</span>
+                    <span class="pay-badge pay-bni"><i class="fa fa-university"></i> BNI</span>
+                    <span class="pay-badge pay-mandiri"><i class="fa fa-university"></i> Mandiri</span>
+                    <span class="pay-badge pay-gopay"><i class="fa fa-mobile"></i> GoPay</span>
+                </div>
             </div>
         </div>
     </div>
