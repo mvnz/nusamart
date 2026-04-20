@@ -280,7 +280,7 @@
         <div class="ks-hero-inner single">
             {{-- Main photo --}}
             <div class="ks-hero-main">
-                @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
+                @if($kuliner->gambar)
                     <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}">
                 @else
                     <div class="ks-hero-placeholder">
@@ -335,7 +335,7 @@
                     </div>
 
                     {{-- Foto --}}
-                    @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
+                    @if($kuliner->gambar)
                     <div style="margin-top:16px;border-radius:12px;overflow:hidden;background:#f3f4f6;">
                         <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}"
                              style="width:100%;height:auto;display:block;">
