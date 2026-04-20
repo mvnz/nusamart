@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Produk - NusaMart')
 
@@ -76,19 +76,19 @@
 /* ===== PRODUCT CARD ===== */
 .product-card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
     border: 1px solid #f0f0f0;
     transition: transform .2s, box-shadow .2s;
     display: flex;
     flex-direction: column;
     position: relative;
 }
-.product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.11); }
+.product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.12); }
 
 .product-card-img {
-    height: 170px;
+    aspect-ratio: 1 / 1;
     background: #f7f7f7;
     display: flex;
     align-items: center;
@@ -99,37 +99,37 @@
 .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
 .product-card-img .no-img { font-size: 48px; color: #ddd; }
 
-.product-card-body { padding: 12px 14px 14px; flex: 1; display: flex; flex-direction: column; }
+.product-card-body { padding: 14px 14px 16px; flex: 1; display: flex; flex-direction: column; }
 .product-card-category {
     font-size: 10px; color: #D10024; font-weight: 700;
     text-transform: uppercase; letter-spacing: .6px;
-    background: rgba(209,0,36,.07); display: inline-block;
-    padding: 2px 7px; border-radius: 20px; margin-bottom: 6px;
+    background: rgba(209,0,36,.08); display: inline-block;
+    padding: 3px 8px; border-radius: 20px; margin-bottom: 8px;
 }
 .product-card-name {
-    font-size: 13px; font-weight: 600; color: #1e1f29;
+    font-size: 14px; font-weight: 700; color: #1e1f29;
     margin-bottom: 4px; line-height: 1.45;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.product-card-seller { font-size: 11px; color: #aaa; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-.product-card-price { font-size: 15px; font-weight: 800; color: #D10024; margin-bottom: 4px; }
-.product-card-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-bottom: 4px; min-height: 18px; }
+.product-card-seller { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+.product-card-price { font-size: 17px; font-weight: 800; color: #D10024; margin-bottom: 8px; }
+.product-card-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; margin-bottom: 6px; min-height: 18px; }
 .product-card-rating .pcr-star { color: #f59e0b; font-size: 13px; }
 .product-card-rating .pcr-val { font-weight: 700; color: #1e1f29; }
 .product-card-rating .pcr-count { color: #aaa; }
 .product-card-rating .pcr-sep { color: #ccc; }
 .product-card-rating .pcr-sold { color: #888; font-size: 11px; }
-.product-card-stock { font-size: 11px; color: #aaa; margin-bottom: 2px; }
+.product-card-stock { font-size: 12px; color: #10b981; margin-bottom: 12px; display: flex; align-items: center; gap: 4px; }
 .product-card-stock.low { color: #f59e0b; }
 .product-card-stock.out { color: #ef4444; }
 .btn-detail {
-    display: block; text-align: center; padding: 8px;
-    background: linear-gradient(135deg,#1e1f29,#2d2e3a);
-    color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600;
-    transition: background .2s; letter-spacing: .3px;
+    display: block; text-align: center; padding: 10px;
+    background: #1e1f29;
+    color: #fff; border-radius: 8px; font-size: 13px; font-weight: 700;
+    transition: background .2s; letter-spacing: .2px; margin-top: auto;
 }
 .btn-detail::after { content: ''; position: absolute; inset: 0; z-index: 1; }
-.btn-detail:hover { background: linear-gradient(135deg,#D10024,#a8001e); color: #fff; }
+.btn-detail:hover { background: #D10024; color: #fff; }
 
 /* ===== EMPTY STATE ===== */
 .empty-state {
@@ -335,8 +335,9 @@ $bannerColor = $catBannerColors[$catIdx];
                         <div class="product-card-category">{{ $product->category->name }}</div>
                     @endif
                     <div class="product-card-name">{{ $product->name }}</div>
-                    <div class="product-card-seller"><i class="fa fa-store" style="margin-right:4px;"></i>{{ $product->seller->name }}</div>
+                    <div class="product-card-seller">{{ $product->seller->name }}</div>
                     <div class="product-card-price">{{ $product->formatted_price }}</div>
+                    @if($product->reviews_count > 0 || ($product->order_items_count ?? 0) > 0)
                     <div class="product-card-rating">
                         @if($product->reviews_count > 0)
                         <span class="pcr-star">&#9733;</span>
@@ -347,13 +348,14 @@ $bannerColor = $catBannerColors[$catIdx];
                         <span class="pcr-sold">{{ $product->order_items_count }} terjual</span>
                         @endif
                     </div>
+                    @endif
                     <div class="product-card-stock @if($product->stock == 0) out @elseif($product->stock <= 5) low @endif">
                         @if($product->stock == 0)
                             <i class="fa fa-times-circle"></i> Stok habis
                         @elseif($product->stock <= 5)
                             <i class="fa fa-exclamation-triangle"></i> Sisa {{ $product->stock }}
                         @else
-                            <i class="fa fa-check-circle" style="color:#10b981;"></i> Stok: {{ $product->stock }}
+                            <i class="fa fa-check-circle"></i> Stok: {{ $product->stock }}
                         @endif
                     </div>
                     <a href="{{ route('products.show', $product) }}" class="btn-detail">Lihat Detail</a>
