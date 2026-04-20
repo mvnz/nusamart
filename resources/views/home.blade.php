@@ -352,6 +352,15 @@
                                     @if($p['sold'] > 0)<span>{{ $p['sold'] }} terjual</span>@endif
                                 </div>
                                 @endif
+                                <div class="ptile-stock @if($p['stock'] == 0) out @elseif($p['stock'] <= 5) low @endif">
+                                    @if($p['stock'] == 0)
+                                        <i class="fa fa-times-circle"></i> Stok habis
+                                    @elseif($p['stock'] <= 5)
+                                        <i class="fa fa-exclamation-triangle"></i> Sisa {{ $p['stock'] }}
+                                    @else
+                                        <i class="fa fa-check-circle"></i> Stok: {{ $p['stock'] }}
+                                    @endif
+                                </div>
                             </div>
                         </a>
                         @endforeach
