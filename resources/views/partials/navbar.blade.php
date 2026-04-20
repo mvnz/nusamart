@@ -155,9 +155,12 @@
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') || request()->routeIs('seller.*') ? 'active' : '' }}">Dashboard</a>
             @endif
             @endauth
+            @php $isAdmin = auth()->check() && auth()->user()->role === 'admin'; @endphp
+            @if(!$isAdmin)
             <a href="{{ route('page.vouchers') }}" class="{{ request()->routeIs('page.vouchers') ? 'active' : '' }}">Voucher</a>
             <a href="{{ route('kuliner.index') }}" class="{{ request()->routeIs('kuliner.*') ? 'active' : '' }}">Kuliner Lokal</a>
             <a href="{{ route('page.bantuan') }}" class="{{ request()->routeIs('page.bantuan') ? 'active' : '' }}">Bantuan</a>
+            @endif
 
             {{-- Link Masuk hanya tampil di mobile (top-bar tersembunyi) --}}
             @guest
