@@ -273,7 +273,7 @@
                  data-kat="{{ $kuliner->kategori }}">
                   {{-- Background --}}
                   <div class="kl-card-bg">
-                      @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
+                      @if($kuliner->gambar)
                           <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}" loading="lazy">
                       @else
                           <div class="kl-card-placeholder"><i class="fa fa-cutlery"></i></div>
