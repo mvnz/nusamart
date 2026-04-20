@@ -1260,6 +1260,9 @@
 .ptile-rating { font-size: 11px; color: #f39c12; display: flex; align-items: center; gap: 3px; white-space: nowrap; margin-top: 6px; }
 .ptile-rating .pcr-sep { color: #ccc; }
 .ptile-rating span { color: #888; }
+.ptile-stock { font-size: 12px; color: #10b981; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.ptile-stock.low { color: #f59e0b; }
+.ptile-stock.out { color: #ef4444; }
 @media (max-width: 1100px) { .prod-tabs-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 768px)  { .prod-tabs-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 480px)  { .prod-tabs-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
