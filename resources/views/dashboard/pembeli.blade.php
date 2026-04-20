@@ -9,29 +9,47 @@
 @endphp
 
 <style>
-.pembeli-dash { padding: 30px 0 60px; }
+.pembeli-dash { padding: 28px 0 60px; background:#f5f6fa; min-height:60vh; }
 .welcome-bar {
-    background: linear-gradient(135deg, #D10024, #ff4a6a);
-    color: #fff; border-radius: 14px; padding: 28px 32px;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+    background: linear-gradient(135deg, #1a0533 0%, #D10024 55%, #ff6b35 100%);
+    color: #fff; border-radius: 22px; padding: 32px 36px;
+    margin-bottom: 28px; overflow:hidden; position:relative;
 }
-.welcome-bar h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.wb-blob { position:absolute; border-radius:50%; background:rgba(255,255,255,.07); animation:wbBlob 4s ease-in-out infinite; pointer-events:none; }
+.wb-blob.b1 { width:280px;height:280px;top:-80px;right:-50px;animation-delay:0s; }
+.wb-blob.b2 { width:180px;height:180px;bottom:-60px;left:4%;animation-delay:1.5s; }
+.wb-blob.b3 { width:110px;height:110px;top:15px;left:38%;animation-delay:.8s; }
+@keyframes wbBlob { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.2);opacity:1} }
+.wb-inner { position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap; }
+.welcome-bar h2 { font-size: 22px; font-weight: 900; margin-bottom: 4px; text-shadow:0 3px 14px rgba(0,0,0,.3); }
 .welcome-bar p { font-size: 13px; opacity: .85; }
 .welcome-bar .btn-shop-now {
-    padding: 12px 24px; background: #fff; color: #D10024;
-    border-radius: 8px; font-size: 14px; font-weight: 700;
+    padding: 12px 24px; background: rgba(255,255,255,.18);
+    border:1.5px solid rgba(255,255,255,.35);
+    backdrop-filter:blur(8px);
+    color: #fff;
+    border-radius: 12px; font-size: 14px; font-weight: 700;
     text-decoration: none; white-space: nowrap;
+    transition: background .2s;
 }
-.welcome-bar .btn-shop-now:hover { background: #f5f5f5; }
+.welcome-bar .btn-shop-now:hover { background: rgba(255,255,255,.28); color:#fff; }
 
 .dash-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
 @media(max-width:768px){ .dash-stats { grid-template-columns: repeat(2, 1fr); } }
 
 .stat-card {
-    background: #fff; border-radius: 12px; padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.07); display: flex; flex-direction: column; gap: 8px;
+    background: #fff; border-radius: 14px; padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border:1px solid #f0f0f0;
+    border-left: 4px solid transparent;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: transform .2s, box-shadow .2s;
 }
+.stat-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+.stat-card.c-red    { border-left-color:#D10024; }
+.stat-card.c-yellow { border-left-color:#f59e0b; }
+.stat-card.c-green  { border-left-color:#10b981; }
+.stat-card.c-purple { border-left-color:#7c3aed; }
 .stat-card .stat-icon {
     width: 44px; height: 44px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center; font-size: 20px;
@@ -153,32 +171,37 @@
 
 <div class="pembeli-dash">
     <div class="welcome-bar">
-        <div>
-            <h2>Halo, {{ $user->name }}! 👋</h2>
-            <p>Selamat datang di NusaMart. Temukan produk terbaik pilihan Anda.</p>
+        <div class="wb-blob b1"></div>
+        <div class="wb-blob b2"></div>
+        <div class="wb-blob b3"></div>
+        <div class="wb-inner">
+            <div>
+                <h2>Halo, {{ $user->name }}! 👋</h2>
+                <p>Selamat datang di NusaMart. Temukan produk terbaik pilihan Anda.</p>
+            </div>
+            <a href="{{ route('products.index') }}" class="btn-shop-now">
+                <i class="fa fa-shopping-bag"></i> Belanja Sekarang
+            </a>
         </div>
-        <a href="{{ route('products.index') }}" class="btn-shop-now">
-            <i class="fa fa-shopping-bag"></i> Belanja Sekarang
-        </a>
     </div>
 
     <div class="dash-stats">
-        <div class="stat-card">
+        <div class="stat-card c-red">
             <div class="stat-icon" style="background:#fff0f0;color:#D10024;"><i class="fa fa-shopping-bag"></i></div>
             <div class="stat-num">{{ $totalOrders }}</div>
             <div class="stat-label">Total Pembelian</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card c-yellow">
             <div class="stat-icon" style="background:#fef3c7;color:#f59e0b;"><i class="fa fa-clock-o"></i></div>
             <div class="stat-num">{{ $pendingOrders }}</div>
             <div class="stat-label">Menunggu Konfirmasi</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card c-green">
             <div class="stat-icon" style="background:#d1fae5;color:#10b981;"><i class="fa fa-check-circle"></i></div>
             <div class="stat-num">{{ $completedOrders }}</div>
             <div class="stat-label">Pesanan Selesai</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card c-purple">
             <div class="stat-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fa fa-shopping-cart"></i></div>
             <div class="stat-num">{{ $cartCount }}</div>
             <div class="stat-label">Item di Keranjang</div>
