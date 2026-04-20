@@ -273,6 +273,15 @@
 @endpush
 
 @section('content')
+@php
+    $nowWib   = \Carbon\Carbon::now('Asia/Jakarta');
+    $jamBuka  = \Carbon\Carbon::createFromFormat('H:i', $kuliner->jam_buka,  'Asia/Jakarta');
+    $jamTutup = \Carbon\Carbon::createFromFormat('H:i', $kuliner->jam_tutup, 'Asia/Jakarta');
+    // Handle overnight (e.g. 20:00 – 02:00)
+    $isOpenNow = $jamTutup->gt($jamBuka)
+        ? $nowWib->between($jamBuka, $jamTutup)
+        : ($nowWib->gte($jamBuka) || $nowWib->lte($jamTutup));
+@endphp
 <div class="ks-page">
 
     {{-- Hero Photo --}}
@@ -292,9 +301,9 @@
         </div>
 
         {{-- Status badge --}}
-        <div class="ks-hero-badge {{ $kuliner->status }}">
+        <div class="ks-hero-badge {{ $isOpenNow ? 'buka' : 'tutup' }}">
             <i class="fa fa-circle" style="font-size:8px"></i>
-            {{ $kuliner->status === 'buka' ? 'Sedang Buka' : 'Sedang Tutup' }}
+            {{ $isOpenNow ? 'Sedang Buka' : 'Sedang Tutup' }}
         </div>
     </div>
 
@@ -359,12 +368,12 @@
                             </div>
                         </div>
                         <div class="ks-hl">
-                            <div class="ks-hl-icon {{ $kuliner->status === 'buka' ? 'green' : 'red' }}">
+                            <div class="ks-hl-icon {{ $isOpenNow ? 'green' : 'red' }}">
                                 <i class="fa fa-circle" style="font-size:10px"></i>
                             </div>
                             <div class="ks-hl-text">
                                 <div class="ks-hl-label">Status</div>
-                                <div class="ks-hl-val">{{ $kuliner->status === 'buka' ? 'Sedang Buka' : 'Sedang Tutup' }}</div>
+                                <div class="ks-hl-val">{{ $isOpenNow ? 'Sedang Buka' : 'Sedang Tutup' }}</div>
                             </div>
                         </div>
                     </div>
@@ -446,9 +455,9 @@
             <div class="ks-sidebar">
                 {{-- CTA Card --}}
                 <div class="ks-cta-card">
-                    <div class="ks-status-large {{ $kuliner->status }}">
+                    <div class="ks-status-large {{ $isOpenNow ? 'buka' : 'tutup' }}">
                         <i class="fa fa-circle"></i>
-                        {{ $kuliner->status === 'buka' ? 'Warung Sedang Buka' : 'Warung Sedang Tutup' }}
+                        {{ $isOpenNow ? 'Warung Sedang Buka' : 'Warung Sedang Tutup' }}
                     </div>
 
                     <div class="ks-info-rows">
