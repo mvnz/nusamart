@@ -392,6 +392,75 @@ ul { list-style: none; }
     transition: box-shadow 0.3s;
 }
 
+/* Custom category dropdown */
+.sb-cat-wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+.sb-cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+    height: 46px;
+    border: 2px solid #D10024;
+    border-right: none;
+    border-radius: 30px 0 0 30px;
+    background: #fff;
+    font-size: 13px;
+    color: #444;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 150px;
+    max-width: 175px;
+    outline: none;
+    transition: background .2s, color .2s;
+    font-family: inherit;
+}
+.sb-cat-btn:hover, .sb-cat-wrap.open .sb-cat-btn {
+    background: #fff6f7;
+    color: #D10024;
+}
+.sb-cat-icon { color: #D10024; font-size: 13px; }
+.sb-cat-arrow { font-size: 10px; margin-left: auto; color: #aaa; transition: transform .25s; }
+.sb-cat-label-text { overflow: hidden; text-overflow: ellipsis; flex: 1; text-align: left; }
+
+.sb-cat-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 210px;
+    background: #fff;
+    border: 1px solid #f0e0e3;
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(209,0,36,.12), 0 2px 8px rgba(0,0,0,.07);
+    z-index: 9999;
+    padding: 6px 0;
+    animation: sbCatFadeIn .18s ease;
+    overflow: hidden;
+}
+.sb-cat-menu.open { display: block; }
+@keyframes sbCatFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.sb-cat-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 16px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+.sb-cat-item i { color: #D10024; font-size: 12px; width: 14px; text-align: center; }
+.sb-cat-item:hover { background: #fff0f2; color: #D10024; }
+.sb-cat-item.active { background: #fff0f2; color: #D10024; font-weight: 700; }
+.sb-cat-item.active i { color: #D10024; }
+
 .search-bar input {
     flex: 1;
     padding: 12px 16px;
