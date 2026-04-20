@@ -3,17 +3,23 @@
 .admin-stat-card {
     background: #fff;
     border-radius: 16px;
-    padding: 24px 20px;
+    padding: 22px 20px;
     display: flex;
     align-items: center;
-    gap: 18px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     border: 1px solid #f0f0f0;
+    border-left: 4px solid transparent;
     transition: transform .2s, box-shadow .2s;
     flex: 1;
     min-width: 0;
 }
-.admin-stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+.admin-stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.1); }
+.admin-stat-card.c-red    { border-left-color: #D10024; }
+.admin-stat-card.c-blue   { border-left-color: #2196f3; }
+.admin-stat-card.c-purple { border-left-color: #9b59b6; }
+.admin-stat-card.c-green  { border-left-color: #27ae60; }
+.admin-stat-card.c-orange { border-left-color: #f97316; }
 .admin-stat-icon {
     width: 56px; height: 56px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
@@ -54,54 +60,62 @@
 .admin-stat-bar-track { height: 8px; background: #f0f0f0; border-radius: 8px; overflow: hidden; }
 .admin-stat-bar-fill { height: 100%; border-radius: 8px; transition: width .6s ease; }
 
+.adm-page { background:#f5f6fa; padding-bottom:48px; }
 .admin-welcome-banner {
-    background: linear-gradient(135deg, #D10024 0%, #8B0000 100%);
-    border-radius: 16px;
-    padding: 24px 28px;
+    background: linear-gradient(135deg, #1a0533 0%, #D10024 55%, #ff6b35 100%);
+    border-radius: 22px;
+    padding: 36px 36px 32px;
     color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
     overflow: hidden;
     position: relative;
+    margin-bottom: 24px;
 }
-.admin-welcome-banner::after {
-    content: '';
-    position: absolute;
-    right: -40px; top: -40px;
-    width: 200px; height: 200px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 50%;
+.adm-blob { position:absolute; border-radius:50%; background:rgba(255,255,255,.07); animation:admBlobPulse 4s ease-in-out infinite; pointer-events:none; }
+.adm-blob.b1 { width:320px;height:320px;top:-90px;right:-60px;animation-delay:0s; }
+.adm-blob.b2 { width:200px;height:200px;bottom:-70px;left:5%;animation-delay:1.6s; }
+.adm-blob.b3 { width:130px;height:130px;top:10px;left:40%;animation-delay:.9s; }
+@keyframes admBlobPulse { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.2);opacity:1} }
+.adm-banner-inner { position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap; }
+.admin-welcome-title { font-size:26px; font-weight:900; margin-bottom:5px; text-shadow:0 3px 16px rgba(0,0,0,.3); }
+.admin-welcome-sub { font-size:13px; opacity:.82; }
+.adm-banner-pills { display:flex;gap:8px;margin-top:14px;flex-wrap:wrap; }
+.adm-banner-pill {
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    backdrop-filter:blur(6px);
+    color:#fff;font-size:12px;font-weight:700;
+    padding:5px 13px;border-radius:20px;
+    display:flex;align-items:center;gap:5px;
 }
-.admin-welcome-banner::before {
-    content: '';
-    position: absolute;
-    right: 60px; bottom: -60px;
-    width: 160px; height: 160px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 50%;
-}
-.admin-welcome-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-.admin-welcome-sub { font-size: 13px; opacity: .85; }
-.admin-welcome-icon { font-size: 48px; opacity: .25; position: relative; z-index: 1; }
+.admin-welcome-icon { font-size:80px;opacity:.12;position:relative;z-index:1;flex-shrink:0; }
 </style>
 
 <!-- Welcome Banner -->
-<section class="container" style="padding-top:24px;padding-bottom:0">
+<div class="adm-page">
+<section class="container" style="padding-top:28px;padding-bottom:0">
     <div class="admin-welcome-banner">
-        <div>
-            <div class="admin-welcome-title">Selamat Datang, {{ auth()->user()->name }} 👋</div>
-            <div class="admin-welcome-sub">{{ now()->translatedFormat('l, d F Y') }} &mdash; Panel Administrator NusaMart</div>
+        <div class="adm-blob b1"></div>
+        <div class="adm-blob b2"></div>
+        <div class="adm-blob b3"></div>
+        <div class="adm-banner-inner">
+            <div>
+                <div class="admin-welcome-title">Selamat Datang, {{ auth()->user()->name }} 👋</div>
+                <div class="admin-welcome-sub">{{ now()->translatedFormat('l, d F Y') }} &mdash; Panel Administrator NusaMart</div>
+                <div class="adm-banner-pills">
+                    <div class="adm-banner-pill"><i class="fa fa-users"></i> {{ $totalUsers }} Pengguna</div>
+                    <div class="adm-banner-pill"><i class="fa fa-eye"></i> {{ $visitorsToday }} Pengunjung Hari Ini</div>
+                    <div class="adm-banner-pill"><i class="fa fa-shield"></i> Administrator</div>
+                </div>
+            </div>
+            <i class="fa fa-shield admin-welcome-icon"></i>
         </div>
-        <i class="fa fa-shield admin-welcome-icon"></i>
     </div>
 </section>
 
 <!-- Stat Cards -->
 <section class="container" style="padding-bottom:0">
     <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <div class="admin-stat-card">
+        <div class="admin-stat-card c-red">
             <div class="admin-stat-icon bg-red"><i class="fa fa-users"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalUsers }}</div>
@@ -109,7 +123,7 @@
                 <div class="admin-stat-sub">Semua role</div>
             </div>
         </div>
-        <div class="admin-stat-card">
+        <div class="admin-stat-card c-blue">
             <div class="admin-stat-icon bg-blue"><i class="fa fa-shopping-bag"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalBuyers }}</div>
@@ -117,7 +131,7 @@
                 <div class="admin-stat-sub">Terdaftar</div>
             </div>
         </div>
-        <div class="admin-stat-card">
+        <div class="admin-stat-card c-purple">
             <div class="admin-stat-icon bg-purple"><i class="fa fa-building-o"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalSellers }}</div>
@@ -125,7 +139,7 @@
                 <div class="admin-stat-sub">Terdaftar</div>
             </div>
         </div>
-        <div class="admin-stat-card">
+        <div class="admin-stat-card c-green">
             <div class="admin-stat-icon bg-green"><i class="fa fa-shield"></i></div>
             <div class="admin-stat-info">
                 <div class="admin-stat-value">{{ $totalAdmins }}</div>
@@ -439,4 +453,5 @@
         </div>{{-- end ll-grid --}}
     </div>
 </section>
+</div>{{-- end .adm-page --}}
 

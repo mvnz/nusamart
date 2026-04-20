@@ -6,14 +6,49 @@
 @endsection
 
 @section('content')
+<style>
+/* Enhanced welcome banner */
+.sc-welcome {
+    background: linear-gradient(135deg, #1a0533 0%, #D10024 55%, #ff6b35 100%) !important;
+    border-radius: 22px !important;
+    padding: 34px 36px !important;
+}
+.sc-welcome::after, .sc-welcome::before { display:none !important; }
+.sc-blob { position:absolute;border-radius:50%;background:rgba(255,255,255,.07);animation:scBlob 4s ease-in-out infinite;pointer-events:none; }
+.sc-blob.b1 { width:300px;height:300px;top:-80px;right:-50px;animation-delay:0s; }
+.sc-blob.b2 { width:180px;height:180px;bottom:-60px;left:4%;animation-delay:1.6s; }
+.sc-blob.b3 { width:120px;height:120px;top:10px;left:40%;animation-delay:.9s; }
+@keyframes scBlob { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.2);opacity:1} }
+.sc-welcome-inner { position:relative;z-index:2;width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap; }
+.sc-welcome h2 { font-size:24px !important; font-weight:900 !important; text-shadow:0 3px 14px rgba(0,0,0,.3); }
+.sc-welcome-icon { font-size:72px !important; opacity:.12 !important; }
+.sc-welcome-pills { display:flex;gap:8px;margin-top:12px;flex-wrap:wrap; }
+.sc-welcome-pill {
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+    backdrop-filter:blur(6px);color:#fff;font-size:12px;font-weight:700;
+    padding:5px 13px;border-radius:20px;display:flex;align-items:center;gap:5px;
+}
+/* Stat card accent */
+.sc-stat-card { border-left:4px solid transparent; }
+</style>
 
 {{-- Welcome --}}
 <div class="sc-welcome">
-    <div>
-        <h2>Selamat datang, {{ auth()->user()->name }}!</h2>
-        <p>{{ now()->translatedFormat('l, d F Y') }} &mdash; Seller Center NusaMart</p>
+    <div class="sc-blob b1"></div>
+    <div class="sc-blob b2"></div>
+    <div class="sc-blob b3"></div>
+    <div class="sc-welcome-inner">
+        <div>
+            <h2>Selamat datang, {{ auth()->user()->name }}!</h2>
+            <p>{{ now()->translatedFormat('l, d F Y') }} &mdash; Seller Center NusaMart</p>
+            <div class="sc-welcome-pills">
+                <div class="sc-welcome-pill"><i class="fa fa-bell"></i> {{ $newOrdersCount }} Pesanan Baru</div>
+                <div class="sc-welcome-pill"><i class="fa fa-cube"></i> {{ $activeProductsCount }} Produk Aktif</div>
+                <div class="sc-welcome-pill"><i class="fa fa-money"></i> Rp {{ number_format($totalRevenue,0,',','.') }}</div>
+            </div>
+        </div>
+        <i class="fa fa-store sc-welcome-icon"></i>
     </div>
-    <i class="fa fa-store sc-welcome-icon"></i>
 </div>
 
 {{-- â•â• Stat cards â•â• --}}
