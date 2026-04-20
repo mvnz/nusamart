@@ -336,9 +336,9 @@
 
                     {{-- Foto --}}
                     @if($kuliner->gambar && file_exists(public_path('uploads/' . $kuliner->gambar)))
-                    <div style="margin-top:16px;border-radius:12px;overflow:hidden;height:240px;">
+                    <div style="margin-top:16px;border-radius:12px;overflow:hidden;background:#f3f4f6;">
                         <img src="{{ asset('uploads/' . $kuliner->gambar) }}" alt="{{ $kuliner->nama }}"
-                             style="width:100%;height:100%;object-fit:cover;display:block;">
+                             style="width:100%;height:auto;display:block;">
                     </div>
                     @endif
 
