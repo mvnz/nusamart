@@ -27,14 +27,28 @@
         </div>
         @if(!auth()->check() || auth()->user()->role !== 'admin')
         <div class="search-bar">
-            <form action="{{ route('products.index') }}" method="GET" style="display:contents;">
-                <select name="category_id">
-                    <option value="">Semua Kategori</option>
-                    @foreach($navCategories as $cat)
-                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                    @endforeach
-                </select>
-                <input type="text" name="search" placeholder="Cari produk..." value="{{ request('search') }}">
+            <form action="{{ route('products.index') }}" method="GET" style="display:contents;" id="headerSearchForm">
+                <input type="hidden" name="category_id" id="headerCatInput" value="{{ request('category_id') }}">
+                <div class="sb-cat-wrap" id="sbCatWrap">
+                    <button type="button" class="sb-cat-btn" id="sbCatBtn" onclick="toggleSbCat(event)">
+                        <i class="fa fa-th-large sb-cat-icon"></i>
+                        <span id="sbCatLabel">@php
+                            $selCat = $navCategories->firstWhere('id', request('category_id'));
+                        @endphp{{ $selCat ? $selCat->name : 'Semua Kategori' }}</span>
+                        <i class="fa fa-chevron-down sb-cat-arrow" id="sbCatArrow"></i>
+                    </button>
+                    <div class="sb-cat-menu" id="sbCatMenu">
+                        <div class="sb-cat-item {{ !request('category_id') ? 'active' : '' }}" onclick="selectSbCat('', 'Semua Kategori')">
+                            <i class="fa fa-th-large"></i> Semua Kategori
+                        </div>
+                        @foreach($navCategories as $cat)
+                        <div class="sb-cat-item {{ request('category_id') == $cat->id ? 'active' : '' }}" onclick="selectSbCat('{{ $cat->id }}', '{{ addslashes($cat->name) }}')">
+                            <i class="fa fa-tag"></i> {{ $cat->name }}
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <input type="text" name="search" placeholder="Cari produk, kategori..." value="{{ request('search') }}">
                 <button type="submit"><i class="fa fa-search"></i> Cari</button>
             </form>
         </div>
@@ -99,3 +113,29 @@
         @endif
     </div>
 </header>
+<script>
+function toggleSbCat(e){
+    e.stopPropagation();
+    var menu = document.getElementById('sbCatMenu');
+    var arrow = document.getElementById('sbCatArrow');
+    var wrap = document.getElementById('sbCatWrap');
+    var open = menu.classList.toggle('open');
+    arrow.style.transform = open ? 'rotate(180deg)' : '';
+    wrap.classList.toggle('open', open);
+}
+function selectSbCat(val, label){
+    document.getElementById('headerCatInput').value = val;
+    document.getElementById('sbCatLabel').textContent = label;
+    document.getElementById('sbCatMenu').classList.remove('open');
+    document.getElementById('sbCatArrow').style.transform = '';
+    document.getElementById('sbCatWrap').classList.remove('open');
+}
+document.addEventListener('click', function(e){
+    var wrap = document.getElementById('sbCatWrap');
+    if(wrap && !wrap.contains(e.target)){
+        document.getElementById('sbCatMenu').classList.remove('open');
+        document.getElementById('sbCatArrow').style.transform = '';
+        wrap.classList.remove('open');
+    }
+});
+</script>
