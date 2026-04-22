@@ -773,42 +773,44 @@
     font-weight: 800;
     margin-bottom: 6px;
 }
+.flash-slider-wrapper {
+    position: relative;
+}
 .flash-sale-scroll {
     overflow-x: auto;
     padding: 0 24px 8px;
     scrollbar-width: none;
-    flex: 1;
-    min-width: 0;
     cursor: grab;
     user-select: none;
 }
 .flash-sale-scroll.dragging { cursor: grabbing; }
 .flash-sale-scroll::-webkit-scrollbar { display: none; }
-.flash-slider-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
 .flash-slider-btn {
-    flex-shrink: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 10;
-    background: rgba(255,255,255,0.15);
-    border: none;
+    background: rgba(20,20,40,0.80);
+    border: 2px solid rgba(255,255,255,0.18);
     color: #fff;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
-    transition: background 0.2s, opacity 0.2s;
+    backdrop-filter: blur(6px);
+    transition: background 0.2s, opacity 0.2s, transform 0.2s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
-.flash-slider-btn:hover { background: rgba(209,0,36,0.75); }
+.flash-slider-btn:hover {
+    background: rgba(209,0,36,0.85);
+    transform: translateY(-50%) scale(1.08);
+}
 .flash-slider-btn.fs-hidden { opacity: 0; pointer-events: none; }
-.flash-slider-prev { margin-left: 8px; }
-.flash-slider-next { margin-right: 8px; }
+.flash-slider-prev { left: 8px; }
+.flash-slider-next { right: 8px; }
 .flash-products-row {
     display: flex;
     gap: 14px;
