@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'NusaMart – Marketplace Produk UMKM Lokal')
 
@@ -283,11 +283,11 @@
                             <div class="flash-price-row">
                                 <span class="flash-price">Rp {{ number_format($p['price'], 0, ',', '.') }}</span>
                                 <span class="flash-original">Rp {{ number_format($p['original_price'], 0, ',', '.') }}</span>
-                                <span class="flash-disc">{{ round((1 - $p['price'] / $p['original_price']) * 100) }}%</span>
+                                <span class="flash-disc">{{ $p['disc'] }}%</span>
                             </div>
                             <div class="flash-progress">
                                 <div class="flash-progress-bar">
-                                    <div class="flash-progress-fill" style="width: {{ min(100, ($p['sold'] / 300) * 100) }}%"></div>
+                                    <div class="flash-progress-fill" style="width: {{ $p['quota'] > 0 ? min(100, round($p['sold'] / $p['quota'] * 100)) : 0 }}%"></div>
                                 </div>
                                 <div class="flash-progress-text">Terjual {{ $p['sold'] }}</div>
                             </div>
@@ -298,6 +298,7 @@
             </div>
         </section>
         @endif
+
         {{-- ===== TABBED PRODUCTS ===== --}}
         <section class="prod-tabs-section">
             <div class="container">
@@ -321,7 +322,6 @@
                     @if(count($tabItems) > 0)
                     <div class="prod-tabs-grid">
                         @foreach($tabItems as $p)
-                        @php $disc = round((1 - $p['price'] / $p['original_price']) * 100); @endphp
                         <a href="{{ route('products.show', $p['id']) }}" class="ptile">
                             <div class="ptile-img">
                                 @if($p['image'])
@@ -331,36 +331,33 @@
                                         <i class="fa fa-image" style="font-size:36px;color:#ddd"></i>
                                     </div>
                                 @endif
-                                @if($disc > 0)
-                                <span class="ptile-disc-badge">{{ $disc }}%</span>
+                                @if(!empty($p['promo_pct']))
+                                <span class="ptile-disc-badge">-{{ $p['promo_pct'] }}%</span>
                                 @endif
                             </div>
                             <div class="ptile-body">
+                                @if(!empty($p['category']))
                                 <div class="ptile-cat">{{ $p['category'] }}</div>
+                                @endif
                                 <div class="ptile-name">{{ $p['name'] }}</div>
+                                <div class="ptile-seller"><i class="fa fa-store" style="margin-right:4px;"></i>{{ $p['seller'] }}</div>
                                 <div class="ptile-price-row">
                                     <span class="ptile-price">Rp {{ number_format($p['price'], 0, ',', '.') }}</span>
-                                    @if($disc > 0)
+                                    @if(!empty($p['promo_pct']))
                                     <span class="ptile-original">Rp {{ number_format($p['original_price'], 0, ',', '.') }}</span>
-                                    <span class="ptile-pct">{{ $disc }}%</span>
+                                    <span class="ptile-pct">{{ $p['promo_pct'] }}%</span>
                                     @endif
                                 </div>
-                                <div class="ptile-seller">{{ $p['seller'] }}</div>
-                                @if($p['rating'] || $p['sold'] > 0)
-                                <div class="ptile-rating">
-                                    @if($p['rating'])<i class="fa fa-star"></i> {{ $p['rating'] }}@if($p['sold'] > 0)<span class="pcr-sep">&middot;</span>@endif @endif
-                                    @if($p['sold'] > 0)<span>{{ $p['sold'] }} terjual</span>@endif
-                                </div>
-                                @endif
                                 <div class="ptile-stock @if($p['stock'] == 0) out @elseif($p['stock'] <= 5) low @endif">
                                     @if($p['stock'] == 0)
                                         <i class="fa fa-times-circle"></i> Stok habis
                                     @elseif($p['stock'] <= 5)
                                         <i class="fa fa-exclamation-triangle"></i> Sisa {{ $p['stock'] }}
                                     @else
-                                        <i class="fa fa-check-circle"></i> Stok: {{ $p['stock'] }}
+                                        <i class="fa fa-check-circle" style="color:#10b981;"></i> Stok: {{ $p['stock'] }}
                                     @endif
                                 </div>
+                                <div class="ptile-sold"><i class="fa fa-shopping-cart" style="margin-right:3px;"></i> {{ $p['sold'] }} terjual</div>
                             </div>
                         </a>
                         @endforeach
@@ -437,9 +434,12 @@ function switchProdTab(key, btn) {
 
 // Countdown Timer
 (function() {
-    // Countdown to midnight (flash sale resets daily with new products)
+    @if(!empty($flashSaleDeadline))
+    var deadline = new Date('{{ $flashSaleDeadline }}');
+    @else
     var now = new Date();
     var deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+    @endif
 
     function pad(n) { return n < 10 ? '0' + n : n; }
     function updateCountdown() {
@@ -573,4 +573,190 @@ function switchProdTab(key, btn) {
     document.head.appendChild(style);
 })();
 </script>
+
+{{-- ═══ KULINER PROMO POPUP ═══ --}}
+<style>
+.hklp-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(10, 5, 20, 0.68);
+    backdrop-filter: blur(5px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: hklpIn .35s ease;
+}
+.hklp-overlay.hklp-hiding { animation: hklpOut .28s ease forwards; }
+@keyframes hklpIn  { from{opacity:0} to{opacity:1} }
+@keyframes hklpOut { from{opacity:1} to{opacity:0} }
+
+.hklp-box {
+    background: #fff;
+    border-radius: 22px;
+    max-width: 400px; width: 100%;
+    overflow: hidden;
+    box-shadow: 0 28px 70px rgba(0,0,0,.32);
+    animation: hklpUp .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes hklpUp { from{transform:translateY(44px) scale(.94);opacity:0} to{transform:none;opacity:1} }
+
+/* ── Header ── */
+.hklp-head {
+    background: linear-gradient(135deg, #1a0533 0%, #D10024 55%, #ff6b35 100%);
+    padding: 32px 24px 26px;
+    text-align: center;
+    position: relative; overflow: hidden;
+}
+.hklp-head::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='22' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+}
+.hklp-blob { position:absolute; border-radius:50%; background:rgba(255,255,255,.08); }
+.hklp-blob.b1 { width:160px;height:160px; top:-50px; right:-40px; }
+.hklp-blob.b2 { width:100px;height:100px; bottom:-28px; left:-18px; }
+
+.hklp-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    color: #fff; font-size: 11px; font-weight: 700;
+    padding: 4px 12px; margin-bottom: 14px;
+    position: relative; z-index: 1;
+    letter-spacing: .4px; text-transform: uppercase;
+}
+.hklp-icon {
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,.16);
+    border: 2px solid rgba(255,255,255,.28);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 30px; color: #fff;
+    margin-bottom: 14px; position: relative; z-index: 1;
+    animation: hklpFloat 3.2s ease-in-out infinite;
+}
+@keyframes hklpFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.hklp-title {
+    font-size: 20px; font-weight: 900; color: #fff;
+    line-height: 1.25; position: relative; z-index: 1;
+    text-shadow: 0 3px 12px rgba(0,0,0,.3);
+    margin-bottom: 7px;
+}
+.hklp-sub {
+    font-size: 12.5px; color: rgba(255,255,255,.8);
+    line-height: 1.5; position: relative; z-index: 1;
+    max-width: 300px; margin: 0 auto;
+}
+
+/* close btn */
+.hklp-close {
+    position: absolute; top: 12px; right: 14px; z-index: 5;
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28);
+    color: #fff; width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; cursor: pointer; transition: background .18s;
+}
+.hklp-close:hover { background: rgba(255,255,255,.3); }
+
+/* ── Feature list ── */
+.hklp-feats {
+    padding: 18px 20px 6px;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.hklp-feat {
+    display: flex; align-items: center; gap: 12px;
+    background: #fdf2f2; border-radius: 12px;
+    padding: 10px 14px;
+}
+.hklp-feat-ico {
+    width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, #ffd6d6, #ffefef);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #D10024;
+}
+.hklp-feat-txt { font-size: 12.5px; font-weight: 700; color: #444; }
+.hklp-feat-txt small { font-weight: 500; color: #888; display: block; margin-top: 1px; }
+
+/* ── Footer ── */
+.hklp-footer { padding: 16px 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+.hklp-cta {
+    display: block; width: 100%;
+    background: linear-gradient(135deg, #D10024, #ff4455);
+    color: #fff; font-weight: 800; font-size: 14.5px;
+    padding: 13px 16px; border-radius: 13px; border: none;
+    cursor: pointer; text-align: center;
+    box-shadow: 0 6px 18px rgba(209,0,36,.35);
+    transition: transform .18s, box-shadow .18s;
+    text-decoration: none;
+}
+.hklp-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(209,0,36,.45); color: #fff; }
+.hklp-skip {
+    background: none; border: none; width: 100%;
+    color: #bbb; font-size: 12px; font-weight: 600;
+    cursor: pointer; padding: 3px; transition: color .18s;
+}
+.hklp-skip:hover { color: #777; }
+
+@media(max-width:440px){ .hklp-title{font-size:18px;} }
+</style>
+
+<div class="hklp-overlay" id="hklPopup" role="dialog" aria-modal="true" aria-labelledby="hklpTitle">
+    <div class="hklp-box">
+        <div class="hklp-head">
+            <div class="hklp-blob b1"></div>
+            <div class="hklp-blob b2"></div>
+            <button class="hklp-close" onclick="hklpClose()" aria-label="Tutup"><i class="fa fa-times"></i></button>
+            <div class="hklp-badge"><i class="fa fa-star"></i> Baru di NusaMart</div>
+            <div class="hklp-icon"><i class="fa fa-cutlery"></i></div>
+            <div class="hklp-title" id="hklpTitle">Memperkenalkan<br>Kuliner Lokal<br>Desa Manud Jaya</div>
+            <p class="hklp-sub">Temukan warung dan kuliner asli khas desa — lengkap dengan info lokasi, jam buka, dan kontak langsung.</p>
+        </div>
+
+        <div class="hklp-feats">
+            <div class="hklp-feat">
+                <div class="hklp-feat-ico"><i class="fa fa-map-marker"></i></div>
+                <div class="hklp-feat-txt">Lokasi & Google Maps <small>Alamat lengkap tiap warung</small></div>
+            </div>
+            <div class="hklp-feat">
+                <div class="hklp-feat-ico"><i class="fa fa-clock-o"></i></div>
+                <div class="hklp-feat-txt">Status Buka / Tutup Real-time <small>Cek langsung sebelum datang</small></div>
+            </div>
+            <div class="hklp-feat">
+                <div class="hklp-feat-ico"><i class="fa fa-whatsapp"></i></div>
+                <div class="hklp-feat-txt">Kontak WhatsApp <small>Pesan langsung ke warung</small></div>
+            </div>
+        </div>
+
+        <div class="hklp-footer">
+            <a href="{{ route('kuliner.index') }}" class="hklp-cta" onclick="hklpClose()">
+                <i class="fa fa-cutlery"></i>&nbsp; Jelajahi Kuliner Sekarang
+            </a>
+            <button class="hklp-skip" onclick="hklpClose(true)">Jangan tampilkan lagi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var popup = document.getElementById('hklPopup');
+    if(!popup) return;
+    var KEY = 'hklp_dismissed';
+    if(localStorage.getItem(KEY) === '1'){
+        popup.style.display = 'none';
+        return;
+    }
+    document.body.style.overflow = 'hidden';
+    popup.addEventListener('click', function(e){ if(e.target === popup) hklpClose(); });
+    document.addEventListener('keydown', function kd(e){ if(e.key==='Escape'){ hklpClose(); document.removeEventListener('keydown',kd); } });
+})();
+
+function hklpClose(remember){
+    var popup = document.getElementById('hklPopup');
+    if(!popup || popup.style.display==='none') return;
+    if(remember) localStorage.setItem('hklp_dismissed','1');
+    popup.classList.add('hklp-hiding');
+    document.body.style.overflow = '';
+    setTimeout(function(){ popup.style.display='none'; }, 270);
+}
+</script>
+
 @endpush
