@@ -257,8 +257,16 @@
                 @foreach($promos as $promo)
                 @php
                     $status = $promo->isActive() ? 'active' : ($promo->isScheduled() ? 'scheduled' : ($promo->isExpired() ? 'expired' : 'inactive'));
-                    $daysLeft = now()->diffInDays($promo->end_date, false);
-                    $daysStart = now()->diffInDays($promo->start_date, false);
+                    $diffLeft = now()->diff($promo->end_date);
+                    $daysLeft = (now() <= $promo->end_date) ? $diffLeft->days * 86400 + $diffLeft->h * 3600 + $diffLeft->i * 60 + $diffLeft->s : -1;
+                    $daysLeftFmt = $diffLeft->days > 0
+                        ? $diffLeft->days.'h '.$diffLeft->h.'j '.$diffLeft->i.'m'
+                        : ($diffLeft->h > 0 ? $diffLeft->h.'j '.$diffLeft->i.'m' : $diffLeft->i.'m');
+                    $diffStart = now()->diff($promo->start_date);
+                    $daysStart = (now() <= $promo->start_date) ? $diffStart->days * 86400 + $diffStart->h * 3600 + $diffStart->i * 60 + $diffStart->s : -1;
+                    $daysStartFmt = $diffStart->days > 0
+                        ? $diffStart->days.'h '.$diffStart->h.'j '.$diffStart->i.'m'
+                        : ($diffStart->h > 0 ? $diffStart->h.'j '.$diffStart->i.'m' : $diffStart->i.'m');
                     $sellerInitial = strtoupper(substr($promo->seller->name, 0, 1));
                 @endphp
                 <tr class="mp-row">
@@ -294,9 +302,9 @@
                             {{ $promo->start_date->format('d/m/Y') }} &ndash; {{ $promo->end_date->format('d/m/Y') }}
                         </div>
                         @if($status === 'active' && $daysLeft >= 0)
-                            <span class="mp-countdown running"><i class="fa fa-circle" style="font-size:7px"></i> {{ $daysLeft }} hari lagi</span>
+                            <span class="mp-countdown running"><i class="fa fa-circle" style="font-size:7px"></i> {{ $daysLeftFmt }} lagi</span>
                         @elseif($status === 'scheduled' && $daysStart >= 0)
-                            <span class="mp-countdown soon"><i class="fa fa-clock-o" style="font-size:9px"></i> mulai {{ $daysStart }} hari lagi</span>
+                            <span class="mp-countdown soon"><i class="fa fa-clock-o" style="font-size:9px"></i> mulai {{ $daysStartFmt }} lagi</span>
                         @elseif($status === 'expired')
                             <span class="mp-countdown past"><i class="fa fa-times" style="font-size:9px"></i> sudah berakhir</span>
                         @endif
