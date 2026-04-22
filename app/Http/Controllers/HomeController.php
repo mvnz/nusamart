@@ -102,7 +102,6 @@ class HomeController extends Controller
                 ->whereHas('product', fn($q) => $q->where('is_active', true)->where('stock', '>', 0))
                 ->where(fn($q) => $q->where('quota', 0)->orWhereRaw('used_quota < quota'))
                 ->orderBy('end_date', 'asc')
-                ->limit(6)
                 ->get();
 
             if ($activePromos->isNotEmpty()) {
