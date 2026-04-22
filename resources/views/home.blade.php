@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'NusaMart – Marketplace Produk UMKM Lokal')
 
@@ -267,7 +267,9 @@
                     </div>
                 </div>
             </div>
-            <div class="flash-sale-scroll">
+            <div class="flash-slider-wrapper">
+            <button class="flash-slider-btn flash-slider-prev" id="flashPrev" aria-label="Sebelumnya"><i class="fa fa-chevron-left"></i></button>
+            <div class="flash-sale-scroll" id="flashScroll">
                 <div class="flash-products-row">
                     @foreach($flashSaleProducts as $p)
                     <a href="{{ route('products.show', $p['id']) }}" class="flash-product-card" style="text-decoration:none;color:inherit">
@@ -296,6 +298,8 @@
                     @endforeach
                 </div>
             </div>
+            <button class="flash-slider-btn flash-slider-next" id="flashNext" aria-label="Berikutnya"><i class="fa fa-chevron-right"></i></button>
+            </div>{{-- /flash-slider-wrapper --}}
         </section>
         @endif
 
@@ -431,6 +435,42 @@ function switchProdTab(key, btn) {
     document.getElementById('prod-tab-' + key).classList.add('active');
     btn.classList.add('active');
 }
+
+// Flash Sale Slider
+(function() {
+    var scroll = document.getElementById('flashScroll');
+    var prev   = document.getElementById('flashPrev');
+    var next   = document.getElementById('flashNext');
+    if (!scroll || !prev || !next) return;
+
+    var STEP = 174 * 3; // 3 kartu per klik (160px card + 14px gap)
+
+    function updateBtns() {
+        prev.classList.toggle('fs-hidden', scroll.scrollLeft <= 2);
+        next.classList.toggle('fs-hidden', scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 2);
+    }
+
+    prev.addEventListener('click', function() { scroll.scrollBy({ left: -STEP, behavior: 'smooth' }); });
+    next.addEventListener('click', function() { scroll.scrollBy({ left:  STEP, behavior: 'smooth' }); });
+    scroll.addEventListener('scroll', updateBtns);
+    window.addEventListener('resize', updateBtns);
+
+    // Drag-to-scroll (mouse)
+    var isDragging = false, startX, startScroll;
+    scroll.addEventListener('mousedown', function(e) {
+        isDragging = true; startX = e.pageX; startScroll = scroll.scrollLeft;
+        scroll.classList.add('dragging');
+    });
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        scroll.scrollLeft = startScroll - (e.pageX - startX);
+    });
+    document.addEventListener('mouseup', function() {
+        if (isDragging) { isDragging = false; scroll.classList.remove('dragging'); updateBtns(); }
+    });
+
+    updateBtns();
+})();
 
 // Countdown Timer
 (function() {
