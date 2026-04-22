@@ -777,8 +777,38 @@
     overflow-x: auto;
     padding: 0 24px 8px;
     scrollbar-width: none;
+    flex: 1;
+    min-width: 0;
+    cursor: grab;
+    user-select: none;
 }
+.flash-sale-scroll.dragging { cursor: grabbing; }
 .flash-sale-scroll::-webkit-scrollbar { display: none; }
+.flash-slider-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.flash-slider-btn {
+    flex-shrink: 0;
+    z-index: 10;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s, opacity 0.2s;
+}
+.flash-slider-btn:hover { background: rgba(209,0,36,0.75); }
+.flash-slider-btn.fs-hidden { opacity: 0; pointer-events: none; }
+.flash-slider-prev { margin-left: 8px; }
+.flash-slider-next { margin-right: 8px; }
 .flash-products-row {
     display: flex;
     gap: 14px;
